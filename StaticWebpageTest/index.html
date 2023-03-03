@@ -349,8 +349,8 @@
             <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab"
                 tabindex="0">
                 <div class="d-flex">
-                    <!-- TODO: vertical message navbar -->
-                    <div class="col-3 overflow-y-scroll pe-0" style="min-width: 180px; height: 100vh;">
+                    <!-- vertical message navbar -->
+                    <div class="col-3 overflow-y-scroll pe-0 vh-100" style="min-width: 180px;">
                         <div class="list-group p-1" id="list-tab" role="tablist">
                             <a class="list-group-item list-group-item-action active" id="latestMessage1-list"
                                 data-bs-toggle="list" href="#latestMessage1" role="tab" aria-controls="latestMessage1">
@@ -424,52 +424,180 @@
                             </a>
                         </div>
                     </div>
+                    <!-- message tabs -->
                     <div class="container-fluid">
-                        <div class="tab-content" id="nav-tabContent">
-                            <div class="tab-pane fade show active" id="latestMessage1" role="tabpanel"
-                                aria-labelledby="latestMessage1-list">
-                                <div class="d-flex flex-column">
-                                    <!-- Title -->
-                                    <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
-                                        <div class="fs-4 fw-bold">Game Name</div>
-                                        <small class="text-muted">Match Type</small>
-                                        <div id="messageGroupPerson1" class="border-start border-end border-dark-subtle px-2">
-                                            <i class="bi bi-person-fill-check"></i>
-                                            <i class="bi bi-person-fill-check"></i>
-                                            <i class="bi bi-person-fill-check"></i>
-                                            <i class="bi bi-person-fill-gear"></i>
-                                            <i class="bi bi-person-fill-slash"></i>
-                                            <i class="bi bi-person"></i>
-                                        </div>
-                                        <button class="btn btn-outline-danger rounded-3 ms-auto" type="button">Quit</button>
+                        <div class="tab-content vh-100" id="nav-tabContent">
+                            <div class="tab-pane fade h-100 show active d-flex flex-column" id="latestMessage1"
+                                role="tabpanel" aria-labelledby="latestMessage1-list">
+                                <!-- Title -->
+                                <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
+                                    <div class="fs-4 fw-bold">Game Name</div>
+                                    <small class="text-muted">Match Type</small>
+                                    <div id="messageGroupPerson1"
+                                        class="border-start border-end border-dark-subtle px-2">
+                                        <i class="bi bi-person-fill-check"></i>
+                                        <i class="bi bi-person-fill-check"></i>
+                                        <i class="bi bi-person-fill-check"></i>
+                                        <i class="bi bi-person-fill-gear"></i>
+                                        <i class="bi bi-person-fill-slash"></i>
+                                        <i class="bi bi-person"></i>
                                     </div>
-                                    <!-- Content -->
-                                    <div class="d-flex">
-                                        <!-- TODO: requirements + chat room + voice chat + user icons -->
-                                        <div class="d-flex flex-column w-75">
-                                            <div>requirements</div>
-                                            <div>chat room</div>
-                                            <div>voice chat</div>
+                                    <button class="btn btn-outline-danger rounded-3 ms-auto" type="button">Quit</button>
+                                </div>
+                                <!-- Content -->
+                                <div class="d-flex flex-grow-1 flex-nowrap" style="min-height: 0;">
+                                    <!-- Left Content -->
+                                    <div class="d-flex flex-column flex-nowrap w-75 gap-2 pe-3" style="min-height: 0;">
+                                        <!-- Requirements -->
+                                        <div>
+                                            <div id="teamRequirementsMessage0"
+                                                class="d-inline-flex flex-wrap gap-2 my-3">
+                                                <div class="px-2 rounded-4 bg-info-subtle">High DPS</div>
+                                                <div class="px-2 rounded-4 bg-info-subtle">High HPS</div>
+                                                <div class="px-2 rounded-4 bg-info-subtle">High Health</div>
+                                                <div class="px-2 rounded-4 bg-info-subtle">High IQ</div>
+                                            </div>
+                                            <div>
+                                                <textarea class="form-control w-100 rounded-3" name="teamDetailsMessage"
+                                                    id="teamDescriptionMessage0" disabled readonly
+                                                    style="resize: none; height: 100px;">
+                                                        Same Content in detailed team infos modal
+                                                    </textarea>
+                                            </div>
                                         </div>
-                                        <div class="w-25 border-start border-dark-subtle">
-                                            user icons
+                                        <!-- Chat Room -->
+                                        <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
+                                            style="min-height: 0;">
+                                            <div class="overflow-y-scroll pe-1" id="chatMessage1">
+                                                <!-- TODO: Messages -->
+                                                <div
+                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                    <div class="d-flex p-1 gap-1">
+                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                            alt="User Icon" width="50" height="50">
+                                                        <div>
+                                                            <div class="fs-6 fw-bold">User Name</div>
+                                                            <small class="text-muted">1999-12-31 23:59:59</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                        Hello everyone, are you free now.
+                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                    </p>
+                                                </div>
+                                                <div
+                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                    <div class="d-flex p-1 gap-1">
+                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                            alt="User Icon" width="50" height="50">
+                                                        <div>
+                                                            <div class="fs-6 fw-bold">User Name</div>
+                                                            <small class="text-muted">2000-12-31 23:59:59</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                        Hello everyone, are you free now.
+                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                    </p>
+                                                </div>
+                                                <div
+                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                    <div class="d-flex p-1 gap-1">
+                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                            alt="User Icon" width="50" height="50">
+                                                        <div>
+                                                            <div class="fs-6 fw-bold">User Name</div>
+                                                            <small class="text-muted">2001-12-31 23:59:59</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                        Hello everyone, are you free now.
+                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                    </p>
+                                                </div>
+                                                <div
+                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                    <div class="d-flex p-1 gap-1">
+                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                            alt="User Icon" width="50" height="50">
+                                                        <div>
+                                                            <div class="fs-6 fw-bold">User Name</div>
+                                                            <small class="text-muted">2002-12-31 23:59:59</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                        Hello everyone, are you free now.
+                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                    </p>
+                                                </div>
+                                                <div
+                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                    <div class="d-flex p-1 gap-1">
+                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                            alt="User Icon" width="50" height="50">
+                                                        <div>
+                                                            <div class="fs-6 fw-bold">User Name</div>
+                                                            <small class="text-muted">2003-12-31 23:59:59</small>
+                                                        </div>
+                                                    </div>
+                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                        Hello everyone, are you free now.
+                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <hr style="margin: 0.5rem 0;">
+                                            <div class="d-flex gap-1">
+                                                <textarea class="form-control rounded-3" name="chatMessageGroup1"
+                                                    id="chatMessageText1" placeholder="Any Message?"
+                                                    style="resize: none; height: 100px;"></textarea>
+                                                <div
+                                                    class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
+                                                    <button class="btn btn-outline-primary" type="button">Send</button>
+                                                    <button class="btn btn-outline-secondary"
+                                                        type="button">Clear</button>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <!-- Audio Link -->
+                                        <div
+                                            class="d-flex justify-content-center align-items-baseline flex-wrap gap-2 mb-1">
+                                            <label class="form-label fs-5 fw-bold" for="audioChatNameMessage">Audio
+                                                Chat<i class="bi bi-mic-fill mx-2"></i></label>
+                                            <input class="form-control form-control-sm form-control-plaintext"
+                                                type="text" name="teamDetailsMessage" id="audioChatNameMessage"
+                                                value="KOOK" style="width: 5rem;" readonly>
+                                            <div class="d-inline-flex gap-1">
+                                                <label class="form-label fs-5 fw-bold" for="audioChatLinkMessage"><i
+                                                        class="bi bi-link-45deg mx-2"></i></label>
+                                                <input
+                                                    class="form-control form-control-sm form-control-plaintext w-auto"
+                                                    type="text" name="teamDetailsMessage" id="audioChatLinkMessage"
+                                                    placeholder="Audio Link From User" readonly>
+                                                <button class="btn btn-outline-secondary p-1"
+                                                    type="button">Copy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- User Icons -->
+                                    <div class="w-25 border-start border-dark-subtle">
+                                        <!-- TODO: -->
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="latestMessage2" role="tabpanel"
+                            <div class="tab-pane fade h-100" id="latestMessage2" role="tabpanel"
                                 aria-labelledby="latestMessage2-list">
                                 ...2
                             </div>
-                            <div class="tab-pane fade" id="latestMessage3" role="tabpanel"
+                            <div class="tab-pane fade h-100" id="latestMessage3" role="tabpanel"
                                 aria-labelledby="latestMessage3-list">
                                 ...3
                             </div>
-                            <div class="tab-pane fade" id="latestMessage4" role="tabpanel"
+                            <div class="tab-pane fade h-100" id="latestMessage4" role="tabpanel"
                                 aria-labelledby="latestMessage4-list">
                                 ...4
                             </div>
-                            <div class="tab-pane fade" id="latestMessage5" role="tabpanel"
+                            <div class="tab-pane fade h-100" id="latestMessage5" role="tabpanel"
                                 aria-labelledby="latestMessage5-list">
                                 ...5
                             </div>
@@ -511,11 +639,11 @@
                 </div>
                 <div class="modal-body">
                     <!-- TODO: Requirements -->
-                    <div id="teamRequirements" class="d-inline-flex pb-2 mb-2">
-                        <div class="px-2 rounded-4 bg-info-subtle me-2">High DPS</div>
-                        <div class="px-2 rounded-4 bg-info-subtle me-2">High HPS</div>
-                        <div class="px-2 rounded-4 bg-info-subtle me-2">High Health</div>
-                        <div class="px-2 rounded-4 bg-info-subtle me-2">High IQ</div>
+                    <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
+                        <div class="px-2 rounded-4 bg-info-subtle">High DPS</div>
+                        <div class="px-2 rounded-4 bg-info-subtle">High HPS</div>
+                        <div class="px-2 rounded-4 bg-info-subtle">High Health</div>
+                        <div class="px-2 rounded-4 bg-info-subtle">High IQ</div>
                     </div>
                     <!-- TODO: Team's Number -->
                     <div class="d-flex align-items-center">
@@ -532,8 +660,8 @@
                     </div>
                     <!-- TODO: Other Description -->
                     <div class="my-3">
-                        <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText" rows="4"
-                            disabled readonly style="resize: none;">
+                        <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText" disabled
+                            readonly style="resize: none; height: 120px;">
                             The text will be controlled by Javascript or Python or C# or jQuery.
                             This is where user can show other requirements. This is where user can show other requirements.
                         </textarea>
