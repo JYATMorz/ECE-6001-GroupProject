@@ -37,11 +37,11 @@
 <body class="overflow-y-hidden" style="min-width: 600px;">
 
     <!-- Whole Page Content -->
-    <div class="d-flex align-items-start overflow-x-hidden">
+    <div class="d-flex align-items-start overflow-hidden vh-100">
 
         <!-- Vertical Navigation Bar -->
-        <div class="nav flex-column nav-pills p-2 border border-dark-subtle bg-dark-subtle" id="v-pills-tab"
-            role="tablist" aria-orientation="vertical" style="height: 100vh;">
+        <div class="nav flex-column nav-pills h-100 p-2 border border-dark-subtle bg-dark-subtle" id="v-pills-tab"
+            role="tablist" aria-orientation="vertical">
 
             <!-- User icon, At the top of the page -->
             <div class="dropdown dropend my-2">
@@ -66,7 +66,7 @@
                 type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
 
             <!-- TODO: Favorite games' Icons -->
-            <div id="GameTabsDiv" class="mb-auto">
+            <div id="GameTabsDiv" class="flex-grow-1">
                 <button class="nav-link m-auto" id="v-pills-game-tab" data-bs-toggle="pill"
                     data-bs-target="#v-pills-game" type="button" role="tab" aria-controls="v-pills-game"
                     aria-selected="false">Game<i class="bi bi-pin-angle-fill ms-1"
@@ -87,147 +87,197 @@
         </div>
 
         <!-- Content Tabs -->
-        <div class="tab-content container-fluid p-0" id="v-pills-tabContent">
+        <div class="tab-content container-fluid h-100 p-0" id="v-pills-tabContent">
             <!-- Home Page -->
-            <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"
-                tabindex="0">
-
-                <!-- TODO: search bar -->
-                <div style="height: 10vh;">
-                    <form class="d-flex m-auto py-3 w-75" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Game" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </div>
-
-                <!-- Scrollable Content instead of scrolling whole page -->
-                <div class="overflow-y-auto overflow-x-hidden" style="height: 90vh;">
-                    <!-- TODO: Ads -->
-                    <div id="carouselExampleControlsNoTouching"
-                        class="carousel slide border-bottom border-top border-dark-subtle" data-bs-ride="carousel"
-                        data-bs-touch="false">
-                        <div class="carousel-inner text-center py-2 w-75 m-auto">
-                            <div class="carousel-item active" data-bs-interval="2000">
-                                <div class="d-block w-100 border border-success" style="height: 125px;">
-                                    <h1>Ad1</h1>
-                                </div>
-                            </div>
-                            <div class="carousel-item" data-bs-interval="2000">
-                                <div class="d-block w-100 border border-success" style="height: 125px;">
-                                    <h1>Ad2</h1>
-                                </div>
-                            </div>
-                            <div class="carousel-item" data-bs-interval="2000">
-                                <div class="d-block w-100 border border-success" style="height: 125px;">
-                                    <h1>Ad3</h1>
-                                </div>
-                            </div>
-                        </div>
+            <div class="tab-pane fade h-100 show active" id="v-pills-home" role="tabpanel"
+                aria-labelledby="v-pills-home-tab" tabindex="0">
+                <div class="d-flex flex-column h-100">
+                    <!-- TODO: search bar -->
+                    <div class="border-bottom border-dark-subtle">
+                        <form class="d-flex m-auto py-3 w-75" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Game" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
                     </div>
 
-                    <!-- TODO: Game Type Selector & New Post -->
-                    <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
-                        aria-label="Toolbar For Matchmaking Types">
-                        <!-- Game Types -->
-                        <div class="btn-group m-1" role="group" aria-label="Game Types Button Group">
-                            <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadioAll"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="GameBtnRadioAll">All</label>
-
-                            <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio1"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="GameBtnRadio1">Type 1</label>
-
-                            <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio2"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="GameBtnRadio2">Type 2</label>
-
-                            <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio3"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="GameBtnRadio3">Type 3</label>
-
-                            <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio4"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="GameBtnRadio4">Type 4</label>
-                        </div>
-                        <!-- Match Types -->
-                        <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
-                            <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadioAll"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="MatchBtnRadioAll">All</label>
-
-                            <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio1"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="MatchBtnRadio1">PvP</label>
-
-                            <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio2"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="MatchBtnRadio2">PvE</label>
-                        </div>
-                        <!-- Start a New Post -->
-                        <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
-                            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                                data-bs-target="#teamCreateModal">New Post</button>
-                        </div>
-                    </div>
-
-                    <!-- TODO: Team Finding Cards for all games -->
-                    <div class="row row-cols-auto g-sm-3 m-0">
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#teamInfoModal">
-                                        Launch static backdrop modal
-                                    </button>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    <!-- Scrollable Content instead of scrolling whole page -->
+                    <div class="flex-grow-1 flex-nowrap overflow-y-auto overflow-x-hidden">
+                        <!-- TODO: Ads -->
+                        <div id="carouselExampleControlsNoTouching"
+                            class="carousel slide border-bottom border-dark-subtle" data-bs-ride="carousel"
+                            data-bs-touch="false">
+                            <div class="carousel-inner text-center py-2 w-75 m-auto">
+                                <div class="carousel-item active" data-bs-interval="2000">
+                                    <div class="d-block w-100 border border-success" style="height: 125px;">
+                                        <h1>Ad1</h1>
+                                    </div>
+                                </div>
+                                <div class="carousel-item" data-bs-interval="2000">
+                                    <div class="d-block w-100 border border-success" style="height: 125px;">
+                                        <h1>Ad2</h1>
+                                    </div>
+                                </div>
+                                <div class="carousel-item" data-bs-interval="2000">
+                                    <div class="d-block w-100 border border-success" style="height: 125px;">
+                                        <h1>Ad3</h1>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content. Test, Test, Test, Test, Test, Test, Test, Test, Test, Test, Test</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
+
+                        <!-- TODO: Game Type Selector & New Post -->
+                        <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
+                            aria-label="Toolbar For Matchmaking Types">
+                            <!-- Game Types -->
+                            <div class="btn-group m-1" role="group" aria-label="Game Types Button Group">
+                                <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadioAll"
+                                    autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="GameBtnRadioAll">All</label>
+
+                                <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio1"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="GameBtnRadio1">Type 1</label>
+
+                                <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio2"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="GameBtnRadio2">Type 2</label>
+
+                                <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio3"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="GameBtnRadio3">Type 3</label>
+
+                                <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio4"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="GameBtnRadio4">Type 4</label>
+                            </div>
+                            <!-- Match Types -->
+                            <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
+                                <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadioAll"
+                                    autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="MatchBtnRadioAll">All</label>
+
+                                <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio1"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="MatchBtnRadio1">PvP</label>
+
+                                <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio2"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="MatchBtnRadio2">PvE</label>
+                            </div>
+                            <!-- Start a New Post -->
+                            <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
+                                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                                    data-bs-target="#teamCreateModal">New Post</button>
                             </div>
                         </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+
+                        <!-- TODO: Team Finding Cards for all games -->
+                        <div class="row row-cols-auto g-3 m-0">
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <h5 class="card-header">
+                                        Game Name
+                                        <div class="px-2 d-inline-flex border border-1 border-primary-subtle rounded-4">
+                                            <i class="bi bi-person-fill"></i>
+                                            <i class="bi bi-person-fill"></i>
+                                            <i class="bi bi-person"></i>
+                                            <i class="bi bi-person"></i>
+                                            <i class="bi bi-person"></i>
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    </h5>
+                                    <div class="card-body">
+                                        <h6 class="card-title fst-italic">MatchType</h6>
+                                        <div class="card-text">Voice Chat Required<i class="bi bi-mic-fill ms-1"></i>
+                                        </div>
+                                        <div class="card-text">Team Number: <span class="fw-bold">5 / 6</span></div>
+                                        <div class="card-text">Game Date: <span class="fw-bold">Now</span></div>
+                                    </div>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                        <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
+                                            data-bs-target="#teamInfoModal">Details</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <h5 class="card-header">
+                                        Game Name
+                                        <div class="px-2 d-inline-flex border border-1 border-primary-subtle rounded-4">
+                                            <i class="bi bi-person-fill"></i>
+                                            <i class="bi bi-person"></i>
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                    </h5>
+                                    <div class="card-body">
+                                        <h6 class="card-title fst-italic">MatchType</h6>
+                                        <div class="card-text">No Voice Chat<i class="bi bi-mic-mute-fill ms-1"></i>
+                                        </div>
+                                        <div class="card-text">Team Number: <span class="fw-bold">1 / 3</span></div>
+                                        <div class="card-text">Game Date: <span class="fw-bold">03-10 ~ 04-01</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                        <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
+                                            data-bs-target="#teamInfoModal">Details</button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <h5 class="card-header">
+                                        Game Name
+                                        <div
+                                            class="px-2 d-inline-flex align-items-center border border-1 border-primary-subtle rounded-4">
+                                            <i class="bi bi-person-fill"></i>
+                                            <i class="bi bi-x"></i>
+                                            <span class="fs-6 pe-2">13</span>
+                                            <i class="bi bi-person"></i>
+                                            <i class="bi bi-x"></i>
+                                            <span class="fs-6">19</span>
+                                        </div>
+                                    </h5>
+                                    <div class="card-body">
+                                        <h6 class="card-title fst-italic">MatchType</h6>
+                                        <div class="card-text">Voice Chat Required<i class="bi bi-mic-fill ms-1"></i>
+                                        </div>
+                                        <div class="card-text">Team Number: <span class="fw-bold">13 / 32</span></div>
+                                        <div class="card-text">Game Date: <span class="fw-bold">16:00 ~ 18:00</span>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
+                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                        <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
+                                            data-bs-target="#teamInfoModal">Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -235,110 +285,123 @@
                 </div>
             </div>
             <!-- Game Page -->
-            <div class="tab-pane fade" id="v-pills-game" role="tabpanel" aria-labelledby="v-pills-game-tab"
+            <div class="tab-pane fade h-100" id="v-pills-game" role="tabpanel" aria-labelledby="v-pills-game-tab"
                 tabindex="0">
-                <!-- TODO: Game Icon & Info -->
-                <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle" style="height: 21vh;">
-                    <img src="\assets\75750856_p0.jpg" alt="GameIcon" width="100" height="100" class="rounded-5">
-                    <!-- Game Infos -->
-                    <div class="mx-3 my-1">
-                        <div style="font-size: xx-large; font-weight: bold;">Game Name</div>
-                        <small class="text-muted">999,999,999 Followers</small>
-                    </div>
-                    <div class="ms-auto">
-                        <button class="btn btn-secondary btn-sm rounded-5" type="button"><i
-                                class="bi bi-pin-angle-fill"></i></button>
-                    </div>
-                </div>
-                <hr style="margin: 0.5rem 0;">
-                <!-- TODO: Team Finding Cards for a Single Game -->
-                <div class="overflow-y-auto overflow-x-hidden" style="height: 75vh;">
-
-                    <!-- TODO: Game Type Selector -->
-                    <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
-                        aria-label="Toolbar For Matchmaking Types">
-                        <!-- Match Types -->
-                        <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
-                            <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadioAll"
-                                autocomplete="off" checked>
-                            <label class="btn btn-outline-primary" for="TypeBtnRadioAll">All</label>
-
-                            <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio1"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="TypeBtnRadio1">PvP</label>
-
-                            <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio2"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="TypeBtnRadio2">PvE</label>
-
-                            <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio3"
-                                autocomplete="off">
-                            <label class="btn btn-outline-primary" for="TypeBtnRadio3">Others</label>
+                <div class="d-flex flex-column h-100">
+                    <!-- TODO: Game Icon & Info -->
+                    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle">
+                        <img src="\assets\75750856_p0.jpg" alt="GameIcon" width="100" height="100" class="rounded-5">
+                        <!-- Game Infos -->
+                        <div class="mx-3 my-1">
+                            <div style="font-size: xx-large; font-weight: bold;">Game Name</div>
+                            <small class="text-muted">999,999,999 Followers</small>
                         </div>
-                        <!-- TODO: Start a New Post -->
-                        <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
-                            <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                                data-bs-target="#teamCreateModal">New Post</button>
+                        <div class="ms-auto">
+                            <button class="btn btn-secondary btn-sm rounded-5" type="button"><i
+                                    class="bi bi-pin-angle-fill"></i></button>
                         </div>
                     </div>
+                    <hr style="margin: 0.5rem 0;">
+                    <!-- TODO: Team Finding Cards for a Single Game -->
+                    <div class="flex-grow-1 flex-nowrap overflow-y-auto overflow-x-hidden">
 
-                    <!-- TODO: Team Finding Cards for all games -->
-                    <div class="row row-cols-auto g-sm-3 m-0">
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#teamInfoModal">
-                                        Launch static backdrop modal
-                                    </button>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
+                        <!-- TODO: Game Type Selector -->
+                        <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
+                            aria-label="Toolbar For Matchmaking Types">
+                            <!-- Match Types -->
+                            <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
+                                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadioAll"
+                                    autocomplete="off" checked>
+                                <label class="btn btn-outline-primary" for="TypeBtnRadioAll">All</label>
+
+                                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio1"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="TypeBtnRadio1">PvP</label>
+
+                                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio2"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="TypeBtnRadio2">PvE</label>
+
+                                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio3"
+                                    autocomplete="off">
+                                <label class="btn btn-outline-primary" for="TypeBtnRadio3">Others</label>
+                            </div>
+                            <!-- TODO: Start a New Post -->
+                            <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
+                                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                                    data-bs-target="#teamCreateModal">New Post</button>
                             </div>
                         </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content. Test, Test, Test, Test, Test, Test, Test, Test, Test, Test, Test</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+
+                        <!-- TODO: Team Finding Cards for all games -->
+                        <div class="row row-cols-auto g-3 m-0">
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            data-bs-target="#teamInfoModal">
+                                            Launch static backdrop modal
+                                        </button>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content. Test, Test, Test, Test, Test, Test, Test, Test, Test, Test, Test
+                                        </p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col m-auto py-1">
-                            <div class="card h-100" style="width: 20rem;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Special title treatment</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional
-                                        content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col m-auto py-1">
+                                <div class="card h-100" style="width: 20rem;">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.</p>
+                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -350,7 +413,7 @@
                 tabindex="0">
                 <div class="d-flex">
                     <!-- vertical message navbar -->
-                    <div class="col-3 overflow-y-scroll pe-0 vh-100" style="min-width: 180px;">
+                    <div class="overflow-y-scroll pe-0 vh-100">
                         <div class="list-group p-1" id="list-tab" role="tablist">
                             <a class="list-group-item list-group-item-action active" id="latestMessage1-list"
                                 data-bs-toggle="list" href="#latestMessage1" role="tab" aria-controls="latestMessage1">
@@ -425,149 +488,154 @@
                         </div>
                     </div>
                     <!-- message tabs -->
-                    <div class="container-fluid">
-                        <div class="tab-content vh-100" id="nav-tabContent">
-                            <div class="tab-pane fade h-100 show active d-flex flex-column" id="latestMessage1"
+                    <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
+                        <div class="tab-content h-100" id="nav-tabContent">
+                            <div class="tab-pane fade h-100 show active" id="latestMessage1"
                                 role="tabpanel" aria-labelledby="latestMessage1-list">
-                                <!-- Title -->
-                                <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
-                                    <div class="fs-4 fw-bold">Game Name</div>
-                                    <small class="text-muted">Match Type</small>
-                                    <div id="messageGroupPerson1"
-                                        class="border-start border-end border-dark-subtle px-2">
-                                        <i class="bi bi-person-fill-check"></i>
-                                        <i class="bi bi-person-fill-check"></i>
-                                        <i class="bi bi-person-fill-check"></i>
-                                        <i class="bi bi-person-fill-gear"></i>
-                                        <i class="bi bi-person-fill-slash"></i>
-                                        <i class="bi bi-person"></i>
+                                <div class="d-flex flex-column h-100">
+                                    <!-- Title -->
+                                    <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
+                                        <div class="fs-4 fw-bold">Game Name</div>
+                                        <small class="text-muted">Match Type</small>
+                                        <div id="messageGroupPerson1"
+                                            class="border-start border-end border-dark-subtle px-2">
+                                            <i class="bi bi-person-fill-check"></i>
+                                            <i class="bi bi-person-fill-check"></i>
+                                            <i class="bi bi-person-fill-check"></i>
+                                            <i class="bi bi-person-fill-gear"></i>
+                                            <i class="bi bi-person-fill-slash"></i>
+                                            <i class="bi bi-person"></i>
+                                        </div>
+                                        <div class="border border-success-subtle rounded-2 px-2"><i
+                                                class="bi bi-calendar3"></i> 03-10 ~ 04-01</div>
+                                        <button class="btn btn-outline-danger rounded-3 ms-auto"
+                                            type="button">Quit</button>
                                     </div>
-                                    <button class="btn btn-outline-danger rounded-3 ms-auto" type="button">Quit</button>
-                                </div>
-                                <!-- Content -->
-                                <div class="d-flex flex-grow-1 flex-nowrap" style="min-height: 0;">
-                                    <!-- Left Content -->
-                                    <div class="d-flex flex-column flex-nowrap w-75 gap-2 pe-3" style="min-height: 0;">
-                                        <!-- Requirements -->
-                                        <div>
-                                            <div id="teamRequirementsMessage0"
-                                                class="d-inline-flex flex-wrap gap-2 my-3">
-                                                <div class="px-2 rounded-4 bg-info-subtle">High DPS</div>
-                                                <div class="px-2 rounded-4 bg-info-subtle">High HPS</div>
-                                                <div class="px-2 rounded-4 bg-info-subtle">High Health</div>
-                                                <div class="px-2 rounded-4 bg-info-subtle">High IQ</div>
-                                            </div>
+                                    <!-- Content -->
+                                    <div class="d-flex flex-grow-1 flex-nowrap" style="min-height: 0;">
+                                        <!-- Left Content -->
+                                        <div class="d-flex flex-column flex-nowrap h-100 w-75 gap-2 pe-2">
+                                            <!-- Requirements -->
                                             <div>
-                                                <textarea class="form-control w-100 rounded-3" name="teamDetailsMessage"
-                                                    id="teamDescriptionMessage0" disabled readonly
-                                                    style="resize: none; height: 100px;">
+                                                <div id="teamRequirementsMessage0"
+                                                    class="d-inline-flex flex-wrap gap-2 my-3">
+                                                    <div class="px-2 rounded-4 bg-info-subtle">High DPS</div>
+                                                    <div class="px-2 rounded-4 bg-info-subtle">High HPS</div>
+                                                    <div class="px-2 rounded-4 bg-info-subtle">High Health</div>
+                                                    <div class="px-2 rounded-4 bg-info-subtle">High IQ</div>
+                                                </div>
+                                                <div>
+                                                    <textarea class="form-control w-100 rounded-3"
+                                                        name="teamDetailsMessage" id="teamDescriptionMessage0"
+                                                        title="Team Requirements" disabled readonly
+                                                        style="resize: none; height: 100px;">
                                                         Same Content in detailed team infos modal
                                                     </textarea>
-                                            </div>
-                                        </div>
-                                        <!-- Chat Room -->
-                                        <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
-                                            style="min-height: 0;">
-                                            <div class="overflow-y-scroll pe-1" id="chatMessage1">
-                                                <!-- TODO: Messages -->
-                                                <div
-                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
-                                                    <div class="d-flex p-1 gap-1">
-                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
-                                                            alt="User Icon" width="50" height="50">
-                                                        <div>
-                                                            <div class="fs-6 fw-bold">User Name</div>
-                                                            <small class="text-muted">1999-12-31 23:59:59</small>
-                                                        </div>
-                                                    </div>
-                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
-                                                        Hello everyone, are you free now.
-                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
-                                                    <div class="d-flex p-1 gap-1">
-                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
-                                                            alt="User Icon" width="50" height="50">
-                                                        <div>
-                                                            <div class="fs-6 fw-bold">User Name</div>
-                                                            <small class="text-muted">2000-12-31 23:59:59</small>
-                                                        </div>
-                                                    </div>
-                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
-                                                        Hello everyone, are you free now.
-                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
-                                                    <div class="d-flex p-1 gap-1">
-                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
-                                                            alt="User Icon" width="50" height="50">
-                                                        <div>
-                                                            <div class="fs-6 fw-bold">User Name</div>
-                                                            <small class="text-muted">2001-12-31 23:59:59</small>
-                                                        </div>
-                                                    </div>
-                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
-                                                        Hello everyone, are you free now.
-                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
-                                                    <div class="d-flex p-1 gap-1">
-                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
-                                                            alt="User Icon" width="50" height="50">
-                                                        <div>
-                                                            <div class="fs-6 fw-bold">User Name</div>
-                                                            <small class="text-muted">2002-12-31 23:59:59</small>
-                                                        </div>
-                                                    </div>
-                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
-                                                        Hello everyone, are you free now.
-                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
-                                                    <div class="d-flex p-1 gap-1">
-                                                        <img class="rounded-2" src="\assets\50913860_p9.jpg"
-                                                            alt="User Icon" width="50" height="50">
-                                                        <div>
-                                                            <div class="fs-6 fw-bold">User Name</div>
-                                                            <small class="text-muted">2003-12-31 23:59:59</small>
-                                                        </div>
-                                                    </div>
-                                                    <p class="m-1 border-top border-dark-subtle fs-6 text-break">
-                                                        Hello everyone, are you free now.
-                                                        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-                                                    </p>
                                                 </div>
                                             </div>
-                                            <hr style="margin: 0.5rem 0;">
-                                            <div class="d-flex gap-1">
-                                                <textarea class="form-control rounded-3" name="chatMessageGroup1"
-                                                    id="chatMessageText1" placeholder="Any Message?"
-                                                    style="resize: none; height: 100px;"></textarea>
-                                                <div
-                                                    class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
-                                                    <button class="btn btn-outline-primary" type="button">Send</button>
-                                                    <button class="btn btn-outline-secondary"
-                                                        type="button">Clear</button>
+                                            <!-- Chat Room -->
+                                            <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
+                                                style="min-height: 0;">
+                                                <div class="overflow-y-scroll pe-1" id="chatMessage1">
+                                                    <!-- TODO: Messages -->
+                                                    <div
+                                                        class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                        <div class="d-flex p-1 gap-1">
+                                                            <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                                alt="User Icon" width="50" height="50">
+                                                            <div>
+                                                                <div class="fs-6 fw-bold">User Name</div>
+                                                                <small class="text-muted">1999-12-31 23:59:59</small>
+                                                            </div>
+                                                        </div>
+                                                        <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                            Hello everyone, are you free now.
+                                                            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                        <div class="d-flex p-1 gap-1">
+                                                            <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                                alt="User Icon" width="50" height="50">
+                                                            <div>
+                                                                <div class="fs-6 fw-bold">User Name</div>
+                                                                <small class="text-muted">2000-12-31 23:59:59</small>
+                                                            </div>
+                                                        </div>
+                                                        <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                            Hello everyone, are you free now.
+                                                            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                        <div class="d-flex p-1 gap-1">
+                                                            <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                                alt="User Icon" width="50" height="50">
+                                                            <div>
+                                                                <div class="fs-6 fw-bold">User Name</div>
+                                                                <small class="text-muted">2001-12-31 23:59:59</small>
+                                                            </div>
+                                                        </div>
+                                                        <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                            Hello everyone, are you free now.
+                                                            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                        <div class="d-flex p-1 gap-1">
+                                                            <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                                alt="User Icon" width="50" height="50">
+                                                            <div>
+                                                                <div class="fs-6 fw-bold">User Name</div>
+                                                                <small class="text-muted">2002-12-31 23:59:59</small>
+                                                            </div>
+                                                        </div>
+                                                        <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                            Hello everyone, are you free now.
+                                                            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                        </p>
+                                                    </div>
+                                                    <div
+                                                        class="d-inline-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
+                                                        <div class="d-flex p-1 gap-1">
+                                                            <img class="rounded-2" src="\assets\50913860_p9.jpg"
+                                                                alt="User Icon" width="50" height="50">
+                                                            <div>
+                                                                <div class="fs-6 fw-bold">User Name</div>
+                                                                <small class="text-muted">2003-12-31 23:59:59</small>
+                                                            </div>
+                                                        </div>
+                                                        <p class="m-1 border-top border-dark-subtle fs-6 text-break">
+                                                            Hello everyone, are you free now.
+                                                            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <hr style="margin: 0.5rem 0;">
+                                                <div class="d-flex gap-1">
+                                                    <textarea class="form-control rounded-3" name="chatMessageGroup1"
+                                                        id="chatMessageText1" placeholder="Any Message?"
+                                                        style="resize: none; height: 100px;"></textarea>
+                                                    <div
+                                                        class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
+                                                        <button class="btn btn-outline-primary"
+                                                            type="button">Send</button>
+                                                        <button class="btn btn-outline-secondary"
+                                                            type="button">Clear</button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <!-- Audio Link -->
-                                        <div
-                                            class="d-flex justify-content-center align-items-baseline flex-wrap gap-2 mb-1">
-                                            <label class="form-label fs-5 fw-bold" for="audioChatNameMessage">Audio
-                                                Chat<i class="bi bi-mic-fill mx-2"></i></label>
-                                            <input class="form-control form-control-sm form-control-plaintext"
-                                                type="text" name="teamDetailsMessage" id="audioChatNameMessage"
-                                                value="KOOK" style="width: 5rem;" readonly>
-                                            <div class="d-inline-flex gap-1">
+                                            <!-- Audio Link -->
+                                            <div
+                                                class="d-flex justify-content-center align-items-baseline flex-wrap gap-2 mb-1">
+                                                <label class="form-label fs-6 fw-bold" for="audioChatNameMessage">Audio
+                                                    Chat<i class="bi bi-mic-fill mx-2"></i></label>
+                                                <input class="form-control form-control-sm form-control-plaintext"
+                                                    type="text" name="teamDetailsMessage" id="audioChatNameMessage"
+                                                    value="KOOK" style="width: 4rem;" readonly>
                                                 <label class="form-label fs-5 fw-bold" for="audioChatLinkMessage"><i
                                                         class="bi bi-link-45deg mx-2"></i></label>
                                                 <input
@@ -578,10 +646,170 @@
                                                     type="button">Copy</button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <!-- User Icons -->
-                                    <div class="w-25 border-start border-dark-subtle">
-                                        <!-- TODO: -->
+                                        <!-- User Icons -->
+                                        <div class="w-25 p-2 border-start border-dark-subtle">
+                                            <div
+                                                class="h-100 p-2 d-flex flex-column gap-2 overflow-y-auto border border-info-subtle rounded-4">
+                                                <!-- User Icon -->
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <img class="rounded-circle" src="\assets\50913860_p9.jpg"
+                                                                alt="User" width="40" height="40">
+                                                            <div class="fs-6 fw-bold text-break">UserLongName</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <img class="rounded-circle" src="\assets\50913860_p9.jpg"
+                                                                alt="User" width="40" height="40">
+                                                            <div class="fs-6 fw-bold text-break">UserLongName</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <img class="rounded-circle" src="\assets\50913860_p9.jpg"
+                                                                alt="User" width="40" height="40">
+                                                            <div class="fs-6 fw-bold text-break">UserLongName</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <img class="rounded-circle" src="\assets\50913860_p9.jpg"
+                                                                alt="User" width="40" height="40">
+                                                            <div class="fs-6 fw-bold text-break">UserLongName</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <img class="rounded-circle" src="\assets\50913860_p9.jpg"
+                                                                alt="User" width="40" height="40">
+                                                            <div class="fs-6 fw-bold text-break">UserLongName</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                                <!-- Empty User Icon -->
+                                                <div class="btn-group">
+                                                    <!-- User icon & user name -->
+                                                    <button type="button" class="btn btn-outline-secondary">
+                                                        <div
+                                                            class="d-flex justify-content-evenly align-items-center gap-1">
+                                                            <i class="bi bi-person-bounding-box"
+                                                                style="font-size: 1.5rem;"></i>
+                                                            <div class="fs-6 fw-bold text-break">Empty</div>
+                                                        </div>
+                                                    </button>
+                                                    <!-- dropdown arrow -->
+                                                    <button type="button"
+                                                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                        data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                                    </button>
+                                                    <!-- dropdown -->
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item" href="#">Block</a></li>
+                                                        <li><a class="dropdown-item" href="#">Black List</a></li>
+                                                        <li>
+                                                            <hr class="dropdown-divider">
+                                                        </li>
+                                                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -646,18 +874,19 @@
                         <div class="px-2 rounded-4 bg-info-subtle">High IQ</div>
                     </div>
                     <!-- TODO: Team's Number -->
-                    <div class="d-flex align-items-center">
-                        <div class="fs-5 fw-bold">Required People: <span id="existingPersonNum">2</span> / <span
-                                id="requiredPersonNum">6</span></div>
-                        <div id="personNumIcons" class="ms-5 px-2 border border-1 border-primary-subtle rounded-4">
-                            <i class="bi bi-person-fill" style="font-size: 1.5em;"></i>
-                            <i class="bi bi-person-fill" style="font-size: 1.5em;"></i>
-                            <i class="bi bi-person-add" style="font-size: 1.5em;"></i>
-                            <i class="bi bi-person" style="font-size: 1.5em;"></i>
-                            <i class="bi bi-person" style="font-size: 1.5em;"></i>
-                            <i class="bi bi-person" style="font-size: 1.5em;"></i>
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="fs-5 fw-bold">Required People <i class="bi bi-person-circle"></i> : 2 / 6</div>
+                        <div class="ms-4 px-2 border border-1 border-primary-subtle rounded-4">
+                            <i class="bi bi-person-fill"></i>
+                            <i class="bi bi-person-fill"></i>
+                            <i class="bi bi-person-add"></i>
+                            <i class="bi bi-person"></i>
+                            <i class="bi bi-person"></i>
+                            <i class="bi bi-person"></i>
                         </div>
                     </div>
+                    <!-- TODO: Gaming Date -->
+                    <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : Now</p>
                     <!-- TODO: Other Description -->
                     <div class="my-3">
                         <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText" disabled
