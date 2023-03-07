@@ -34,7 +34,7 @@
     }
 </style>
 
-<body class="overflow-y-hidden" style="min-width: 600px;">
+<body class="overflow-y-hidden">
 
     <!-- Whole Page Content -->
     <div class="d-flex align-items-start overflow-hidden vh-100">
@@ -46,7 +46,7 @@
             <!-- User icon, At the top of the page -->
             <div class="dropdown dropend my-2">
                 <a href="#"
-                    class="d-flex align-items-center justify-content-center p-3 link-dark text-decoration-none dropdown-toggle"
+                    class="d-flex align-items-center justify-content-center p-1 link-dark text-decoration-none dropdown-toggle"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <img class="rounded-circle" src="\assets\50913860_p9.jpg" alt="User" width="50" height="50">
                 </a>
@@ -61,12 +61,12 @@
                 </ul>
             </div>
 
-            <!-- Main page icon -->
-            <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home"
-                type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</button>
-
-            <!-- TODO: Favorite games' Icons -->
             <div id="GameTabsDiv" class="flex-grow-1">
+                <!-- Main page icon -->
+                <button class="nav-link m-auto active" id="v-pills-home-tab" data-bs-toggle="pill"
+                    data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home"
+                    aria-selected="true">Home</button>
+                <!-- TODO: Favorite games' Icons -->
                 <button class="nav-link m-auto" id="v-pills-game-tab" data-bs-toggle="pill"
                     data-bs-target="#v-pills-game" type="button" role="tab" aria-controls="v-pills-game"
                     aria-selected="false">Game<i class="bi bi-pin-angle-fill ms-1"
@@ -81,9 +81,9 @@
                 <button class="nav-link m-auto" id="v-pills-settings-tab" data-bs-toggle="pill"
                     data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings"
                     aria-selected="false">Settings</button>
-                <hr>
-                <p class="fs-4 fw-bolder text-light-emphasis">Game<br>Fellowship</p>
             </div>
+            <hr style="margin: 0.5rem 0;">
+            <p class="fs-5 fw-bolder text-light-emphasis">Game<br>Fellowship</p>
         </div>
 
         <!-- Content Tabs -->
@@ -174,7 +174,7 @@
                         <!-- TODO: Team Finding Cards for all games -->
                         <div class="row row-cols-auto g-3 m-0">
                             <div class="col m-auto py-1">
-                                <div class="card h-100" style="width: 20rem;">
+                                <div class="card h-100" style="max-width: 20rem;">
                                     <h5 class="card-header">
                                         Game Name
                                         <div class="px-2 d-inline-flex border border-1 border-primary-subtle rounded-4">
@@ -193,15 +193,15 @@
                                         <div class="card-text">Team Number: <span class="fw-bold">5 / 6</span></div>
                                         <div class="card-text">Game Date: <span class="fw-bold">Now</span></div>
                                     </div>
-                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
+                                        <small class="text-muted">Last updated 3 minutes ago</small>
                                         <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
                                             data-bs-target="#teamInfoModal">Details</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col m-auto py-1">
-                                <div class="card h-100" style="width: 20rem;">
+                                <div class="card h-100" style="max-width: 20rem;">
                                     <h5 class="card-header">
                                         Game Name
                                         <div class="px-2 d-inline-flex border border-1 border-primary-subtle rounded-4">
@@ -218,15 +218,15 @@
                                         <div class="card-text">Game Date: <span class="fw-bold">03-10 ~ 04-01</span>
                                         </div>
                                     </div>
-                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
+                                        <small class="text-muted">Last updated 3 minutes ago</small>
                                         <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
                                             data-bs-target="#teamInfoModal">Details</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col m-auto py-1">
-                                <div class="card h-100" style="width: 20rem;">
+                                <div class="card h-100" style="max-width: 20rem;">
                                     <h5 class="card-header">
                                         Game Name
                                         <div
@@ -247,15 +247,15 @@
                                         <div class="card-text">Game Date: <span class="fw-bold">16:00 ~ 18:00</span>
                                         </div>
                                     </div>
-                                    <div class="card-footer d-inline-flex justify-content-between align-items-center">
-                                        <small class="text-muted">Last updated 3 minutes ago ...</small>
+                                    <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
+                                        <small class="text-muted">Last updated 3 minutes ago</small>
                                         <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
                                             data-bs-target="#teamInfoModal">Details</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="col m-auto py-1">
-                                <div class="card h-100" style="width: 20rem;">
+                                <div class="card h-100" style="max-width: 20rem;">
                                     <div class="card-body">
                                         <h5 class="card-title">Special title treatment</h5>
                                         <p class="card-text">With supporting text below as a natural lead-in to
@@ -268,7 +268,7 @@
                                 </div>
                             </div>
                             <div class="col m-auto py-1">
-                                <div class="card h-100" style="width: 20rem;">
+                                <div class="card h-100" style="max-width: 20rem;">
                                     <div class="card-body">
                                         <h5 class="card-title">Special title treatment</h5>
                                         <p class="card-text">With supporting text below as a natural lead-in to
@@ -490,8 +490,8 @@
                     <!-- message tabs -->
                     <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
                         <div class="tab-content h-100" id="nav-tabContent">
-                            <div class="tab-pane fade h-100 show active" id="latestMessage1"
-                                role="tabpanel" aria-labelledby="latestMessage1-list">
+                            <div class="tab-pane fade h-100 show active" id="latestMessage1" role="tabpanel"
+                                aria-labelledby="latestMessage1-list">
                                 <div class="d-flex flex-column h-100">
                                     <!-- Title -->
                                     <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
