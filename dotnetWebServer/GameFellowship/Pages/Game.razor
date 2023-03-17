@@ -1,0 +1,81 @@
+@page "/games"
+@using GameFellowship.Data
+
+<PageTitle>Find Your Game</PageTitle>
+
+<div class="tab-pane fade h-100 show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab"
+    tabindex="0">
+    <div class="d-flex flex-column h-100">
+        <!-- TODO: search bar -->
+        <div>
+            <form class="d-flex m-auto py-3 w-75" role="search">
+                <input class="form-control me-2" type="search" placeholder="Game" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- Scrollable Content instead of scrolling whole page -->
+        <div class="flex-grow-1 flex-nowrap overflow-y-auto overflow-x-hidden">
+
+            <AdCarousel />
+
+            <!-- TODO: Game Type Selector & New Post -->
+            <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
+                aria-label="Toolbar For Matchmaking Types">
+                <!-- Game Types -->
+                <div class="btn-group m-1" role="group" aria-label="Game Types Button Group">
+                    <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadioAll" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="GameBtnRadioAll">All</label>
+
+                    <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio1" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="GameBtnRadio1">Type 1</label>
+
+                    <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="GameBtnRadio2">Type 2</label>
+
+                    <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio3" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="GameBtnRadio3">Type 3</label>
+
+                    <input type="radio" class="btn-check" name="GameBtnRadio" id="GameBtnRadio4" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="GameBtnRadio4">Type 4</label>
+                </div>
+                <!-- Match Types -->
+                <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
+                    <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadioAll" autocomplete="off"
+                        checked>
+                    <label class="btn btn-outline-primary" for="MatchBtnRadioAll">All</label>
+
+                    <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio1" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="MatchBtnRadio1">PvP</label>
+
+                    <input type="radio" class="btn-check" name="MatchBtnRadio" id="MatchBtnRadio2" autocomplete="off">
+                    <label class="btn btn-outline-primary" for="MatchBtnRadio2">PvE</label>
+                </div>
+                <!-- Start a New Post -->
+                <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
+                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                        data-bs-target="#teamCreateModal">New Post</button>
+                </div>
+            </div>
+
+            <!-- TODO: Team Finding Cards for all games -->
+            <div class="row row-cols-auto g-3 m-0">
+                @foreach (var game in existedGames)
+                {
+                    <GameCard game="game" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<NewPostModal/>
+
+@code {
+    private GameInfo[] existedGames = {
+        new("Touhou Project", 114514, "images/75750856_p0.jpg"),
+        new("Project Touhou", 1919, "images/gametitle.jpg"),
+        new("???", 810, "images/75750856_p0.jpg")
+    };
+}

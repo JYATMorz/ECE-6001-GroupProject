@@ -1,0 +1,81 @@
+@using GameFellowship.Data
+
+<div class="modal fade" id="teamInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="teamInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header align-items-baseline">
+                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.GameName</h1>
+                <small class="text-muted pt-1">@Post.MatchType</small>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
+                    @foreach (var requirement in Post.Requirements)
+                    {
+                        <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
+                    }
+                </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div class="fs-5 fw-bold">Required People <i class="bi bi-person-circle"></i> :
+                        @Post.CurrentPeople / @Post.TotalPeople</div>
+                    <div class="ms-4 px-2 border border-1 border-primary-subtle rounded-4">
+                        @for (int i = 0; i < Post.CurrentPeople; i++)
+                        {
+                            <i class="bi bi-person-fill"></i>
+                        }
+                        <i class="bi bi-person-add"></i>
+                        @for (int i = 0; i < (Post.TotalPeople - Post.CurrentPeople - 1); i++)
+                        {
+                            <i class="bi bi-person"></i>
+                        }
+                    </div>
+                </div>
+
+                <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : Now</p>
+
+                <div class="my-3">
+                    <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText"
+                        @bind="Post.Description" disabled readonly style="resize: none; height: 120px;"></textarea>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    @if (Post.AudioChat)
+                    {
+                        <span class="fs-5 fw-bold">Audio Chat</span>
+                        <i class="bi bi-mic-fill mx-2"></i>
+                        <span id="audioChatName">@Post.AudioPlatform</span>
+                        <i class="bi bi-arrow-bar-right ms-1"></i>
+                        <input type="text" name="teamDetails" id="audioChatLink" placeholder="Audio Link From User"
+                        @bind="Post.AudioLink" readonly style="width: 60%;">
+                    }
+                    else
+                    {
+                        <span class="fs-5 fw-bold">Audio Chat</span>
+                        <i class="bi bi-mic-mute-fill mx-2"></i>
+                        <span>不需要</span>
+                    }
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <small class="text-muted">Last updated <span id="detailUpdateTime">@((DateTime.Now - Post.LastUpdate).Minutes) mins</span> ago
+                    ...</small>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Join</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public PostInfo Post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
+"High EQ" }, "?", 3, 2);
+}

@@ -1,0 +1,32 @@
+@inject IJSRuntime JSRuntime
+
+<div id="adsCarousel" class="carousel slide border-top border-bottom border-dark-subtle" data-bs-ride="carousel"
+    data-bs-touch="false">
+    <div class="carousel-inner text-center py-2 w-75 m-auto">
+        <div class="carousel-item active" data-bs-interval="2000">
+            <div class="d-block w-100 border border-success" style="height: 125px;">
+                <h1>Ad1</h1>
+            </div>
+        </div>
+        <div class="carousel-item" data-bs-interval="2000">
+            <div class="d-block w-100 border border-success" style="height: 125px;">
+                <h1>Ad2</h1>
+            </div>
+        </div>
+        <div class="carousel-item" data-bs-interval="2000">
+            <div class="d-block w-100 border border-success" style="height: 125px;">
+                <h1>Ad3</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    const string carouselName = "adsCarousel";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        object[] args = { carouselName };
+        await JSRuntime.InvokeVoidAsync("startCarousel", args);
+    }
+}
