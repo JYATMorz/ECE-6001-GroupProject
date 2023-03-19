@@ -1,0 +1,73 @@
+@page "/teams/{GameName}"
+@using GameFellowship.Data
+
+<PageTitle>Find Your Team for @GameName</PageTitle>
+
+<div class="d-flex flex-column h-100">
+    <!-- TODO: Game Icon & Info -->
+    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle">
+        <img src="images/GameIcons/75750856_p0.jpg" alt="GameIcon" width="100" height="100" class="rounded-5">
+        <!-- Game Infos -->
+        <div class="mx-3 my-1">
+            <div style="font-size: xx-large; font-weight: bold;">@GameName</div>
+            <small class="text-muted">999,999,999 Followers</small>
+        </div>
+        <div class="ms-auto">
+            <button class="btn btn-secondary btn-sm rounded-5" type="button"><i
+                    class="bi bi-pin-angle-fill"></i></button>
+        </div>
+    </div>
+    <hr>
+    <!-- TODO: Team Finding Cards for a Single Game -->
+    <div class="flex-grow-1 flex-nowrap overflow-y-auto overflow-x-hidden">
+
+        <!-- TODO: Game Type Selector -->
+        <div class="btn-toolbar justify-content-between px-3 py-2" role="toolbar"
+            aria-label="Toolbar For Matchmaking Types">
+            <!-- Match Types -->
+            <div class="btn-group m-1" role="group" aria-label="Match Types Button Group">
+                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadioAll" autocomplete="off"
+                    checked>
+                <label class="btn btn-outline-primary" for="TypeBtnRadioAll">All</label>
+
+                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio1" autocomplete="off">
+                <label class="btn btn-outline-primary" for="TypeBtnRadio1">PvP</label>
+
+                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio2" autocomplete="off">
+                <label class="btn btn-outline-primary" for="TypeBtnRadio2">PvE</label>
+
+                <input type="radio" class="btn-check" name="TypeBtnRadio" id="TypeBtnRadio3" autocomplete="off">
+                <label class="btn btn-outline-primary" for="TypeBtnRadio3">Others</label>
+            </div>
+            <!-- TODO: Start a New Post -->
+            <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
+                <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
+                    data-bs-target="#teamCreateModal">新组队</button>
+            </div>
+        </div>
+
+        <!-- TODO: Team Finding Cards for all games -->
+        <div class="row row-cols-auto g-3 m-0">
+
+            <TeamCard Post="@post"/>
+        </div>
+    </div>
+</div>
+
+<NewPostModal GameName="@GameName" />
+<PostDetailModal Post="@post"/>
+
+@code {
+    [Parameter]
+    public string GameName { get; set; } = "Undefined";
+
+    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
+"High EQ" }, "?", 5, 2, new int[] { 1, 2, 3, 4 });
+
+    protected override Task OnInitializedAsync()
+    {
+        // TODO: use the game name to find the Game details
+        return base.OnInitializedAsync();
+    }
+}
+

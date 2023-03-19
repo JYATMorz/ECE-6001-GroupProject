@@ -1,0 +1,47 @@
+@if ((Current + Remain) > 8)
+{
+    <div class="gap-1">
+        <i class="bi bi-person-fill-check"></i>
+        <i class="bi bi-x"></i>
+        <span>@Current</span>
+        <i class="bi bi-grip-vertical"></i>
+        <i class="bi bi-person"></i>
+        <i class="bi bi-x"></i>
+        <span>@Remain</span>
+    </div>
+}
+else
+{
+    <div>
+        @for (int i = 0; i < Current; i++)
+        {
+            <i class="bi bi-person-fill-check"></i>
+        }
+        <i class="bi bi-grip-vertical"></i>
+        @if (NewUser)
+        {
+            <i class="bi bi-person-add"></i>
+            <i class="bi bi-grip-vertical"></i>
+            @for (int i = 1; i < Remain; i++)
+            {
+                <i class="bi bi-person"></i>
+            }
+        }
+        else
+        {
+            @for (int i = 0; i < Remain; i++)
+            {
+                <i class="bi bi-person"></i>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public int Current { get; set; }
+    [Parameter, EditorRequired]
+    public int Remain { get; set; }
+    [Parameter]
+    public bool NewUser { get; set; } = false;
+}

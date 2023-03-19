@@ -1,11 +1,11 @@
-@using GameFellowship.Data;
+@using GameFellowship.Data
 
 <div class="col mx-auto">
     <div class="card h-100" style="max-width: 20rem;">
-        <img class="card-img-top" src=@game.IconURI alt="GameIcon">
+        <img class="card-img-top" src=@Game.IconURI alt="GameIcon">
         <div class="card-body">
-            <h5 class="card-title fw-bold">@game.GameName</h5>
-            <p class="card-text">订阅人数: @game.Followers</p>
+            <h5 class="card-title fw-bold">@Game.GameName</h5>
+            <p class="card-text">订阅人数: @Game.Followers</p>
             <div class="d-flex justify-content-between align-items-center gap-3">
                 <small class="text-muted">最后更新 3 分钟前</small> 
                 <button class="btn btn-outline-primary p-1" type="button">搜索队伍</button>
@@ -16,5 +16,5 @@
 
 @code {
     [Parameter]
-    public GameInfo game { get; set; } = new();
+    public GameInfo Game { get; set; } = new();
 }

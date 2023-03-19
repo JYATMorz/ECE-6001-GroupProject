@@ -1,44 +1,36 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">GameFellowship</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿<div class="d-flex flex-column h-100">
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="games">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Game Page
-            </NavLink>
-        </div>
+    <UserIcon />
+
+    <ul class="nav nav-pills flex-column flex-grow-1 mx-1 my-2">
+        <li class="nav-item">
+            <NavLink class="nav-link text-nowrap" href="games">Games</NavLink>
+        </li>
+        @foreach (var name in gameNames)
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link text-nowrap" href=@("teams/" + name)>@name</NavLink>
+            </li>
+        }
+        <li class="nav-item mt-auto">
+            <NavLink class="nav-link text-nowrap" href="fetchdata">Weather</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link text-nowrap" href="messages">Messages</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link text-nowrap" href="" Match="NavLinkMatch.All">Settings</NavLink>
+        </li>
+    </ul>
+    <nav class="navbar">
+        <hr>
+        <a class="navbar-brand m-0" href="games">
+            <div class="fs-5 fw-bolder text-light-emphasis m-1">Game<br>Fellowship</div>
+        </a>
     </nav>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+    // TODO: Add Nav link after getting user's favourite game
+    private string[] gameNames = { "Minecraft", "Destiny 2", "CSGO", "Apex" };
 }

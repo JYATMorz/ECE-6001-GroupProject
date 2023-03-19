@@ -1,0 +1,43 @@
+@page "/messages/{MessageID:int?}"
+@using GameFellowship.Data
+
+<PageTitle>Your Message</PageTitle>
+
+<div class="d-flex">
+    <!-- vertical message navbar -->
+    <div class="overflow-y-scroll pe-0 vh-100">
+        <div class="list-group p-1">
+            @for (int i = 0; i < 8; i++)
+            {
+                if (MessageID == i)
+                {
+                    <MessageNavbar MessageID="@i" IsActive="@true" />
+                }
+                else
+                {
+                    <MessageNavbar MessageID="@i" IsActive="@false" />
+                }
+            }
+
+        </div>
+    </div>
+    <!-- message tabs -->
+    <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
+        @if (MessageID is null)
+        {
+            <p>选择任意对话开始浏览</p>
+        }
+        else
+        {
+            <MessageDetail Post="@post" />
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int? MessageID { get; set; }
+
+    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
+"High EQ" }, "?", 3, 2, new int[] { 1, 2, 3, 4 });
+}

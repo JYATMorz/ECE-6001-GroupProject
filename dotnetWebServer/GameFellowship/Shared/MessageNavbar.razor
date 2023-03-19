@@ -1,0 +1,22 @@
+@using GameFellowship.Data
+
+<a class="list-group-item list-group-item-action @(IsActive ? active : string.Empty)" href=@("messages/" + MessageID)>
+    <div class="d-inline-flex gap-2 flex-wrap align-items-end">
+        <img class="rounded-3" src="images/GameIcons/75750856_p0.jpg" alt="GameIcon" width="40" height="40">
+        <div class="fs-4">Game Name</div>
+    </div>
+    <div class="border-top border-bottom border-dark-subtle py-1">
+        <div>Match Type</div>
+        <div><i class="bi bi-file-person-fill"></i>: 5/6</div>
+    </div>
+    <small class="text-muted">Last updated <span>1 minutes</span> ago ...</small>
+    <div class="m-1 badge text-bg-danger rounded-pill">A new message !</div>
+</a>
+
+@code {
+    [Parameter, EditorRequired]
+    public int MessageID { get; set; }
+    [Parameter]
+    public bool IsActive { get; set; } = false;
+    private string active = "active";
+}

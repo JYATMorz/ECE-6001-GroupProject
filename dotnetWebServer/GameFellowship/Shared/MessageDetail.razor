@@ -1,0 +1,93 @@
+@using GameFellowship.Data
+
+<div class="d-flex flex-column h-100">
+    <!-- Title -->
+    <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
+        <div class="fs-4 fw-bold">@Post.GameName</div>
+        <small class="text-muted">@Post.MatchType</small>
+        <div class="border-start border-end border-dark-subtle px-2">
+            <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)" />
+        </div>
+        <div class="border border-success-subtle rounded-2 px-2"><i class="bi bi-calendar3"></i>
+            @if (Post.PlayNow)
+            {
+                <span>立刻组队！</span>
+            }
+            else
+            {
+                <span>@Post.StartDate.ToShortDateString() ~ @Post.EndDate.ToShortDateString()</span>
+            }
+        </div>
+        <button class="btn btn-success rounded-3 ms-auto" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#teamMemberOffcanvas" aria-controls="teamMemberOffcanvas">Members</button>
+        <button class="btn btn-outline-danger rounded-3" type="button">Quit</button>
+    </div>
+    <!-- Content -->
+    <div class="d-flex flex-column flex-grow-1 gap-2 pe-2" style="min-height: 0;">
+        <!-- Requirements -->
+        <div>
+            <div id="teamRequirementsMessage0" class="d-inline-flex flex-wrap gap-2 my-3">
+                @foreach (var requirement in Post.Requirements)
+                {
+                    <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
+                }
+            </div>
+            <div>
+                <textarea class="form-control w-100 rounded-3" name="teamDetailsMessage" id="teamDescriptionMessage0"
+                    title="Team Requirements" disabled readonly style="resize: none; height: 100px;"
+                    @bind=Post.Description></textarea>
+            </div>
+        </div>
+        <!-- Chat Room -->
+        <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
+            style="min-height: 0;">
+            <div class="flex-grow-1 overflow-y-scroll pe-1">
+
+                <MessageBlock Content="@comm1" />
+                <MessageBlock Content="@comm2" />
+
+            </div>
+            <hr style="margin: 0.5rem 0;">
+            <div class="d-flex gap-1">
+                <textarea class="form-control rounded-3" name="chatMessageGroup1" id="chatMessageText1"
+                    placeholder="Any Message?" style="resize: none; height: 100px;"></textarea>
+                <div class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
+                    <button class="btn btn-outline-primary" type="button">Send</button>
+                    <button class="btn btn-outline-secondary" type="button">Clear</button>
+                </div>
+            </div>
+        </div>
+        <!-- Audio Link -->
+        <div class="d-flex justify-content-center align-items-baseline flex-wrap gap-2 mb-1">
+            @if (Post.AudioChat)
+            {
+                <label class="form-label fs-6 fw-bold" for="audioChatNameMessage">Audio
+                    Chat<i class="bi bi-mic-fill mx-2"></i></label>
+                <input class="form-control form-control-sm form-control-plaintext" type="text" name="teamDetailsMessage"
+                    id="audioChatNameMessage" @bind=Post.AudioPlatform style="width: 4rem;" readonly>
+                <label class="form-label fs-5 fw-bold" for="audioChatLinkMessage"><i
+                        class="bi bi-link-45deg mx-2"></i></label>
+                <input class="form-control form-control-sm form-control-plaintext w-auto" type="text"
+                    name="teamDetailsMessage" @bind=Post.AudioLink placeholder="Audio Link From User" readonly>
+                <button class="btn btn-outline-secondary p-1" type="button">Copy</button>
+            }
+            else
+            {
+                <small>不需要语音</small>
+            }
+        </div>
+    </div>
+</div>
+
+<TeamMemberOffcanvas CurrentUsers=@users Total=8/>
+
+@code {
+    // TODO: Messages
+    private Conversation comm1 = new("user1", new DateTime(2022, 2, 22, 2, 22, 22), "Test, Test, \r\n, Long Context Test1");
+    private Conversation comm2 = new("user2", new DateTime(2023, 3, 23, 3, 33, 33), "Test, Test, \n, Long Context Test2");
+
+    [Parameter]
+    public PostInfo Post { get; set; } = new();
+
+    private string[] users = { "AAAAAAAA" , "SFsfsegsGsf", "sFHNLIASghlSIg", ";slgijseoifhFGHa"};
+}

@@ -22,22 +22,24 @@
                 </div>
 
                 <div class="d-flex align-items-center mb-2">
-                    <div class="fs-5 fw-bold">Required People <i class="bi bi-person-circle"></i> :
+                    <div class="fs-5 fw-bold">需要人数 <i class="bi bi-person-circle"></i> :
                         @Post.CurrentPeople / @Post.TotalPeople</div>
                     <div class="ms-4 px-2 border border-1 border-primary-subtle rounded-4">
-                        @for (int i = 0; i < Post.CurrentPeople; i++)
-                        {
-                            <i class="bi bi-person-fill"></i>
-                        }
-                        <i class="bi bi-person-add"></i>
-                        @for (int i = 0; i < (Post.TotalPeople - Post.CurrentPeople - 1); i++)
-                        {
-                            <i class="bi bi-person"></i>
-                        }
+                        <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)"
+                            NewUser="@true" />
                     </div>
                 </div>
 
-                <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : Now</p>
+                @if (@Post.PlayNow)
+                {
+                    <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : Now</p>
+                }
+                else
+                {
+                    <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : 
+                        @Post.StartDate.ToShortDateString() ~ @Post.EndDate..ToShortDateString()
+                    </p>
+                }
 
                 <div class="my-3">
                     <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText"
@@ -45,9 +47,9 @@
                 </div>
 
                 <div class="d-flex align-items-center">
+                    <span class="fs-5 fw-bold">语音平台</span>
                     @if (Post.AudioChat)
                     {
-                        <span class="fs-5 fw-bold">Audio Chat</span>
                         <i class="bi bi-mic-fill mx-2"></i>
                         <span id="audioChatName">@Post.AudioPlatform</span>
                         <i class="bi bi-arrow-bar-right ms-1"></i>
@@ -56,18 +58,16 @@
                     }
                     else
                     {
-                        <span class="fs-5 fw-bold">Audio Chat</span>
                         <i class="bi bi-mic-mute-fill mx-2"></i>
                         <span>不需要</span>
                     }
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <small class="text-muted">Last updated <span id="detailUpdateTime">@((DateTime.Now - Post.LastUpdate).Minutes) mins</span> ago
-                    ...</small>
+                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).Minutes) 分钟前 ...</small>
                 <div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Join</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary">加入！</button>
                 </div>
             </div>
         </div>
@@ -76,6 +76,5 @@
 
 @code {
     [Parameter]
-    public PostInfo Post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
-"High EQ" }, "?", 3, 2);
+    public PostInfo Post { get; set; } = new();
 }

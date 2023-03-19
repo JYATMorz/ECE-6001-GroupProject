@@ -13,28 +13,30 @@ namespace GameFellowship.Data
 
         public int TotalPeople { get; set; } = 0;
         public int CurrentPeople { get; set; } = 0;
+        public int[] CurrentIDs { get; set; } = { };
 
         public bool PlayNow { get; set; } = true;
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime StartDate { get; set; } = DateTime.MinValue;
+        public DateTime EndDate { get; set; } = DateTime.MaxValue;
 
         public bool AudioChat { get; set; } = false;
-        public string AudioPlatform { get; set; } = "Any Platform";
+        public string AudioPlatform { get; set; } = "No Platform";
         public string AudioLink { get; set; } = string.Empty;
 
         public PostInfo() { }
 
         public PostInfo(int id, DateTime update, string name, string match, List<string> requirements,
-            string? description, int total, int current, bool now = true, DateTime? start = null, DateTime? end = null,
-            bool audio = false, string? platform = null, string? link = null)
+            string? description, int total, int current, int[] userIds, DateTime? start = null, DateTime? end = null,
+            string? platform = null, string? link = null)
         {
             PostId = id;
-            update = LastUpdate;
+            LastUpdate = update;
             GameName = name;
             MatchType = match;
             Requirements = requirements;
             TotalPeople = total;
             CurrentPeople = current;
+            CurrentIDs = userIds;
 
             if (description is not null) Description = description;
 
@@ -45,8 +47,8 @@ namespace GameFellowship.Data
             else
             {
                 PlayNow = false;
-                StartDate = start;
-                EndDate = end;
+                StartDate = (DateTime)start;
+                EndDate = (DateTime)end;
             }
 
             if (platform is null || link is null)
