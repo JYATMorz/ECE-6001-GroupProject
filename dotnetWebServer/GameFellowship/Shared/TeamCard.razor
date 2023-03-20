@@ -1,14 +1,15 @@
 @using GameFellowship.Data
 
 <div class="col mx-auto">
-    <div class="card h-100">
+    <div class="card h-100" style="min-width: 18rem;">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <div class="fs-6">用户名</div>
                 <a href="#"
                     class="d-flex align-items-center justify-content-center link-dark text-decoration-none dropdown-toggle"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="rounded-circle" src="images/UserIcons/50913860_p9.jpg" alt="User" width="30" height="30">
+                    <img class="rounded-circle" src="images/UserIcons/50913860_p9.jpg" alt="User" width="30"
+                        height="30">
                 </a>
                 <ul class="dropdown-menu text-small shadow">
                     <li><a class="dropdown-item" href="#">个人资料</a></li>
@@ -19,26 +20,45 @@
                     <li><a class="dropdown-item" href="#">屏蔽</a></li>
                 </ul>
             </div>
-            <h4>团队死斗<i class="bi bi-mic-fill ms-3"></i></h4>
+            <h4>@Post.MatchType
+                @if (Post.AudioChat)
+                {
+                    <i class="bi bi-mic-fill ms-3"></i>
+                }
+                else
+                {
+                    <i class="bi bi-mic-mute-fill ms-3"></i>
+                }
+            </h4>
             <div class="px-2 my-2 d-inline-flex border border-1 border-primary-subtle rounded-4">
                 <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)" />
             </div>
             <div class="d-flex flex-wrap gap-1 my-2">
-                <div class="px-2 rounded-4 bg-info-subtle">DPS</div>
-                <div class="px-2 rounded-4 bg-info-subtle">HPS</div>
-                <div class="px-2 rounded-4 bg-info-subtle">DPM</div>
-                <div class="px-2 rounded-4 bg-info-subtle">IQ</div>
+                @foreach (var requirement in Post.Requirements)
+                {
+                    <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
+                }
             </div>
-            <div class="card-text py-1 my-2">游戏时间: <span class="fw-bold">马上</span>
-            </div>
+            @if (Post.PlayNow)
+            {
+                <div class="card-text py-1 my-2">游戏时间:
+                    <span class="fw-bold">现在</span>
+                </div>
+            }
+            else
+            {
+                <div class="card-text py-1 my-2">游戏时间:
+                    <span class="fw-bold">@Post.StartDate.ToShortDateString() ~ @Post.EndDate.ToShortDateString()</span>
+                </div>
+            }
             <div class="card-text px-2 py-1 rounded-3 bg-dark-subtle">
-                这个句子精辟到只有十五个字的说
+                @Post.Description
             </div>
         </div>
         <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
-            <small class="text-muted">最后更新 @((DateTime.Now - Post.LastUpdate).Minutes) 分钟前</small>
+            <small class="text-muted">最后更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前</small>
             <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
-                data-bs-target="#teamInfoModal">详情</button>
+                data-bs-target="#teamInfoModal" @onclick="OnDetailCallback">详情</button>
         </div>
     </div>
 </div>
@@ -46,4 +66,11 @@
 @code {
     [Parameter]
     public PostInfo Post { get; set; } = new();
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
+
+    // FIXME: Use UserID in Post to find User Detail
+
 }
+
+

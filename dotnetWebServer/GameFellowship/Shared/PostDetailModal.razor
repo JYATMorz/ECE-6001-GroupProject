@@ -32,12 +32,12 @@
 
                 @if (@Post.PlayNow)
                 {
-                    <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : Now</p>
+                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> : 现在</p>
                 }
                 else
                 {
-                    <p class="fs-5 fw-bold">Game Date <i class="bi bi-calendar3"></i> : 
-                        @Post.StartDate.ToShortDateString() ~ @Post.EndDate..ToShortDateString()
+                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> : 
+                        @Post.StartDate.ToShortDateString() ~ @Post.EndDate.ToShortDateString()
                     </p>
                 }
 
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).Minutes) 分钟前 ...</small>
+                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     <button type="button" class="btn btn-primary">加入！</button>

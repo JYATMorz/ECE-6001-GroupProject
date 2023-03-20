@@ -1,21 +1,25 @@
 @page "/teams/{GameName}"
 @using GameFellowship.Data
+@inject PostInfoService PostService
+@inject GameInfoService GameService
 
 <PageTitle>Find Your Team for @GameName</PageTitle>
 
 <div class="d-flex flex-column h-100">
-    <!-- TODO: Game Icon & Info -->
-    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle">
-        <img src="images/GameIcons/75750856_p0.jpg" alt="GameIcon" width="100" height="100" class="rounded-5">
-        <!-- Game Infos -->
-        <div class="mx-3 my-1">
-            <div style="font-size: xx-large; font-weight: bold;">@GameName</div>
-            <small class="text-muted">999,999,999 Followers</small>
-        </div>
-        <div class="ms-auto">
-            <button class="btn btn-secondary btn-sm rounded-5" type="button"><i
-                    class="bi bi-pin-angle-fill"></i></button>
-        </div>
+    <!-- Game Icon & Info -->
+    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle" style="min-height: 120px;">
+        @if (theGame is null || theGame.GameID <= 0)
+        {
+            <p>正在获得游戏详细信息 ...</p>
+        }
+        else
+        {
+            <img src="@theGame.IconURI" alt="GameIcon" width="100" height="100" class="rounded-5">
+            <div class="mx-3 my-1">
+                <div style="font-size: xx-large; font-weight: bold;">@theGame.GameName</div>
+                <small class="text-muted">@theGame.Followers 订阅</small>
+            </div>
+        }
     </div>
     <hr>
     <!-- TODO: Team Finding Cards for a Single Game -->
@@ -48,26 +52,58 @@
 
         <!-- TODO: Team Finding Cards for all games -->
         <div class="row row-cols-auto g-3 m-0">
-
-            <TeamCard Post="@post"/>
+            @if (posts is null)
+            {
+                <div class="spinner-border text-secondary" role="status">
+                    <span class="visually-hidden">正在查找 ...</span>
+                </div>
+            }
+            else
+            {
+                @if (posts.Length == 0)
+                {
+                    <div class="container-fluid m-auto d-flex align-items-center" style="height: 200px;">
+                        <p>目前没有人在 @GameName 寻找组队 ...</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var post in posts)
+                    {
+                        <TeamCard Post="@post" OnDetailCallback="@(() => ShowTeamDetail(post))" />
+                    }
+                }
+            }
         </div>
     </div>
 </div>
 
 <NewPostModal GameName="@GameName" />
-<PostDetailModal Post="@post"/>
+<PostDetailModal Post="@selectedPost" />
 
 @code {
     [Parameter]
-    public string GameName { get; set; } = "Undefined";
+    public string GameName { get; set; } = string.Empty;
 
-    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
-"High EQ" }, "?", 5, 2, new int[] { 1, 2, 3, 4 });
+    private PostInfo selectedPost { get; set; } = new();
 
-    protected override Task OnInitializedAsync()
+    private PostInfo[]? posts;
+    private GameInfo? theGame;
+
+    protected override async Task OnParametersSetAsync()
     {
         // TODO: use the game name to find the Game details
-        return base.OnInitializedAsync();
+        posts = await PostService.GetPostsAsync(GameName);
+        theGame = await GameService.GetGameAsync(GameName);
+    }
+
+    private void ShowTeamDetail(PostInfo post)
+    {
+        selectedPost = post;
     }
 }
+
+
+
+
 

@@ -7,15 +7,15 @@
     <!-- vertical message navbar -->
     <div class="overflow-y-scroll pe-0 vh-100">
         <div class="list-group p-1">
-            @for (int i = 0; i < 8; i++)
+            @foreach (var id in favouriteGameIDs)
             {
-                if (MessageID == i)
+                if (MessageID == id)
                 {
-                    <MessageNavbar MessageID="@i" IsActive="@true" />
+                    <MessageNavbar MessageID="@id" IsActive="@true" />
                 }
                 else
                 {
-                    <MessageNavbar MessageID="@i" IsActive="@false" />
+                    <MessageNavbar MessageID="@id" IsActive="@false" />
                 }
             }
 
@@ -38,6 +38,8 @@
     [Parameter]
     public int? MessageID { get; set; }
 
-    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new List<string> { "High IQ",
-"High EQ" }, "?", 3, 2, new int[] { 1, 2, 3, 4 });
+    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new string[] { "High IQ",
+"High EQ" }, "?", 3, 2, 4, new int[] { 1, 2, 3, 4 });
+
+    private int[] favouriteGameIDs = { 1, 2, 3, 4 };
 }
