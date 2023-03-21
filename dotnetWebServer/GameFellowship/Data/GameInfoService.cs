@@ -3,11 +3,16 @@ namespace GameFellowship.Data
     public class GameInfoService
     {
         private GameInfo[] games = {
-            new GameInfo (1, "Destiny 2", 114),
-            new GameInfo (2, "Touhou Project", 514, "images/GameIcons/75750856_p0.jpg"),
-            new GameInfo (3, "Minecraft", 1919, "images/GameIcons/75750856_p0.jpg"),
+            new GameInfo (1, "Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
+            new GameInfo (2, "Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
+            new GameInfo (3, "Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
             new GameInfo (4, "APEX", 8100)
         };
+
+        public Task<GameInfo[]> GetAllGameAsync()
+        {
+            return Task.FromResult(games);
+        }
 
         public Task<GameInfo> GetGameAsync(int id)
         {

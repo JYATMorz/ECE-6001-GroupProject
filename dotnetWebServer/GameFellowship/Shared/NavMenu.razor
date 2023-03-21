@@ -3,7 +3,38 @@
 @inject GameInfoService GameService
 
 <div class="d-flex flex-column h-100">
-    <UserIcon User="@user" />
+    <div class="dropdown dropend text-center my-2">
+        @if (user is null || user.UserID <= 0)
+        {
+            <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <img class="rounded-circle" src="images/GameIcons/gametitle.jpg" alt="User" width="50" height="50">
+            </button>
+            <ul class="dropdown-menu text-small shadow">
+                <li><a class="dropdown-item" href="login">登录</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="login/register">注册</a></li>
+            </ul>
+        }
+        else
+        {
+            <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <img class="rounded-circle" src="@user.UserIconURI" alt="User" width="50" height="50">
+            </button>
+            <ul class="dropdown-menu text-small shadow">
+                <li><button class="dropdown-item" type="button">新帖子</button></li>
+                <li><button class="dropdown-item" type="button">我的帖子</button></li>
+                <li><button class="dropdown-item" type="button">个人信息</button></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><button class="dropdown-item" type="button">退出登录</button></li>
+            </ul>
+        }
+    </div>
 
     <ul class="nav nav-pills flex-column flex-grow-1 mx-1 my-2">
         <li class="nav-item">
@@ -25,10 +56,10 @@
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">设置</NavLink>
         </li>
     </ul>
-        <hr>
-        <a class="navbar-brand m-0" href="games">
-            <div class="fs-5 fw-bolder text-light-emphasis m-auto">Game<br>Fellowship</div>
-        </a>
+    <hr>
+    <a class="navbar-brand m-0" href="games">
+        <div class="fs-5 fw-bolder text-light-emphasis m-auto">Game<br>Fellowship</div>
+    </a>
 </div>
 
 @code {

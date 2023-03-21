@@ -1,24 +1,30 @@
 @using GameFellowship.Data
+@inject UserInfoService UserService
 
 <div class="col mx-auto">
     <div class="card h-100" style="min-width: 18rem;">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <div class="fs-6">用户名</div>
-                <a href="#"
-                    class="d-flex align-items-center justify-content-center link-dark text-decoration-none dropdown-toggle"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    <img class="rounded-circle" src="images/UserIcons/50913860_p9.jpg" alt="User" width="30"
-                        height="30">
-                </a>
-                <ul class="dropdown-menu text-small shadow">
-                    <li><a class="dropdown-item" href="#">个人资料</a></li>
-                    <li><a class="dropdown-item" href="#">私信</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li><a class="dropdown-item" href="#">屏蔽</a></li>
-                </ul>
+                @if (creator is null)
+                {
+                    <LoadingSpinner />
+                }
+                else
+                {
+                    <div class="fs-6">@creator.UserName</div>
+                    <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <img class="rounded-circle" src="@creator.UserIconURI" alt="User" width="30" height="30">
+                    </button>
+                    <ul class="dropdown-menu text-small shadow">
+                        <li><button class="dropdown-item" type="button">个人资料</button></li>
+                        <li><button class="dropdown-item" type="button">私信</button></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><button class="dropdown-item" type="button">屏蔽</button></li>
+                    </ul>
+                }
             </div>
             <h4>@Post.MatchType
                 @if (Post.AudioChat)
@@ -69,8 +75,14 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
 
-    // FIXME: Use UserID in Post to find User Detail
+    private UserInfo? creator { get; set; }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        creator = await UserService.GetUserAsync(Post.CreatorID);
+    }
 }
+
+
 
 

@@ -4,7 +4,7 @@
     <div class="d-inline-flex gap-2 flex-wrap align-items-end">
         @if (gameIcon is null)
         {
-            <div style="height: 40px;">Loading Game Icon ...</div>
+            <div style="height: 40px;">@Post.GameName</div>
         }
         else
         {
@@ -35,6 +35,3 @@
         gameIcon = await GameService.GetGameIconAsync(Post.GameName);
     }
 }
-
-
-

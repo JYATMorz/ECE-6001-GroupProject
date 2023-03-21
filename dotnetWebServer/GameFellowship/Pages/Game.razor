@@ -1,5 +1,6 @@
 @page "/games"
 @using GameFellowship.Data
+@inject GameInfoService GameService
 
 <PageTitle>Find Your Game</PageTitle>
 
@@ -21,12 +22,17 @@
     <div class="flex-grow-1 flex-nowrap overflow-y-auto overflow-x-hidden">
 
         <AdCarousel />
-
-        <!-- TODO: Team Finding Cards for all games -->
         <div class="row row-cols-auto g-3 m-0">
-            @foreach (var game in existedGames)
+            @if (existedGames is null)
             {
-                <GameCard Game="@game" />
+                <LoadingSpinner />
+            }
+            else
+            {
+                @foreach (var game in existedGames)
+                {
+                    <GameCard Game="@game" />
+                }
             }
         </div>
     </div>
@@ -35,9 +41,10 @@
 <NewPostModal />
 
 @code {
-    private GameInfo[] existedGames = {
-        new(1, "Touhou Project", 114514, "images/GameIcons/75750856_p0.jpg"),
-        new(2, "Project Touhou", 1919, "images/GameIcons/gametitle.jpg"),
-        new(2, "???", 810, "images/GameIcons/75750856_p0.jpg")
-    };
+    private GameInfo[]? existedGames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        existedGames = await GameService.GetAllGameAsync();
+    }
 }

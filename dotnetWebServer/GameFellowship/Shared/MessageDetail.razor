@@ -43,9 +43,9 @@
         <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
             style="min-height: 0;">
             <div class="flex-grow-1 overflow-y-scroll pe-1">
-                @if (conversations is not null && conversations.Length > 0)
+                @if (Post.Conversations is not null && Post.Conversations.Length > 0)
                 {
-                    @foreach (var conversation in conversations)
+                    @foreach (var conversation in Post.Conversations)
                     {
                         <MessageBlock Content="@conversation" />
                     }
@@ -83,20 +83,10 @@
     </div>
 </div>
 
-<TeamMemberOffcanvas CurrentUserIDs=@userIDs Total=@Post.TotalPeople />
+<TeamMemberOffcanvas CurrentUserIDs=@Post.CurrentUserIDs Total=@Post.TotalPeople />
 
 @code {
     [Parameter]
     public PostInfo Post { get; set; } = new();
 
-    private int[]? userIDs;
-    private Conversation[]? conversations;
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        userIDs = Post.CurrentUserIDs;
-        conversations = Post.Conversations;
-    }
 }

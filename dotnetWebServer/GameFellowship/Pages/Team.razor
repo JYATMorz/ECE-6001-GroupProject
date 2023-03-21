@@ -7,9 +7,10 @@
 
 <div class="d-flex flex-column h-100">
     <!-- Game Icon & Info -->
-    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle" style="min-height: 120px;">
+    <div class="p-3 m-2 d-flex rounded-3 bg-dark-subtle">
         @if (theGame is null || theGame.GameID <= 0)
         {
+            <LoadingSpinner />
             <p>正在获得游戏详细信息 ...</p>
         }
         else
@@ -50,13 +51,11 @@
             </div>
         </div>
 
-        <!-- TODO: Team Finding Cards for all games -->
+        <!-- Team Finding Cards for games -->
         <div class="row row-cols-auto g-3 m-0">
             @if (posts is null)
             {
-                <div class="spinner-border text-secondary" role="status">
-                    <span class="visually-hidden">正在查找 ...</span>
-                </div>
+                <LoadingSpinner />
             }
             else
             {
@@ -92,7 +91,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        // TODO: use the game name to find the Game details
         posts = await PostService.GetPostsGroupAsync(GameName);
         theGame = await GameService.GetGameAsync(GameName);
     }
