@@ -1,15 +1,37 @@
+@using GameFellowship.Data
+
 <div class="dropdown dropend text-center my-2">
-    <a class="dropdown-toggle link-secondary" role="button"
-        href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        <img class="rounded-circle" src="images/UserIcons/50913860_p9.jpg" alt="User" width="50" height="50">
-    </a>
-    <ul class="dropdown-menu text-small shadow">
-        <li><a class="dropdown-item" href="#">My Posts</a></li>
-        <li><a class="dropdown-item" href="#">New Post</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li>
-            <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
-    </ul>
+    @if (User is null || User.UserID <= 0)
+    {
+        <a class="dropdown-toggle link-secondary" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+            <img class="rounded-circle" src="images/GameIcons/gametitle.jpg" alt="User" width="50" height="50">
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="#">登录</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#">注册</a></li>
+        </ul>
+    }
+    else
+    {
+        <a class="dropdown-toggle link-secondary" role="button" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+            <img class="rounded-circle" src="@User.UserIconURI" alt="User" width="50" height="50">
+        </a>
+        <ul class="dropdown-menu text-small shadow">
+            <li><a class="dropdown-item" href="#">新帖子</a></li>
+            <li><a class="dropdown-item" href="#">我的帖子</a></li>
+            <li><a class="dropdown-item" href="#">个人信息</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="#">退出登录</a></li>
+        </ul>
+    }
 </div>
+
+@code {
+    [Parameter, EditorRequired]
+    public UserInfo? User { get; set; }
+}

@@ -34,5 +34,31 @@ namespace GameFellowship.Data
 
             return Task.FromResult(selectedGame.First());
         }
+
+        public Task<string> GetGameIconAsync(string name)
+        {
+            var selectedGameIcon =
+                from game in games
+                where game.GameName.ToLower() == name.ToLower()
+                select game.IconURI;
+
+            if (selectedGameIcon.Count() == 0)
+                return Task.FromResult("images/GameIcons/gametitle.jpg");
+
+            return Task.FromResult(selectedGameIcon.First());
+        }
+
+        public Task<string[]> GetGameNameGroupAsync(int[] gameIDs)
+        {
+            var selectedGames =
+                from game in games
+                where gameIDs.Contains(game.GameID)
+                select game.GameName;
+
+            if (selectedGames.Count() == 0)
+                return Task.FromResult(new string[] {});
+
+            return Task.FromResult(selectedGames.ToArray());
+        }
     }
 }

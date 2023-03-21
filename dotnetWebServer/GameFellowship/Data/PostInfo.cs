@@ -30,7 +30,7 @@ namespace GameFellowship.Data
         public PostInfo() { }
 
         public PostInfo(int id, DateTime update, string game, string match, string[] requirements,
-            string? description, int total, int current, int creator, int[] userIDs, DateTime? start = null, DateTime? end = null,
+            string? description, int total, int creator, int[] userIDs, DateTime? start = null, DateTime? end = null,
             string? platform = null, string? link = null, Conversation[]? conversations = null)
         {
             PostID = id;
@@ -39,7 +39,7 @@ namespace GameFellowship.Data
             MatchType = match;
             Requirements = requirements;
             TotalPeople = total;
-            CurrentPeople = current;
+            CurrentPeople = userIDs.Length;
             CreatorID = creator;
             CurrentUserIDs = userIDs;
 

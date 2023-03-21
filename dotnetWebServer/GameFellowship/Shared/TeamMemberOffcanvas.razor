@@ -1,4 +1,6 @@
-<!-- TODO: offcanvas elements for team members info -->
+@using GameFellowship.Data
+@inject UserInfoService UserService
+
 <div class="offcanvas offcanvas-end w-25" tabindex="-1" id="teamMemberOffcanvas"
     aria-labelledby="teamMemberOffcanvasLabel">
     <div class="offcanvas-header border-bottom border-dark-subtle">
@@ -9,62 +11,74 @@
         <!-- User Icons -->
         <div class="h-100 p-2 d-flex flex-column gap-2 overflow-y-auto border border-info-subtle rounded-4">
             <!-- User Icon -->
-            @foreach (var user in CurrentUsers)
+            @if (currentUsers is null)
             {
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary">
-                        <div class="d-flex justify-content-evenly align-items-center gap-1">
-                            <img class="rounded-circle" src="images/UserIcons/50913860_p9.jpg" alt="User" width="40"
-                                height="40">
-                            <div class="fs-6 fw-bold text-break">@user</div>
-                        </div>
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Block</a></li>
-                        <li><a class="dropdown-item" href="#">Black List</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
-                    </ul>
-                </div>
+                <LoadingSpinner />
             }
-            <!-- Empty User Icon -->
-            @for (int i = 0; i < (Total - CurrentUsers.Length); i++)
+            else
             {
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary">
-                        <div class="d-flex justify-content-evenly align-items-center gap-1">
-                            <i class="bi bi-person-bounding-box" style="font-size: 1.5rem;"></i>
-                            <div class="fs-6 fw-bold text-break">Empty</div>
-                        </div>
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                        data-bs-toggle="dropdown" aria-expanded="false" disabled>
-                        <span class="visually-hidden">Toggle Dropdown</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Block</a></li>
-                        <li><a class="dropdown-item" href="#">Black List</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="#">Add Friend</a></li>
-                    </ul>
-                </div>
+                @foreach (var user in currentUsers)
+                {
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary">
+                            <div class="d-flex justify-content-evenly align-items-center gap-1">
+                                <img class="rounded-circle" src="@user.UserIconURI" alt="User" width="40" height="40">
+                                <div class="fs-6 fw-bold text-break">@user.UserName</div>
+                            </div>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">加入黑名单</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">添加好友</a></li>
+                        </ul>
+                    </div>
+                }
+                @for (int i = 0; i < (Total - currentUsers.Length); i++)
+                {
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-secondary">
+                            <div class="d-flex justify-content-evenly align-items-center gap-1">
+                                <i class="bi bi-person-bounding-box" style="font-size: 1.5rem;"></i>
+                                <div class="fs-6 fw-bold text-break">暂缺</div>
+                            </div>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                            data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">加入黑名单</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">添加好友</a></li>
+                        </ul>
+                    </div>
+                }
             }
         </div>
     </div>
 </div>
 
 @code {
-    // FIXME: User Name with User Icon uri
     [Parameter, EditorRequired]
-    public string[] CurrentUsers { get; set; } = { };
+    public int[] CurrentUserIDs { get; set; } = { };
     [Parameter, EditorRequired]
     public int Total { get; set; }
+
+    private UserInfo[]? currentUsers;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        currentUsers = await UserService.GetUserGroupAsync(CurrentUserIDs);
+    }
 }
+
+
+

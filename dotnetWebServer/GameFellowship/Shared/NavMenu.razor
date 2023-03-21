@@ -1,33 +1,46 @@
-﻿<div class="d-flex flex-column h-100">
+﻿@using GameFellowship.Data
+@inject UserInfoService UserService
+@inject GameInfoService GameService
 
-    <UserIcon />
+<div class="d-flex flex-column h-100">
+    <UserIcon User="@user" />
 
     <ul class="nav nav-pills flex-column flex-grow-1 mx-1 my-2">
         <li class="nav-item">
-            <NavLink class="nav-link text-nowrap" href="games">Games</NavLink>
+            <NavLink class="nav-link" href="games">游戏</NavLink>
         </li>
-        @foreach (var name in gameNames)
+        @if (gameNames is not null)
         {
-            <li class="nav-item">
-                <NavLink class="nav-link text-nowrap" href=@("teams/" + name)>@name</NavLink>
-            </li>
+            @foreach (var name in gameNames)
+            {
+                <li class="nav-item">
+                    <NavLink class="nav-link" href=@("teams/" + name)>@name</NavLink>
+                </li>
+            }
         }
         <li class="nav-item mt-auto">
-            <NavLink class="nav-link text-nowrap" href="messages">Messages</NavLink>
+            <NavLink class="nav-link" href="messages">消息</NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link text-nowrap" href="" Match="NavLinkMatch.All">Settings</NavLink>
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">设置</NavLink>
         </li>
     </ul>
-    <nav class="navbar">
         <hr>
         <a class="navbar-brand m-0" href="games">
-            <div class="fs-5 fw-bolder text-light-emphasis m-1">Game<br>Fellowship</div>
+            <div class="fs-5 fw-bolder text-light-emphasis m-auto">Game<br>Fellowship</div>
         </a>
-    </nav>
 </div>
 
 @code {
-    // FIXME: Add Nav link after getting user's favourite game
-    private string[] gameNames = { "Minecraft", "Destiny 2", "CSGO", "Apex" };
+    // FIXME: User info should be obtained from UserStatus
+    private int userID = 1;
+
+    private UserInfo? user;
+    private string[]? gameNames;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserService.GetUserAsync(userID);
+        gameNames = await GameService.GetGameNameGroupAsync(user.GameIDs);
+    }
 }

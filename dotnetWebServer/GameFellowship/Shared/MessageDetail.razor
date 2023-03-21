@@ -43,10 +43,13 @@
         <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
             style="min-height: 0;">
             <div class="flex-grow-1 overflow-y-scroll pe-1">
-
-                <MessageBlock Content="@comm1" />
-                <MessageBlock Content="@comm2" />
-
+                @if (conversations is not null && conversations.Length > 0)
+                {
+                    @foreach (var conversation in conversations)
+                    {
+                        <MessageBlock Content="@conversation" />
+                    }
+                }
             </div>
             <hr style="margin: 0.5rem 0;">
             <div class="d-flex gap-1">
@@ -62,15 +65,15 @@
         <div class="d-flex justify-content-center align-items-baseline flex-wrap gap-2 mb-1">
             @if (Post.AudioChat)
             {
-                <label class="form-label fs-6 fw-bold" for="audioChatNameMessage">Audio
-                    Chat<i class="bi bi-mic-fill mx-2"></i></label>
+                <label class="form-label fs-6 fw-bold" for="audioChatNameMessage">语音<i
+                        class="bi bi-mic-fill mx-2"></i></label>
                 <input class="form-control form-control-sm form-control-plaintext" type="text" name="teamDetailsMessage"
                     id="audioChatNameMessage" @bind=Post.AudioPlatform style="width: 4rem;" readonly>
                 <label class="form-label fs-5 fw-bold" for="audioChatLinkMessage"><i
                         class="bi bi-link-45deg mx-2"></i></label>
                 <input class="form-control form-control-sm form-control-plaintext w-auto" type="text"
                     name="teamDetailsMessage" @bind=Post.AudioLink placeholder="Audio Link From User" readonly>
-                <button class="btn btn-outline-secondary p-1" type="button">Copy</button>
+                <button class="btn btn-outline-secondary p-1" type="button">复制</button>
             }
             else
             {
@@ -80,15 +83,20 @@
     </div>
 </div>
 
-<TeamMemberOffcanvas CurrentUsers=@users Total=8/>
+<TeamMemberOffcanvas CurrentUserIDs=@userIDs Total=@Post.TotalPeople />
 
 @code {
-    // TODO: get Message from Post, get Conversation from Message
-    private Conversation comm1 = new("user1", new DateTime(2022, 2, 22, 2, 22, 22), "Test, Test, \r\n, Long Context Test1");
-    private Conversation comm2 = new("user2", new DateTime(2023, 3, 23, 3, 33, 33), "Test, Test, \n, Long Context Test2");
-
     [Parameter]
     public PostInfo Post { get; set; } = new();
 
-    private string[] users = { "AAAAAAAA" , "SFsfsegsGsf", "sFHNLIASghlSIg", ";slgijseoifhFGHa"};
+    private int[]? userIDs;
+    private Conversation[]? conversations;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        userIDs = Post.CurrentUserIDs;
+        conversations = Post.Conversations;
+    }
 }

@@ -1,5 +1,7 @@
-@page "/messages/{MessageID:int?}"
+@page "/messages/{PostID:int?}"
 @using GameFellowship.Data
+@inject UserInfoService UserService
+@inject PostInfoService PostService
 
 <PageTitle>Your Message</PageTitle>
 
@@ -7,39 +9,67 @@
     <!-- vertical message navbar -->
     <div class="overflow-y-scroll pe-0 vh-100">
         <div class="list-group p-1">
-            @foreach (var id in favouriteGameIDs)
+            @if (myPosts is null)
             {
-                if (MessageID == id)
+                <LoadingSpinner />
+            }
+            else
+            {
+                @foreach (var post in myPosts)
                 {
-                    <MessageNavbar MessageID="@id" IsActive="@true" />
-                }
-                else
-                {
-                    <MessageNavbar MessageID="@id" IsActive="@false" />
+                    if (post.PostID == PostID)
+                    {
+                        <MessageNavbar Post="@post" IsActive="@true" />
+                    }
+                    else
+                    {
+                        <MessageNavbar Post="@post" IsActive="@false" />
+                    }
                 }
             }
-
         </div>
     </div>
     <!-- message tabs -->
     <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
-        @if (MessageID is null)
+        @if (selectedPost is null)
         {
             <p>选择任意对话开始浏览</p>
         }
         else
         {
-            <MessageDetail Post="@post" />
+            <MessageDetail Post="@selectedPost" />
         }
     </div>
 </div>
 
 @code {
     [Parameter]
-    public int? MessageID { get; set; }
+    public int? PostID { get; set; }
 
-    private PostInfo post { get; set; } = new PostInfo(1, DateTime.Now, "Test", "PVP", new string[] { "High IQ",
-"High EQ" }, "?", 3, 2, 4, new int[] { 1, 2, 3, 4 });
+    private int[]? myPostIDs;
+    private PostInfo[]? myPosts;
+    private PostInfo? selectedPost;
 
-    private int[] favouriteGameIDs = { 1, 2, 3, 4 };
+    // FIXME: Get It From UserStatus
+    private int userId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        myPostIDs = (await UserService.GetUserAsync(userId)).JoinedPostIDs;
+        myPosts = await PostService.GetPostsGroupAsync(myPostIDs);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        
+        if (PostID is not null && myPosts is not null)
+        {
+            selectedPost = (
+                from post in myPosts
+                where post.PostID == PostID
+                select post
+            ).First();
+        }
+    }
 }

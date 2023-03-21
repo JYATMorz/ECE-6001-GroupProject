@@ -93,7 +93,7 @@
     protected override async Task OnParametersSetAsync()
     {
         // TODO: use the game name to find the Game details
-        posts = await PostService.GetPostsAsync(GameName);
+        posts = await PostService.GetPostsGroupAsync(GameName);
         theGame = await GameService.GetGameAsync(GameName);
     }
 
