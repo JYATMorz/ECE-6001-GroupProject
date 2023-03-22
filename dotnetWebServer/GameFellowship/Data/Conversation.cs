@@ -2,15 +2,15 @@ namespace GameFellowship.Data
 {
     public class Conversation
     {
-        public string UserName { get; set; } = "Undefined User";
+        public int UserID { get; set; } = -1;
         public DateTime SendTime { get; set; } = DateTime.MinValue;
         public string Context { get; set; } = string.Empty;
 
         public Conversation() { }
 
-        public Conversation(string name, DateTime time, string context)
+        public Conversation(int id, DateTime time, string context)
         {
-            UserName = name;
+            UserID = id;
             SendTime = time;
             Context = context;
         }

@@ -1,10 +1,12 @@
 @using GameFellowship.Data
+@inject UserInfoService UserService
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
-        <img class="rounded-2" src="images/UserIcons/50913860_p9.jpg" alt="User Icon" width="50" height="50">
+        <img class="rounded-2" src="@(user is null ? defaultIconURI : user.UserIconURI)"
+            alt="User Icon" width="50" height="50">
         <div>
-            <div class="fs-6 fw-bold">@Content.UserName</div>
+            <div class="fs-6 fw-bold">@(user is null ? "Loading" : user.UserName)</div>
             <small class="text-muted">@Content.SendTime.ToLocalTime()</small>
         </div>
     </div>
@@ -14,5 +16,12 @@
 @code {
     [Parameter]
     public Conversation Content { get; set; } = new();
-    // FIXME: How to get user's icon?
+
+    private UserInfo? user;
+    private string defaultIconURI = "images/GameIcons/gametitle.jpg";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        user = await UserService.GetUserAsync(Content.UserID);
+    }
 }

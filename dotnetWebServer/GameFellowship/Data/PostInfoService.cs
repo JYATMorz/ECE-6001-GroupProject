@@ -12,8 +12,8 @@ namespace GameFellowship.Data
                     new DateTime(2023,3,21), new DateTime(2023,12,29),
                     "Kook", "https://www.baidu.com",
                     new Conversation[] {
-                        new("user1", new DateTime(2023, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
-                        new("user2", new DateTime(2023, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
+                        new(1, new DateTime(2023, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
+                        new(2, new DateTime(2023, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
                     }
                 ),
                 new PostInfo(
@@ -21,7 +21,7 @@ namespace GameFellowship.Data
                     "Minecraft", "守村庄",
                     new string[] {"钻石甲", "钻石剑", "弩"},
                     "救救救救救救救救救救救",
-                    5, 1, new int[] {1, 2,3,5}
+                    5, 1, new int[] {1,2,3,5}
                 ),
                 new PostInfo(
                     3, new DateTime(2023, 2, 2, 2, 2, 2),
@@ -31,15 +31,15 @@ namespace GameFellowship.Data
                     6, 4, new int[] {4,5},
                     null, null, null, null,
                     new Conversation[] {
-                        new("user1", new DateTime(2022, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
-                        new("user3", new DateTime(2022, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
+                        new(4, new DateTime(2022, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
+                        new(5, new DateTime(2022, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
                     }
                 ),
             };
 
         public Task<PostInfo> GetPostAsync(int id)
         {
-            var resultPost = 
+            var resultPost =
                 from post in posts
                 where post.PostID == id
                 select post;
@@ -66,9 +66,9 @@ namespace GameFellowship.Data
                 from post in posts
                 where postIDs.Contains(post.PostID)
                 select post;
-            
+
             if (resultPosts.Count() == 0)
-                return Task.FromResult(new PostInfo[]{});
+                return Task.FromResult(new PostInfo[] { });
 
             return Task.FromResult(resultPosts.ToArray());
         }
