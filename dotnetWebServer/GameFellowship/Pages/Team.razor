@@ -1,7 +1,7 @@
 @page "/teams/{GameName}"
 @using GameFellowship.Data
-@inject PostInfoService PostService
-@inject GameInfoService GameService
+@inject PostService PostService
+@inject GameService GameService
 
 <PageTitle>Find Your Team for @GameName</PageTitle>
 
@@ -84,10 +84,10 @@
     [Parameter]
     public string GameName { get; set; } = string.Empty;
 
-    private PostInfo selectedPost { get; set; } = new();
+    private PostModel selectedPost { get; set; } = new();
 
-    private PostInfo[]? posts;
-    private GameInfo? theGame;
+    private PostModel[]? posts;
+    private GameModel? theGame;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -95,7 +95,7 @@
         theGame = await GameService.GetGameAsync(GameName);
     }
 
-    private void ShowTeamDetail(PostInfo post)
+    private void ShowTeamDetail(PostModel post)
     {
         selectedPost = post;
     }

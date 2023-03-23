@@ -1,5 +1,5 @@
 @using GameFellowship.Data
-@inject UserInfoService UserService
+@inject UserService UserService
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
@@ -17,7 +17,7 @@
     [Parameter]
     public Conversation Content { get; set; } = new();
 
-    private UserInfo? user;
+    private UserModel? user;
     private string defaultIconURI = "images/GameIcons/gametitle.jpg";
 
     protected override async Task OnParametersSetAsync()

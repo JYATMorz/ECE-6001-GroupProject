@@ -1,6 +1,6 @@
 @page "/games"
 @using GameFellowship.Data
-@inject GameInfoService GameService
+@inject GameService GameService
 
 <PageTitle>Find Your Game</PageTitle>
 
@@ -41,7 +41,7 @@
 <NewPostModal />
 
 @code {
-    private GameInfo[]? existedGames;
+    private GameModel[]? existedGames;
 
     protected override async Task OnInitializedAsync()
     {

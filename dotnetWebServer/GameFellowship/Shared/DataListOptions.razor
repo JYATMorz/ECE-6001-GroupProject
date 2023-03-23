@@ -1,0 +1,9 @@
+@foreach (var name in DataList)
+{
+    <option value="@name" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string[] DataList { get; set; } = { };
+}

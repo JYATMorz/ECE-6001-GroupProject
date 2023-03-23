@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class PostInfo
+    public class PostModel
     {
         public int PostID { get; init; } = -1;
         public int CreatorID { get; init; } = -1;
@@ -27,9 +27,9 @@ namespace GameFellowship.Data
 
         public Conversation[] Conversations { get; set; } = { };
 
-        public PostInfo() { }
+        public PostModel() { }
 
-        public PostInfo(int id, DateTime update, string game, string match, string[] requirements,
+        public PostModel(int id, DateTime update, string game, string match, string[] requirements,
             string? description, int total, int creator, int[] userIDs, DateTime? start = null, DateTime? end = null,
             string? platform = null, string? link = null, Conversation[]? conversations = null)
         {

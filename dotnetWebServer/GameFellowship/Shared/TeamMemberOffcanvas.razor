@@ -1,5 +1,5 @@
 @using GameFellowship.Data
-@inject UserInfoService UserService
+@inject UserService UserService
 
 <div class="offcanvas offcanvas-end w-25" tabindex="-1" id="teamMemberOffcanvas"
     aria-labelledby="teamMemberOffcanvasLabel">
@@ -72,7 +72,7 @@
     [Parameter, EditorRequired]
     public int Total { get; set; }
 
-    private UserInfo[]? currentUsers;
+    private UserModel[]? currentUsers;
 
     protected override async Task OnParametersSetAsync()
     {

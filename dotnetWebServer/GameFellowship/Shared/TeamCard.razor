@@ -1,5 +1,5 @@
 @using GameFellowship.Data
-@inject UserInfoService UserService
+@inject UserService UserService
 
 <div class="col mx-auto">
     <div class="card h-100" style="min-width: 18rem;">
@@ -71,11 +71,11 @@
 
 @code {
     [Parameter]
-    public PostInfo Post { get; set; } = new();
+    public PostModel Post { get; set; } = new();
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
 
-    private UserInfo? creator { get; set; }
+    private UserModel? creator { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
