@@ -1,15 +1,24 @@
 @page "/games"
 @using GameFellowship.Data
 @inject GameService GameService
+@inject NavigationManager Navigation
 
 <PageTitle>Find Your Game</PageTitle>
 
 <div class="d-flex flex-column h-100">
-    <!-- TODO: Search Bar -->
+    <!-- Search Bar -->
     <div class="d-flex gap-1">
         <form class="d-flex m-auto py-3 gap-1 w-75" role="search">
-            <input class="form-control" type="search" placeholder="Game" aria-label="Search">
-            <button class="btn btn-outline-success text-nowrap" type="button">搜索游戏</button>
+            <input class="form-control" list="searchGameList" type="search" placeholder="搜索游戏" aria-label="Search"
+                @bind="SearchName" @bind:event="oninput">
+            <button class="btn btn-outline-success text-nowrap" type="button"
+                disabled="@_invalidSearch" @onclick="NavigateToGame">搜索</button>
+            <datalist id="searchGameList">
+                @if (validGames is not null)
+                {
+                    <DataListOptions DataList="@validGames" />
+                }
+            </datalist>
         </form>
         <!-- Start a New Post -->
         <div class="btn-group m-auto" role="group" aria-label="New Post Button">
@@ -42,9 +51,34 @@
 
 @code {
     private GameModel[]? existedGames;
+    private string[]? validGames;
+
+    private bool _invalidSearch = true;
+    private string? _searchName;
+    private string? SearchName
+    {
+        get => _searchName;
+        set
+        {
+            _searchName = value;
+            OnSearchNameInputAsync();
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
         existedGames = await GameService.GetAllGameAsync();
+    }
+
+    private async void OnSearchNameInputAsync()
+    {
+        validGames = await GameService.GetGameNameTopAsync(5, _searchName);
+        if (validGames.Length == 1 && validGames[0] == _searchName) _invalidSearch = false;
+        else _invalidSearch = true;
+    }
+
+    private void NavigateToGame()
+    {
+        Navigation.NavigateTo($"/teams/{_searchName}");
     }
 }

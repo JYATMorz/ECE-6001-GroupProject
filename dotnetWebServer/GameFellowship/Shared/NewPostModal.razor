@@ -61,44 +61,12 @@
                     <div class="fst-italic text-danger">Current player number doesn't match the required number !
                     </div>
                 </div>
-                <!-- TODO: Requirements -->
+                <!-- Requirements -->
                 <div class="mt-3">
                     <label class="fs-4 fw-bold mb-1" for="createRequirementAdd">条件<i
                             class="bi bi-card-checklist mx-2"></i></label>
                     <div class="d-flex gap-2">
-                        <!-- created requirement -->
-                        <div class="d-inline-flex border border-3 border-dark-subtle rounded-5">
-                            <input
-                                class="form-control form-control-sm rounded-start-4 text-center form-control-plaintext"
-                                type="text" name="createRequirement" id="createRequirement0" placeholder="Necessity"
-                                value="High IQ" aria-label="team requirement" style="max-width: 6rem;" disabled
-                                readonly>
-                            <div class="d-inline-flex align-items-center">
-                                <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="Delete"><i
-                                        class="bi bi-x-lg pe-1"></i></button>
-                            </div>
-                        </div>
-                        <div class="d-inline-flex border border-3 border-dark-subtle rounded-5">
-                            <input
-                                class="form-control form-control-sm rounded-start-4 text-center form-control-plaintext"
-                                type="text" name="createRequirement" id="createRequirement1" placeholder="Necessity"
-                                value="Not Toxic" aria-label="team requirement" style="max-width: 6rem;" disabled
-                                readonly>
-                            <div class="d-inline-flex align-items-center">
-                                <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="Delete"><i
-                                        class="bi bi-x-lg pe-1"></i></button>
-                            </div>
-                        </div>
-                        <!-- Add new requirement -->
-                        <div class="d-inline-flex border border-3 border-primary-subtle rounded-5">
-                            <input class="form-control form-control-sm rounded-start-4 text-center" type="text"
-                                name="createRequirement" id="createRequirementAdd" placeholder="Necessity" value=""
-                                aria-label="team requirement" style="max-width: 6rem;">
-                            <div class="d-inline-flex align-items-center">
-                                <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="Add"><i
-                                        class="bi bi-plus-lg pe-1"></i></button>
-                            </div>
-                        </div>
+                        <PillRequirements @bind-Requirements="requirements"/>
                     </div>
                 </div>
                 <!-- TODO: Game Date -->
@@ -231,6 +199,9 @@
 
     private string[]? gameNamesList;
     private string[]? gameTypesList;
+
+    // FIXME: Should be empty
+    private HashSet<string> requirements = new HashSet<string> { "test1", "test2" };
 
     protected override async Task OnParametersSetAsync()
     {

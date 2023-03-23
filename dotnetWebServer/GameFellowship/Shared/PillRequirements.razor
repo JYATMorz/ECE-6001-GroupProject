@@ -1,0 +1,58 @@
+﻿@foreach (var require in Requirements)
+{
+<div class="d-inline-flex border border-3 border-dark-subtle rounded-5">
+    <input class="form-control form-control-sm rounded-start-4 text-center form-control-plaintext"
+        type="text" aria-label="team requirement" disabled readonly
+        value="@require" style="max-width: 6rem;">
+    <div class="d-inline-flex align-items-center">
+        <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="Current Requirements"
+            @onclick="()=>OnRequirementsDelete(require)">
+            <i class="bi bi-x-lg pe-1"></i>
+        </button>
+    </div>
+</div>
+}
+<div class="d-inline-flex border border-3 border-dark-subtle rounded-5">
+    <input class="form-control form-control-sm rounded-start-4 text-center form-control-plaintext"
+        type="text" placeholder="新要求" aria-label="team requirement" required
+        bind="@_newRequirement" style="max-width: 6rem;">
+    <div class="d-inline-flex align-items-center">
+        <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="New Requirements"
+            @onclick="OnRequirementsAdd">
+            <i class="bi bi-plus-lg pe-1"></i>
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public HashSet<string> Requirements { get; set; } = new();
+    [Parameter]
+    public EventCallback<HashSet<string>> RequirementsChanged { get; set; }
+
+    // BUG: Wrong Parameter Callback
+    // https://learn.microsoft.com/zh-cn/aspnet/core/blazor/components/data-binding?view=aspnetcore-6.0
+    private HashSet<string> _currentRequirements = new();
+    private string _newRequirement = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _currentRequirements = Requirements;
+    }
+
+    private async Task OnRequirementsAdd()
+    {
+        _currentRequirements.Add(_newRequirement);
+        _newRequirement = "";
+        await RequirementsChanged.InvokeAsync(_currentRequirements);
+    }
+
+    private async Task OnRequirementsDelete(string require)
+    {
+        _currentRequirements.Remove(require);
+        await RequirementsChanged.InvokeAsync(_currentRequirements);
+    }
+
+}

@@ -2,6 +2,8 @@ namespace GameFellowship.Data
 {
     public class UserModel
     {
+        private static int _userID;
+
         public int UserID { get; init; } = -1;
 
         // FIXME: public string Password { get; init; } = "password";
@@ -15,11 +17,14 @@ namespace GameFellowship.Data
         public string UserEmail { get; set; } = string.Empty;
         public string UserIconURI { get; set; } = "images/UserIcons/50913860_p9.jpg";
 
-        public UserModel() { }
-
-        public UserModel(int id, string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
+        public UserModel()
         {
-            UserID = id;
+            UserID = ++_userID;
+        }
+
+        public UserModel(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
+        {
+            UserID = ++_userID;
             UserName = name;
 
             if (email is not null && email != string.Empty)

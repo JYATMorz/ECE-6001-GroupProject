@@ -4,7 +4,7 @@ namespace GameFellowship.Data
     {
         private PostModel[] posts = {
                 new PostModel(
-                    1, new DateTime(2023, 2, 2, 2, 2, 2),
+                    new DateTime(2023, 2, 2, 2, 2, 2),
                     "Minecraft", "种地",
                     new string[] {"铁盔甲", "钻石剑", "自带干粮"},
                     "种土豆谢谢茄子",
@@ -17,14 +17,14 @@ namespace GameFellowship.Data
                     }
                 ),
                 new PostModel(
-                    2, new DateTime(2023, 1, 1, 1, 1, 1),
+                    new DateTime(2023, 1, 1, 1, 1, 1),
                     "Minecraft", "守村庄",
                     new string[] {"钻石甲", "钻石剑", "弩"},
                     "救救救救救救救救救救救",
                     5, 1, new int[] {1,2,3,5}
                 ),
                 new PostModel(
-                    3, new DateTime(2023, 2, 2, 2, 2, 2),
+                    new DateTime(2023, 2, 2, 2, 2, 2),
                     "Destiny 2", "Raid",
                     new string[] {"1810", "星火术", "速刷"},
                     "来打过的谢谢",

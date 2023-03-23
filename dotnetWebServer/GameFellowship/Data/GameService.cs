@@ -3,14 +3,14 @@ namespace GameFellowship.Data
     public class GameService
     {
         private GameModel[] games = {
-            new GameModel (1, "Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
-            new GameModel (2, "Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
-            new GameModel (3, "Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
-            new GameModel (4, "APEX", 8100),
-            new GameModel (5, "Destiny 1", 11, new DateTime(2023,3,11,11,11,11), "images/GameIcons/75750856_p0.jpg"),
-            new GameModel (6, "MineCity", 2020, new DateTime(2023,3,22,22,22,22)),
-            new GameModel (7, "CS:GO", 77777),
-            new GameModel (8, "CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
+            new GameModel ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
+            new GameModel ("Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
+            new GameModel ("Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
+            new GameModel ("APEX", 8100),
+            new GameModel ("Destiny 1", 11, new DateTime(2023,3,11,11,11,11), "images/GameIcons/75750856_p0.jpg"),
+            new GameModel ("MineCity", 2020, new DateTime(2023,3,22,22,22,22)),
+            new GameModel ("CS:GO", 77777),
+            new GameModel ("CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
         };
 
         public Task<GameModel[]> GetAllGameAsync()
