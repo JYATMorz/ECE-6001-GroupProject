@@ -50,3 +50,24 @@ hr {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.validation-message {
+    color: crimson;
+    font-size: medium;
+    letter-spacing: 0.1rem;
+    margin-top: 8px;
+}
+
+.invalid {
+    border-color: darkred;
+    border-width: medium;
+}
+
+#postTotalPeople, #postCurrentPeople {
+    width: 4rem;
+}
+
+#postOtherText {
+    resize: none;
+    height: 100px;
+}

@@ -26,12 +26,10 @@
 
 @code {
     [Parameter]
-    public HashSet<string> Requirements { get; set; } = new();
+    public string[] Requirements { get; set; } = { };
     [Parameter]
-    public EventCallback<HashSet<string>> RequirementsChanged { get; set; }
+    public EventCallback<string[]> RequirementsChanged { get; set; }
 
-    // BUG: Wrong Parameter Callback
-    // https://learn.microsoft.com/zh-cn/aspnet/core/blazor/components/data-binding?view=aspnetcore-6.0
     private HashSet<string> _currentRequirements = new();
     private string? _newRequirement;
 
@@ -39,7 +37,7 @@
     {
         base.OnInitialized();
 
-        _currentRequirements = Requirements;
+        _currentRequirements = Requirements.ToHashSet();
     }
 
     private async Task OnRequirementsAdd()
@@ -50,13 +48,13 @@
             _newRequirement = "";
         }
 
-        await RequirementsChanged.InvokeAsync(_currentRequirements);
+        await RequirementsChanged.InvokeAsync(_currentRequirements.ToArray());
     }
 
     private async Task OnRequirementsDelete(string require)
     {
         _currentRequirements.Remove(require);
-        await RequirementsChanged.InvokeAsync(_currentRequirements);
+        await RequirementsChanged.InvokeAsync(_currentRequirements.ToArray());
     }
 
 }
