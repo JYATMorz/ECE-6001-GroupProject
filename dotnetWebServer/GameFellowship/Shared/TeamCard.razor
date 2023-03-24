@@ -71,11 +71,11 @@
 
 @code {
     [Parameter]
-    public PostModel Post { get; set; } = new();
+    public Post Post { get; set; } = new();
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
 
-    private UserModel? creator { get; set; }
+    private User? creator { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {

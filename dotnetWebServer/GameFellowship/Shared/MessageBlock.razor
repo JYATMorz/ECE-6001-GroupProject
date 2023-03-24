@@ -17,7 +17,7 @@
     [Parameter]
     public Conversation Content { get; set; } = new();
 
-    private UserModel? user;
+    private User? user;
     private string defaultIconURI = "images/GameIcons/gametitle.jpg";
 
     protected override async Task OnParametersSetAsync()

@@ -84,10 +84,10 @@
     [Parameter]
     public string GameName { get; set; } = string.Empty;
 
-    private PostModel selectedPost { get; set; } = new();
+    private Post selectedPost { get; set; } = new();
 
-    private PostModel[]? posts;
-    private GameModel? theGame;
+    private Post[]? posts;
+    private Data.Game? theGame;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -95,7 +95,7 @@
         theGame = await GameService.GetGameAsync(GameName);
     }
 
-    private void ShowTeamDetail(PostModel post)
+    private void ShowTeamDetail(Post post)
     {
         selectedPost = post;
     }

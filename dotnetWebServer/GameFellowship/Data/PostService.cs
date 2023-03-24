@@ -2,8 +2,8 @@ namespace GameFellowship.Data
 {
     public class PostService
     {
-        private PostModel[] posts = {
-                new PostModel(
+        private Post[] posts = {
+                new Post(
                     new DateTime(2023, 2, 2, 2, 2, 2),
                     "Minecraft", "种地",
                     new string[] {"铁盔甲", "钻石剑", "自带干粮"},
@@ -16,14 +16,14 @@ namespace GameFellowship.Data
                         new(2, new DateTime(2023, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
                     }
                 ),
-                new PostModel(
+                new Post(
                     new DateTime(2023, 1, 1, 1, 1, 1),
                     "Minecraft", "守村庄",
                     new string[] {"钻石甲", "钻石剑", "弩"},
                     "救救救救救救救救救救救",
                     5, 1, new int[] {1,2,3,5}
                 ),
-                new PostModel(
+                new Post(
                     new DateTime(2023, 2, 2, 2, 2, 2),
                     "Destiny 2", "Raid",
                     new string[] {"1810", "星火术", "速刷"},
@@ -37,7 +37,7 @@ namespace GameFellowship.Data
                 ),
             };
 
-        public Task<PostModel> GetPostAsync(int id)
+        public Task<Post> GetPostAsync(int id)
         {
             var resultPost =
                 from post in posts
@@ -45,12 +45,12 @@ namespace GameFellowship.Data
                 select post;
 
             if (resultPost.Count() == 0)
-                return Task.FromResult(new PostModel());
+                return Task.FromResult(new Post());
 
             return Task.FromResult(resultPost.First());
         }
 
-        public Task<PostModel[]> GetPostsGroupAsync(string game)
+        public Task<Post[]> GetPostsGroupAsync(string game)
         {
             var resultPosts =
                 from post in posts
@@ -60,7 +60,7 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPosts.ToArray());
         }
 
-        public Task<PostModel[]> GetPostsGroupAsync(int[] postIDs)
+        public Task<Post[]> GetPostsGroupAsync(int[] postIDs)
         {
             var resultPosts =
                 from post in posts
@@ -68,7 +68,7 @@ namespace GameFellowship.Data
                 select post;
 
             if (resultPosts.Count() == 0)
-                return Task.FromResult(new PostModel[] { });
+                return Task.FromResult(new Post[] { });
 
             return Task.FromResult(resultPosts.ToArray());
         }

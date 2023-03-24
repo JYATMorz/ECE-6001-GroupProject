@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class UserModel
+    public class User
     {
         private static int _userID;
 
@@ -17,12 +17,12 @@ namespace GameFellowship.Data
         public string UserEmail { get; set; } = string.Empty;
         public string UserIconURI { get; set; } = "images/UserIcons/50913860_p9.jpg";
 
-        public UserModel()
+        public User()
         {
             UserID = ++_userID;
         }
 
-        public UserModel(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
+        public User(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
         {
             UserID = ++_userID;
             UserName = name;

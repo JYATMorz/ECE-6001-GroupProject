@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class GameModel
+    public class Game
     {
         private static int _gameID;
 
@@ -10,12 +10,12 @@ namespace GameFellowship.Data
         public string IconURI { get; set; } = "images/GameIcons/gametitle.jpg";
         public DateTime LastPostDate { get; set; } = DateTime.MinValue;
 
-        public GameModel()
+        public Game()
         {
             GameID = ++_gameID;
         }
 
-        public GameModel(string name, int followers, DateTime? lastPost = null, string? icon = null)
+        public Game(string name, int followers, DateTime? lastPost = null, string? icon = null)
         {
             GameID = ++_gameID;
             GameName = name;
