@@ -91,7 +91,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        posts = await PostService.GetPostsGroupAsync(GameName);
+        posts = await PostService.GetPostsAsync(GameName);
         theGame = await GameService.GetGameAsync(GameName);
     }
 

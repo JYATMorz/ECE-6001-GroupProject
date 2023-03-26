@@ -72,7 +72,7 @@
 
     private async void OnSearchNameInputAsync()
     {
-        validGames = await GameService.GetGameNameTopAsync(5, _searchName);
+        validGames = await GameService.GetGameNamesAsync(5, _searchName);
         if (validGames.Length == 1 && validGames[0] == _searchName) _invalidSearch = false;
         else _invalidSearch = true;
     }

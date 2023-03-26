@@ -63,7 +63,6 @@ namespace GameFellowship.Data
 
     public class PostDateValidatorAttribute : ValidationAttribute
     {
-        private readonly DateTime _today;
         private readonly DateTime _latestStartDate;
         private readonly int _intervalDays;
         private readonly bool _isStartDate;
@@ -73,8 +72,7 @@ namespace GameFellowship.Data
             _intervalDays = intervalDays;
             _isStartDate = isStartDate;
 
-            _today = DateTime.Now;
-            _latestStartDate = _today + TimeSpan.FromDays(_intervalDays);
+            _latestStartDate = DateTime.Today + TimeSpan.FromDays(_intervalDays);
         }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
@@ -84,7 +82,7 @@ namespace GameFellowship.Data
                 return new ValidationResult("请是个正常日期");
             }
 
-            if ((DateTime)value < _today)
+            if ((DateTime)value < DateTime.Today)
             {
                 return new ValidationResult("时间点不能设在过去");
             }

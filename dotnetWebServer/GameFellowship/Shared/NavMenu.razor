@@ -72,6 +72,6 @@
     protected override async Task OnInitializedAsync()
     {
         user = await UserService.GetUserAsync(userID);
-        gameNames = await GameService.GetGameNameGroupAsync(user.GameIDs);
+        gameNames = await GameService.GetGameNamesAsync(user.GameIDs);
     }
 }

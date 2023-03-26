@@ -2,7 +2,7 @@ namespace GameFellowship.Data
 {
     public class GameService
     {
-        private Game[] games = {
+        private readonly Game[] games = {
             new Game ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
             new Game ("Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
             new Game ("Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
@@ -25,7 +25,7 @@ namespace GameFellowship.Data
                 where game.GameID == id
                 select game;
 
-            if (selectedGame.Count() == 0)
+            if (!selectedGame.Any())
                 return Task.FromResult(new Game());
 
             return Task.FromResult(selectedGame.First());
@@ -38,7 +38,7 @@ namespace GameFellowship.Data
                 where game.GameName.ToLower() == name.ToLower()
                 select game;
 
-            if (selectedGame.Count() == 0)
+            if (!selectedGame.Any())
                 return Task.FromResult(new Game());
 
             return Task.FromResult(selectedGame.First());
@@ -51,26 +51,26 @@ namespace GameFellowship.Data
                 where game.GameName.ToLower() == name.ToLower()
                 select game.IconURI;
 
-            if (selectedGameIcon.Count() == 0)
+            if (!selectedGameIcon.Any())
                 return Task.FromResult("images/GameIcons/gametitle.jpg");
 
             return Task.FromResult(selectedGameIcon.First());
         }
 
-        public Task<string[]> GetGameNameGroupAsync(int[] gameIDs)
+        public Task<string[]> GetGameNamesAsync(int[] gameIDs)
         {
             var selectedGames =
                 from game in games
                 where gameIDs.Contains(game.GameID)
                 select game.GameName;
 
-            if (selectedGames.Count() == 0)
-                return Task.FromResult(new string[] { });
+            if (!selectedGames.Any())
+                return Task.FromResult(Array.Empty<string>());
 
             return Task.FromResult(selectedGames.ToArray());
         }
 
-        public Task<string[]> GetGameNameTopAsync(int num, string? prefix = null)
+        public Task<string[]> GetGameNamesAsync(int count, string? prefix = null)
         {
             IEnumerable<string> selectedGames;
 
@@ -80,7 +80,7 @@ namespace GameFellowship.Data
                     from game in games
                     orderby game.Followers descending
                     select game.GameName
-                ).Take(num);
+                ).Take(count);
             }
             else
             {
@@ -89,7 +89,7 @@ namespace GameFellowship.Data
                     where game.GameName.Contains(prefix)
                     orderby game.Followers descending
                     select game.GameName
-                ).Take(num);
+                ).Take(count);
             }
 
             return Task.FromResult(selectedGames.ToArray());

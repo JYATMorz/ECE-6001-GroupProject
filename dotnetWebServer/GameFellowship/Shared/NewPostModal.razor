@@ -15,7 +15,6 @@
             <div class="modal-body">
                 <EditForm id="newPostForm" Model="@newPost" OnValidSubmit="@HandleValidSubmit">
                     <DataAnnotationsValidator />
-                    <!-- FIXME: Game Name @bind="SearchGameName" @bind:event="oninput" @onchange="OnGameNameChangeAsync" -->
                 <div>
                     <label class="fs-4 fw-bold mb-1" for="postGameName">
                         游戏名<i class="bi bi-joystick mx-2"></i>
@@ -24,13 +23,13 @@
                         placeholder="输入或搜索 ..." @bind-Value="newPost.GameName" />
                     <ValidationMessage For="() => newPost.GameName" />
                     <datalist id="gameNameOptions">
-                        @if (gameNamesList is not null)
+                        @if (newPost.GameNameList is not null)
                         {
-                            <DataListOptions DataList="@gameNamesList" />
+                            <DataListOptions DataList="@newPost.GameNameList" />
                         }
                     </datalist>
                 </div>
-                <!-- TODO: Match Type -->
+                <!-- Match Type -->
                 <div class="mt-2">
                     <label class="fs-4 fw-bold mb-1" for="postMatchType">
                         游戏类型<i class="bi bi-boxes mx-2"></i>
@@ -39,9 +38,9 @@
 		                placeholder="输入或搜索 ..." @bind-Value="newPost.MatchType" />
                     <ValidationMessage For="() => newPost.MatchType" />
                     <datalist id="matchTypeOptions">
-                        @if (gameTypesList is not null)
+                        @if (newPost.MatchTypeList is not null)
                         {
-                            <DataListOptions DataList="@gameTypesList" />
+                            <DataListOptions DataList="@newPost.MatchTypeList" />
                         }
                     </datalist>
                 </div>
@@ -87,7 +86,7 @@
                             <div class="validation-message">至少提1个队伍要求</div>
                         }
                     </div>
-                <!-- TODO: Game Date -->
+                <!-- Game Date -->
                 <div class="mt-2">
                     <div class="fs-4 fw-bold mb-1">日期<i class="bi bi-calendar-check mx-2"></i></div>
                     <div class="m-2">
@@ -98,35 +97,31 @@
                             <label class="form-check-label" for="postPlaLate">下次一定</label>
                         </InputRadioGroup>
                     </div>
-                    <div class="collapse @(newPost.PlayNow ? "" : "show")" id="gameDateCollapse">
+                    <div class="collapse @(newPost.PlayNow ? "" : "show")">
                         <div class="d-inline-flex gap-2 p-2 border border-dark-subtle rounded-3 align-items-center">
                             <div class="row">
-                                <label class="col-form-label col-form-label-sm col-sm-auto"
-                                    for="gameDateStart">从:</label>
+                                <label class="col-form-label col-form-label-sm col-sm-auto" for="postDateStart">从:</label>
                                 <div class="col-sm-auto">
-                                    <input class="form-control form-control-sm" type="date" name="gameDatePeriod"
-                                        id="gameDateStart">
+                                    <InputDate class="form-control form-control-sm" id="postDateStart" 
+                                        @bind-Value="newPost.StartDate"/>
                                 </div>
-                                <label class="col-form-label col-form-label-sm col-sm-auto"
-                                    for="gameTimeStart">的:</label>
+                                <label class="col-form-label col-form-label-sm col-sm-auto" for="postTimeStart">的:</label>
                                 <div class="col-sm-auto">
-                                    <input class="form-control form-control-sm" type="time" name="gameDatePeriod"
-                                        id="gameTimeStart">
+                                    <InputDate class="form-control form-control-sm" id="postTimeStart"
+                                        Type="InputDateType.Time" @bind-Value="newPost.StartTime" />
                                 </div>
                             </div>
                             <div class="vr"></div>
                             <div class="row">
-                                <label class="col-form-label col-form-label-sm col-sm-auto"
-                                    for="gameDateEnd">到:</label>
+                                <label class="col-form-label col-form-label-sm col-sm-auto" for="postDateEnd">到:</label>
                                 <div class="col-sm-auto">
-                                    <input class="form-control form-control-sm" type="date" name="gameDatePeriod"
-                                        id="gameDateEnd">
+                                    <InputDate class="form-control form-control-sm" id="postDateEnd"
+                                        @bind-Value="newPost.EndDate" />
                                 </div>
-                                <label class="col-form-label col-form-label-sm col-sm-auto"
-                                    for="gameTimeEnd">的:</label>
+                                <label class="col-form-label col-form-label-sm col-sm-auto" for="postTimeEnd">的:</label>
                                 <div class="col-sm-auto">
-                                    <input class="form-control form-control-sm" type="time" name="gameDatePeriod"
-                                        id="gameTimeEnd">
+									<InputDate class="form-control form-control-sm" id="postTimeEnd"
+                                        Type="InputDateType.Time" @bind-Value="newPost.EndTime" />
                                 </div>
                             </div>
                         </div>
@@ -138,7 +133,7 @@
                         }
                     </div>
                 </div>
-                <!-- TODO: Audio Chat Panel -->
+                <!-- Audio Chat Panel -->
                 <div class="mt-2">
                     <div class="fs-4 fw-bold mb-1">语音<i class="bi bi-mic-fill mx-2"></i></div>
                     <div class="form-check form-switch m-2">
@@ -151,12 +146,11 @@
                                 <label class="col-form-label col-auto" for="postAudioName">语音平台: </label>
                                 <InputText class="form-control col-auto w-25" id="postAudioName" list="audioChatNames"
                                     placeholder="输入或搜索 ..." @bind-Value="newPost.AudioPlatform" />
-                                <!-- FIXME: Datalist Options -->
                                 <datalist id="audioChatNames">
-                                    <option value="Discord" />
-                                    <option value="KOOK" />
-                                    <option value="WeChat" />
-                                    <option value="YY" />
+                                    @if (newPost.AudioPlatformList is not null)
+                                    {
+                                        <DataListOptions DataList="@newPost.AudioPlatformList" />
+                                    }
                                 </datalist>
                             </div>
                             <hr>
@@ -194,56 +188,32 @@
     [Parameter]
     public string? GameName { get; set; }
 
-    private PostModel newPost = new();
+    private PostModel newPost = default!;
     private EditContext? editContext;
-
-    // FIXME: Not working now
-    private string? SearchGameName
-    {
-        get => newPost.GameName;
-        set
-        {
-            newPost.GameName = value;
-            OnGameNameInputAsync();
-        }
-    }
-
-    private int _showTopResult = 5;
-    private string[]? gameNamesList;
-    private string[]? gameTypesList;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
+        newPost = new(GameService, PostService);
+
         editContext = new(newPost);
         editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
+        base.OnParametersSet();
+
         newPost.GameName = GameName;
-        gameNamesList = await GameService.GetGameNameTopAsync(_showTopResult, newPost.GameName);
-        gameTypesList = await PostService.GetMatchTypesAsync(_showTopResult, newPost.GameName);
-    }
-
-    private async void OnGameNameInputAsync()
-    {
-        gameNamesList = await GameService.GetGameNameTopAsync(_showTopResult, newPost.GameName);
-    }
-
-    private async void OnGameNameChangeAsync()
-    {
-        gameTypesList = await PostService.GetMatchTypesAsync(_showTopResult, newPost.GameName);
     }
 
     private void HandleValidSubmit()
     {
-        // FIXME: Do my extre validation here
-        Console.WriteLine(newPost.Requirements.Length);
-
+        // TODO: Do my extre validation here
+        Console.WriteLine("Pass Validation");
 
         // Reload the page
-        Navigation.NavigateTo(Navigation.Uri, true);
+        // TODO: Navigation.NavigateTo(Navigation.Uri, true);
     }
 }

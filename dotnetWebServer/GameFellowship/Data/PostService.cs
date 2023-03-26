@@ -44,13 +44,13 @@ namespace GameFellowship.Data
                 where post.PostID == id
                 select post;
 
-            if (resultPost.Count() == 0)
+            if (!resultPost.Any())
                 return Task.FromResult(new Post());
 
             return Task.FromResult(resultPost.First());
         }
 
-        public Task<Post[]> GetPostsGroupAsync(string game)
+        public Task<Post[]> GetPostsAsync(string game)
         {
             var resultPosts =
                 from post in posts
@@ -60,15 +60,15 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPosts.ToArray());
         }
 
-        public Task<Post[]> GetPostsGroupAsync(int[] postIDs)
+        public Task<Post[]> GetPostsAsync(int[] postIDs)
         {
             var resultPosts =
                 from post in posts
                 where postIDs.Contains(post.PostID)
                 select post;
 
-            if (resultPosts.Count() == 0)
-                return Task.FromResult(new Post[] { });
+            if (!resultPosts.Any())
+                return Task.FromResult(Array.Empty<Post>());
 
             return Task.FromResult(resultPosts.ToArray());
         }
@@ -91,6 +91,29 @@ namespace GameFellowship.Data
                     from post in posts
                     where post.GameName == game
                     select post.MatchType
+                ).Take(num);
+            }
+
+            return Task.FromResult(resultPosts.ToArray());
+        }
+
+        public Task<string[]> GetAudioPlatformsAsync(int num, string? game = null)
+        {
+            IEnumerable<string> resultPosts;
+
+            if (!string.IsNullOrWhiteSpace(game))
+            {
+                resultPosts = (
+                    from post in posts
+                    select post.AudioPlatform
+                    ).Take(num);
+            }
+            else
+            {
+                resultPosts = (
+                    from post in posts
+                    where post.GameName == game
+                    select post.AudioPlatform
                 ).Take(num);
             }
 
