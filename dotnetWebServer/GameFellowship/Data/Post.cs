@@ -6,14 +6,14 @@ namespace GameFellowship.Data
 
         public int PostID { get; init; } = -1;
         public int CreatorID { get; init; } = -1;
-        public int[] CurrentUserIDs { get; set; } = { };
+        public int[] CurrentUserIDs { get; set; } = Array.Empty<int>();
 
         public DateTime LastUpdate { get; init; }
 
-        public string GameName { get; set; } = "Empty Game Name";
-        public string MatchType { get; set; } = "Empty Game Type";
+        public string GameName { get; set; } = string.Empty;
+        public string MatchType { get; set; } = string.Empty;
 
-        public string[] Requirements { get; set; } = { };
+        public string[] Requirements { get; set; } = Array.Empty<string>();
         public string Description { get; set; } = string.Empty;
 
         public int TotalPeople { get; set; } = 0;
@@ -24,10 +24,10 @@ namespace GameFellowship.Data
         public DateTime EndDate { get; set; } = DateTime.MaxValue;
 
         public bool AudioChat { get; set; } = false;
-        public string AudioPlatform { get; set; } = "No Platform";
+        public string AudioPlatform { get; set; } = string.Empty;
         public string AudioLink { get; set; } = string.Empty;
 
-        public Conversation[] Conversations { get; set; } = { };
+        public Conversation[] Conversations { get; set; } = Array.Empty<Conversation>();
 
         public Post()
         {

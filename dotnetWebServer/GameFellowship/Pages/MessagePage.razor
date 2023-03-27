@@ -1,7 +1,7 @@
 @page "/messages/{PostID:int?}"
-@using GameFellowship.Data
-@inject UserService UserService
-@inject PostService PostService
+
+@inject IUserService UserService
+@inject IPostService PostService
 
 <PageTitle>Your Message</PageTitle>
 

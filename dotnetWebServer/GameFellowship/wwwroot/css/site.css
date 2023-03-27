@@ -58,11 +58,6 @@ hr {
     margin-top: 8px;
 }
 
-.invalid {
-    border-color: darkred;
-    border-width: medium;
-}
-
 #postTotalPeople, #postCurrentPeople {
     width: 4rem;
 }

@@ -95,4 +95,52 @@ namespace GameFellowship.Data
             return ValidationResult.Success;
         }
     }
+
+    // BUG: Not functional
+    public class PostCompareValidatorAttribute : ValidationAttribute
+    {
+        private readonly string _smallerType;
+        private readonly string _largerType;
+
+        public PostCompareValidatorAttribute(string smaller, string larger)
+        {
+            _smallerType = smaller;
+            _largerType = larger;
+        }
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is null || !(bool)value)
+            {
+                return new ValidationResult($"{_smallerType}不应该大于{_largerType}捏");
+            }
+            else
+            {
+                return ValidationResult.Success;
+            }
+        }
+    }
+
+    // BUG: Not functional
+    public class PostAcceptNullValidatorAttribute : ValidationAttribute
+    {
+        private readonly string _acceptNullName;
+
+        public PostAcceptNullValidatorAttribute(string acceptNullName)
+        {
+            _acceptNullName = acceptNullName;
+        }
+
+        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        {
+            if (value is null || !(bool)value)
+            {
+                return new ValidationResult($"当前选择下，{_acceptNullName}不可为空捏");
+            }
+            else
+            {
+                return ValidationResult.Success;
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class PostService
+    public class PostService : IPostService
     {
         private Post[] posts = {
                 new Post(
@@ -97,25 +97,15 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPosts.ToArray());
         }
 
-        public Task<string[]> GetAudioPlatformsAsync(int num, string? game = null)
+        public Task<string[]> GetAudioPlatformsAsync(int num)
         {
             IEnumerable<string> resultPosts;
 
-            if (!string.IsNullOrWhiteSpace(game))
-            {
-                resultPosts = (
-                    from post in posts
-                    select post.AudioPlatform
-                    ).Take(num);
-            }
-            else
-            {
-                resultPosts = (
-                    from post in posts
-                    where post.GameName == game
-                    select post.AudioPlatform
+            resultPosts = (
+                from post in posts
+                where post.AudioChat
+                select post.AudioPlatform
                 ).Take(num);
-            }
 
             return Task.FromResult(resultPosts.ToArray());
         }

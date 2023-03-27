@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class GameService
+    public class GameService : IGameService
     {
         private readonly Game[] games = {
             new Game ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),

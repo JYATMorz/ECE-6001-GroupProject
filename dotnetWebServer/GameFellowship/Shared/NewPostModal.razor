@@ -1,6 +1,5 @@
-@using GameFellowship.Data
-@inject GameService GameService
-@inject PostService PostService
+@inject IGameService GameService
+@inject IPostService PostService
 @inject NavigationManager Navigation
 
 <div class="modal fade" id="teamCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -14,13 +13,14 @@
             </div>
             <div class="modal-body">
                 <EditForm id="newPostForm" Model="@newPost" OnValidSubmit="@HandleValidSubmit">
-                    <DataAnnotationsValidator />
+                <DataAnnotationsValidator />
+                <!-- Game Name -->
                 <div>
                     <label class="fs-4 fw-bold mb-1" for="postGameName">
                         游戏名<i class="bi bi-joystick mx-2"></i>
                     </label>
 					<InputText id="postGameName" class="form-control w-50" list="gameNameOptions"
-                        placeholder="输入或搜索 ..." @bind-Value="newPost.GameName" />
+                        placeholder="输入或搜索 ..." @bind-Value="newPost.GameName" @onchange="OnGameNameChangeAsync" />
                     <ValidationMessage For="() => newPost.GameName" />
                     <datalist id="gameNameOptions">
                         @if (newPost.GameNameList is not null)
@@ -28,6 +28,7 @@
                             <DataListOptions DataList="@newPost.GameNameList" />
                         }
                     </datalist>
+                    <!-- TODO: If the game name doesn't exist, Add the new game type -->
                 </div>
                 <!-- Match Type -->
                 <div class="mt-2">
@@ -44,7 +45,7 @@
                         }
                     </datalist>
                 </div>
-                <!-- Team's Number -->
+                <!-- Member's Number -->
                 <div class="d-inline-flex flex-wrap mt-2 column-gap-4">
                     <div class="row">
                         <label class="col-form-label col-form-label-sm col-sm-auto fs-4 fw-bold"
@@ -65,10 +66,7 @@
                     </div>
                     <ValidationMessage For="() => newPost.TotalPeople" />
                     <ValidationMessage For="() => newPost.CurrentPeople" />
-                    @if(newPost.TotalPeople < newPost.CurrentPeople)
-                    {
-                        <div class="validation-message">当前人数大于需要人数，已经塞不下了❤</div>
-                    }
+                    <ValidationMessage For="() => newPost.ValidPeople" />
                 </div>
                 <!-- Requirements -->
                 <div class="mt-2">
@@ -127,13 +125,10 @@
                         </div>
                         <ValidationMessage For="() => newPost.StartDate" />
                         <ValidationMessage For="() => newPost.EndDate" />
-                        @if (newPost.StartDate < newPost.EndDate)
-                        {
-                            <div class="validation-message">开始日期不能晚于结束日期</div>
-                        }
+                        <ValidationMessage For="() => newPost.ValidDate" />
                     </div>
                 </div>
-                <!-- Audio Chat Panel -->
+                <!-- Audio Chat -->
                 <div class="mt-2">
                     <div class="fs-4 fw-bold mb-1">语音<i class="bi bi-mic-fill mx-2"></i></div>
                     <div class="form-check form-switch m-2">
@@ -141,6 +136,10 @@
                         <label class="form-check-label" for="postAudioChat">需要语音</label>
                     </div>
                     <div class="collapse @(newPost.AudioChat ? "show" : "")" id="audioChatCollapse">
+                        <ValidationMessage For="() => newPost.ValidAudioPlatform" />
+                        <ValidationMessage For="() => newPost.AudioPlatform" />
+                        <ValidationMessage For="() => newPost.ValidAudioLink" />
+                        <ValidationMessage For="() => newPost.AudioLink" />
                         <div class="p-2 border border-dark-subtle rounded-3">
                             <div class="row ps-2">
                                 <label class="col-form-label col-auto" for="postAudioName">语音平台: </label>
@@ -198,7 +197,7 @@
         newPost = new(GameService, PostService);
 
         editContext = new(newPost);
-        editContext.SetFieldCssClassProvider(new CustomFieldClassProvider());
+        editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
     }
 
     protected override void OnParametersSet()
@@ -206,6 +205,16 @@
         base.OnParametersSet();
 
         newPost.GameName = GameName;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        newPost.AudioPlatformList = await PostService.GetAudioPlatformsAsync(5);
+    }
+
+    private async void OnGameNameChangeAsync()
+    {
+        newPost.MatchTypeList = await PostService.GetMatchTypesAsync(5, GameName);
     }
 
     private void HandleValidSubmit()

@@ -1,6 +1,6 @@
 namespace GameFellowship.Data
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private User[] users = {
             new User("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),

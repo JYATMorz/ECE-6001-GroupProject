@@ -1,5 +1,5 @@
-@using GameFellowship.Data
-@inject GameService GameService
+@inject IGameService GameService
+
 <a class="list-group-item list-group-item-action @(IsActive ? active : string.Empty)" href=@("messages/" + Post.PostID)>
     <div class="d-inline-flex gap-2 flex-wrap align-items-end">
         @if (gameIcon is null)
