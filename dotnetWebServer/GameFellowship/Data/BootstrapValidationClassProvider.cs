@@ -10,10 +10,10 @@ namespace GameFellowship.Data
 
             if (editContext.IsModified(fieldIdentifier))
             {
-                return isValid ? "is-valid" : "is-invalid";
+                return isValid ? "modified valid" : "modified invalid";
             }
 
-            return string.Empty;
+            return isValid ? "valid" : "invalid";
         }
     }
 }

@@ -38,7 +38,7 @@ namespace GameFellowship.Data
         [PostPeopleValidator(1, 100)]
         public int CurrentPeople { get; set; } = 1;
         [PostCompareValidator("当前人数","需要人数")]
-        public bool ValidPeople => CurrentPeople < TotalPeople;
+        public bool ValidPeople => CurrentPeople <= TotalPeople;
 
         [Required]
         public bool PlayNow { get; set; } = true;
