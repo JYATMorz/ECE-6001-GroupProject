@@ -78,7 +78,7 @@ namespace GameFellowship.Data
         {
             IEnumerable<string> resultPosts;
 
-            if (!string.IsNullOrWhiteSpace(game))
+            if (string.IsNullOrWhiteSpace(game))
             {
                 resultPosts = (
                     from post in posts
@@ -89,7 +89,7 @@ namespace GameFellowship.Data
             {
                 resultPosts = (
                     from post in posts
-                    where post.GameName == game
+                    where post.GameName.ToLower() == game.ToLower()
                     select post.MatchType
                 ).Take(num);
             }

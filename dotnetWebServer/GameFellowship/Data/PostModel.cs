@@ -4,9 +4,8 @@ namespace GameFellowship.Data
 {
     public class PostModel
     {
-        private readonly int resultCount = 5;
-        private readonly IGameService gameServiceModel;
-        private readonly IPostService postServiceModel;
+        private readonly int _resultCount;
+        private readonly IGameService _gameServiceModel;
 
         private string? _gameName;
         [PostGameValidator(10, "名")]
@@ -66,16 +65,13 @@ namespace GameFellowship.Data
 
         private async void OnNameChangeAsync()
         {
-            // FIXME: On GameName Input
-            GameNameList = await gameServiceModel.GetGameNamesAsync(resultCount, GameName);
-            // On GameName Change
-            MatchTypeList = await postServiceModel.GetMatchTypesAsync(resultCount, GameName);
+            GameNameList = await _gameServiceModel.GetGameNamesAsync(_resultCount, GameName);
         }
 
-        public PostModel(IGameService gameService, IPostService postService)
+        public PostModel(int count, IGameService gameService)
         {
-            gameServiceModel = gameService;
-            postServiceModel = postService;
+            _resultCount = count;
+            _gameServiceModel = gameService;
         }
     }
 }
