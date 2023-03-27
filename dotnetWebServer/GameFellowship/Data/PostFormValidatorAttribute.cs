@@ -32,12 +32,12 @@ namespace GameFellowship.Data
     public class PostPeopleValidatorAttribute : ValidationAttribute
     {
         private readonly int _minium;
-        private readonly int _maxium;
+        private readonly int _maximum;
 
         public PostPeopleValidatorAttribute(int min, int max)
         {
             _minium = min;
-            _maxium = max;
+            _maximum = max;
         }
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
@@ -52,9 +52,9 @@ namespace GameFellowship.Data
                 return new ValidationResult($"人数不得少于{_minium}，请算上自己");
             }
 
-            if ((int)value > _maxium)
+            if ((int)value > _maximum)
             {
-                return new ValidationResult($"人数请少于{_maxium}，已经塞不下了");
+                return new ValidationResult($"人数请少于{_maximum}，已经塞不下了");
             }
 
             return ValidationResult.Success;
@@ -96,7 +96,6 @@ namespace GameFellowship.Data
         }
     }
 
-    // BUG: Not functional
     public class PostCompareValidatorAttribute : ValidationAttribute
     {
         private readonly string _smallerType;
@@ -121,7 +120,6 @@ namespace GameFellowship.Data
         }
     }
 
-    // BUG: Not functional
     public class PostAcceptNullValidatorAttribute : ValidationAttribute
     {
         private readonly string _acceptNullName;
