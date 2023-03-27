@@ -17,6 +17,7 @@
         <div><i class="bi bi-file-person-fill"></i>: @Post.CurrentPeople / @Post.TotalPeople</div>
     </div>
     <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
+    <!-- TODO: New Message Notification -->
     <div class="m-1 badge text-bg-danger rounded-pill">有新消息！</div>
 </a>
 
