@@ -30,7 +30,7 @@
                     </datalist>
                     @if (!existedGame && !editContext!.GetValidationMessages(()=>newPost.GameName).Any())
                     {
-                        <NewGameCreate GameName="@newPost.GameName" @bind-CreateNewGame="createNewGame" />
+                        <NewGameCreate GameName="@newPost.GameName" @bind-CreateNewGame="createNewGame" @bind-ExistedGame="existedGame" />
                     }
                 </div>
                 <!-- Match Type -->
