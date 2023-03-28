@@ -37,6 +37,15 @@ namespace GameFellowship.Data
                 ),
             };
 
+        // TODO: Maybe use async method
+        public void CreateNewPost(PostModel model)
+        {
+            // FIXME: Get UserID from UserStatus
+            Post newPost = new(model, 1, DateTime.Now);
+
+            posts.Append(newPost);
+        }
+
         public Task<Post> GetPostAsync(int id)
         {
             var resultPost =

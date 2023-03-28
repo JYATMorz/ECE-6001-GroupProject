@@ -13,6 +13,12 @@ namespace GameFellowship.Data
             new Game ("CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
         };
 
+        // TODO: Use async
+        public void CreateNewGame(GameModel model)
+        {
+            Game newGame = new(model);
+        }
+
         public Task<Game[]> GetAllGameAsync()
         {
             return Task.FromResult(games);
@@ -93,6 +99,17 @@ namespace GameFellowship.Data
             }
 
             return Task.FromResult(selectedGames.ToArray());
+        }
+
+        public Task<bool> HasGameNameAsync(string name)
+        {
+            var anyGameName = (
+                from game in games
+                where game.GameName.ToLower() == name.ToLower()
+                select game.GameName
+            );
+
+            return Task.FromResult(anyGameName.Any());
         }
     }
 }

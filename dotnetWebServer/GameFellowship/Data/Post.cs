@@ -39,6 +39,7 @@ namespace GameFellowship.Data
             string? platform = null, string? link = null, Conversation[]? conversations = null)
         {
             PostID = ++_postID;
+
             LastUpdate = update;
             GameName = game;
             MatchType = match;
@@ -78,5 +79,38 @@ namespace GameFellowship.Data
             }
         }
 
+        public Post(PostModel model, int userID, DateTime update)
+        {
+            PostID = ++_postID;
+            CreatorID = userID;
+            CurrentUserIDs.Append(userID);
+
+            LastUpdate = update;
+
+            GameName = model.GameName;
+            MatchType = model.MatchType;
+            Requirements = model.Requirements;
+            Description = model.Description;
+            TotalPeople = model.TotalPeople;
+            CurrentPeople = model.CurrentPeople;
+            PlayNow = model.PlayNow;
+            AudioChat = model.AudioChat;
+
+            if (!PlayNow)
+            {
+                StartDate = new DateTime(
+                    model.StartDate.Year, model.StartDate.Month, model.StartDate.Day,
+                    model.StartTime.Hour, model.StartTime.Minute, model.StartTime.Second);
+                EndDate = new DateTime(
+                    model.EndDate.Year, model.EndDate.Month, model.EndDate.Day,
+                    model.EndTime.Hour, model.EndTime.Minute, model.EndTime.Second);
+            }
+
+            if (AudioChat)
+            {
+                AudioPlatform = model.AudioPlatform;
+                AudioLink = model.AudioLink;
+            }
+        }
     }
 }

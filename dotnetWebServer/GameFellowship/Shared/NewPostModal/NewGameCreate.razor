@@ -1,0 +1,82 @@
+@inject IGameService GameService
+
+<div class="m-2 p-3 border rounded-3 border-dark-subtle">
+    @if (newGame.CreatingGame)
+    {
+        <LoadingSpinner />
+    }
+    else
+    {
+        <div><span class="fw-bold pe-1">@GameName</span>暂时未被收录，不考虑成为创建者🐎</div>
+        <div class="form-check form-switch mt-1">
+            <input class="form-check-input" id="createGameSwitch" type="checkbox" role="switch"
+                @bind="_createGame" @oninput="OnCreateGameSwitchAsync">
+            <label class="form-check-label" for="createGameSwitch">新建游戏？</label>
+        </div>
+        @if (_createGame)
+        {
+            <hr>
+            <div class="d-flex align-items-stretch gap-3 mt-2">
+                <label class="form-label text-nowrap my-auto" for="IconUpload">给<span class="fw-bold px-1">@GameName</span>上传一个图标吧</label>
+                <InputFile class="form-control" id="IconUpload" accept="image/jpg, image/png, image/jpeg" />
+            </div>
+            <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
+                <div class="form-check my-auto">
+                    <input class="form-check-input" id="followCheck" type="checkbox" @bind="newGame.Follow">
+                    <label class="form-check-label" for="followCheck">成为第1个关注者</label>
+                </div>
+                <button class="btn btn-primary" type="button" @onclick="OnNewGameCreateAsync">创建⭐游戏</button>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string GameName { get; set; } = string.Empty;
+    [Parameter]
+    public bool CreateNewGame { get; set; } = true;
+    [Parameter]
+    public EventCallback<bool> CreateNewGameChanged { get; set; }
+    [Parameter]
+    public bool ExistedGame {get;set;} = false;
+    [Parameter]
+    public EventCallback<bool> ExistedGameChanged { get; set; }
+
+    private bool _createGame = false;
+
+    private GameModel newGame = default!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        newGame = new GameModel(GameName);
+        _createGame = CreateNewGame;
+    }
+
+    private async void OnCreateGameSwitchAsync()
+    {
+        await CreateNewGameChanged.InvokeAsync(_createGame);
+    }
+
+    private void OnIconFileUploaded()
+    {
+        // TODO: Handle image upload and rename file and get the uri
+    }
+
+    private async void OnNewGameCreateAsync()
+    {
+        newGame.CreatingGame = true;
+
+        // TODO: Create the game
+
+        await Task.Delay(3000);
+
+        bool existedNewGame = await GameService.HasGameNameAsync(newGame.GameName);
+        await ExistedGameChanged.InvokeAsync(existedNewGame);
+
+        newGame.CreatingGame = false;
+        StateHasChanged();
+    }
+}

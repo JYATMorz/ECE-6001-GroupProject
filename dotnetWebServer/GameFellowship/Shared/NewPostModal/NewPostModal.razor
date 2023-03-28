@@ -28,7 +28,10 @@
                             <DataListOptions DataList="@newPost.GameNameList" />
                         }
                     </datalist>
-                    <!-- TODO: If the game name doesn't exist, Add the new game type -->
+                    @if (!existedGame && !editContext!.GetValidationMessages(()=>newPost.GameName).Any())
+                    {
+                        <NewGameCreate GameName="@newPost.GameName" @bind-CreateNewGame="createNewGame" />
+                    }
                 </div>
                 <!-- Match Type -->
                 <div class="mt-2">
@@ -205,6 +208,8 @@
     private EditContext? editContext;
 
     private const int searchResult = 5;
+    private bool existedGame = true;
+    private bool createNewGame = false;
 
     protected override void OnInitialized()
     {
@@ -220,7 +225,7 @@
     {
         base.OnParametersSet();
 
-        newPost.GameName = GameName;
+        newPost.GameName = GameName ?? string.Empty;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -232,14 +237,25 @@
     private async void OnGameNameFocusAsync()
     {
         newPost.MatchTypeList = await PostService.GetMatchTypesAsync(searchResult, newPost.GameName);
+
+        if (!string.IsNullOrWhiteSpace(newPost.GameName))
+        {
+            existedGame = await GameService.HasGameNameAsync(newPost.GameName);
+        }
     }
 
     private void HandleValidSubmit()
     {
-        // TODO: Do my extre validation here
-        Console.WriteLine("Pass Validation");
+        if (createNewGame || !existedGame)
+        {
+            // Tell user to create new game profile first
+        }
+        else
+        {
+            Console.WriteLine("Pass Validation");
 
-        // Reload the page
-        // TODO: Navigation.NavigateTo(Navigation.Uri, true);
+            // Reload the page
+            // TODO: Navigation.NavigateTo(Navigation.Uri, true);
+        }
     }
 }

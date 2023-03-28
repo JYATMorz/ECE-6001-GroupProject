@@ -20,7 +20,7 @@ namespace GameFellowship.Data
                 return new ValidationResult($"游戏{_type}是必须的捏");
             }
 
-            if (value.ToString().Length > _nameLength)
+            if (value.ToString()!.Length > _nameLength)
             {
                 return new ValidationResult($"游戏{_type}请少于{_nameLength}个字符");
             }

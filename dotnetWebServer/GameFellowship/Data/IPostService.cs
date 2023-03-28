@@ -2,6 +2,8 @@
 {
     public interface IPostService
     {
+        void CreateNewPost(PostModel model);
+
         Task<string[]> GetAudioPlatformsAsync(int num);
         Task<string[]> GetMatchTypesAsync(int num, string? game = null);
         Task<Post> GetPostAsync(int id);

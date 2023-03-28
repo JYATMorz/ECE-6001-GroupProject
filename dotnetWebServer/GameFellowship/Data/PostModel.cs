@@ -7,9 +7,9 @@ namespace GameFellowship.Data
         private readonly int _resultCount;
         private readonly IGameService _gameServiceModel;
 
-        private string? _gameName;
+        private string _gameName = string.Empty;
         [PostGameValidator(10, "名")]
-        public string? GameName
+        public string GameName
         {
             get => _gameName;
             set
@@ -21,7 +21,7 @@ namespace GameFellowship.Data
         public string[]? GameNameList { get; set; }
 
         [PostGameValidator(10, "类型")]
-        public string? MatchType { get; set; }
+        public string MatchType { get; set; } = string.Empty;
         public string[]? MatchTypeList { get; set; }
 
         [Required]
@@ -30,7 +30,7 @@ namespace GameFellowship.Data
         public string[] Requirements { get; set; } = Array.Empty<string>();
 
         [StringLength(50, ErrorMessage = "描述请精简地少于50个字")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [PostPeopleValidator(2, 100)]
         public int TotalPeople { get; set; } = 2;
@@ -54,12 +54,12 @@ namespace GameFellowship.Data
         [Required]
         public bool AudioChat { get; set; }
         [StringLength(8, ErrorMessage = "语音平台名字请少于8个字")]
-        public string? AudioPlatform { get; set; }
+        public string AudioPlatform { get; set; } = string.Empty;
         [PostAcceptNullValidator("语音平台")]
         public bool ValidAudioPlatform => !AudioChat || !string.IsNullOrWhiteSpace(AudioPlatform);
         public string[]? AudioPlatformList { get; set; }
         [StringLength(20, ErrorMessage = "链接/号码长度请少于20字符")]
-        public string? AudioLink { get; set; }
+        public string AudioLink { get; set; } = string.Empty;
         [PostAcceptNullValidator("语音地址")]
         public bool ValidAudioLink => !AudioChat || !string.IsNullOrWhiteSpace(AudioLink);
 

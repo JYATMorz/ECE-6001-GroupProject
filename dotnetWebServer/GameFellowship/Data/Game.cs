@@ -15,6 +15,15 @@ namespace GameFellowship.Data
             GameID = ++_gameID;
         }
 
+        public Game(GameModel model)
+        {
+            GameID = ++_gameID;
+
+            GameName = model.GameName;
+            Followers = model.Follow ? 1 : 0;
+            IconURI = model.IconURI;
+        }
+
         public Game(string name, int followers, DateTime? lastPost = null, string? icon = null)
         {
             GameID = ++_gameID;
