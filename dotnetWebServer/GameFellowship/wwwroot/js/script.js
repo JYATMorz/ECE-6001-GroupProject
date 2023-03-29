@@ -5,5 +5,6 @@ function startCarousel(carouselId) {
 }
 
 window.createGameAlert = (gameName) => {
-    alert(`请先创建${gameName}`);
+    alert(`请先创建${gameName}⏳真的很快的`);
+    document.getElementById("postGameName").focus();
 }
