@@ -2,7 +2,7 @@ namespace GameFellowship.Data
 {
     public class GameService : IGameService
     {
-        private readonly Game[] games = {
+        private List<Game> games = new() {
             new Game ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
             new Game ("Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
             new Game ("Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
@@ -13,15 +13,17 @@ namespace GameFellowship.Data
             new Game ("CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
         };
 
-        // TODO: Use async
-        public void CreateNewGame(GameModel model)
+        public Task<bool> CreateNewGameAsync(GameModel model)
         {
             Game newGame = new(model);
+            games.Add(newGame);
+
+            return Task.FromResult(true);
         }
 
         public Task<Game[]> GetAllGameAsync()
         {
-            return Task.FromResult(games);
+            return Task.FromResult(games.ToArray());
         }
 
         public Task<Game> GetGameAsync(int id)

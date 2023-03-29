@@ -2,7 +2,7 @@
 {
     public interface IGameService
     {
-        void CreateNewGame(GameModel model);
+        Task<bool> CreateNewGameAsync(GameModel model);
 
         Task<Game[]> GetAllGameAsync();
         Task<Game> GetGameAsync(int id);

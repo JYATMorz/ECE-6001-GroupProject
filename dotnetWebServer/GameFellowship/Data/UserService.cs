@@ -2,7 +2,7 @@ namespace GameFellowship.Data
 {
     public class UserService : IUserService
     {
-        private User[] users = {
+        private List<User> users = new() {
             new User("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),
             new User("User 2 with long", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1,2}, null),
             new User("User 3", null, null, null, null, new int[]{1,2}, null),

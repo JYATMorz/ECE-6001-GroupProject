@@ -2,7 +2,7 @@ namespace GameFellowship.Data
 {
     public class PostService : IPostService
     {
-        private Post[] posts = {
+        private List<Post> posts = new() {
                 new Post(
                     new DateTime(2023, 2, 2, 2, 2, 2),
                     "Minecraft", "种地",
@@ -43,7 +43,7 @@ namespace GameFellowship.Data
             // FIXME: Get UserID from UserStatus
             Post newPost = new(model, 1, DateTime.Now);
 
-            posts.Append(newPost);
+            posts.Add(newPost);
         }
 
         public Task<Post> GetPostAsync(int id)
