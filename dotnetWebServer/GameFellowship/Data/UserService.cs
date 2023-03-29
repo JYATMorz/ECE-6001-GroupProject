@@ -18,7 +18,7 @@ namespace GameFellowship.Data
                 where user.UserID == id
                 select user;
 
-            if (resultUser.Count() == 0)
+            if (!resultUser.Any())
                 return Task.FromResult(new User());
 
             return Task.FromResult(resultUser.First());
@@ -31,8 +31,8 @@ namespace GameFellowship.Data
                 where ids.Contains(user.UserID)
                 select user;
 
-            if (resultUser.Count() == 0)
-                return Task.FromResult(new User[] { });
+            if (!resultUser.Any())
+                return Task.FromResult(Array.Empty<User>());
 
             return Task.FromResult(resultUser.ToArray());
         }
