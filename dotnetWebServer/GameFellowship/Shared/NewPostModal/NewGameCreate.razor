@@ -18,7 +18,8 @@
             <hr>
             <div class="d-flex align-items-stretch gap-3 mt-2">
                 <label class="form-label text-nowrap my-auto" for="IconUpload">给<span class="fw-bold px-1">@GameName</span>上传一个图标吧</label>
-                <InputFile class="form-control" id="IconUpload" accept="image/jpg, image/png, image/jpeg" />
+                <InputFile class="form-control" id="IconUpload" accept="image/jpg, image/png, image/jpeg"
+                    OnChange="@OnIconFileUploaded"/>
             </div>
             <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
                 <div class="form-check my-auto">
@@ -62,14 +63,15 @@
 
     private void OnIconFileUploaded()
     {
-        // TODO: Handle image upload and rename file and get the uri
+        // FIXME: Handle image upload and rename file and get the uri
+        newGame.IconURI = "images/GameIcons/gametitle.jpg";
     }
 
     private async void OnNewGameCreateAsync()
     {
         newGame.CreatingGame = true;
 
-        // TODO: Create the game
+        _ = await GameService.CreateNewGameAsync(newGame);
 
         await Task.Delay(3000);
 

@@ -8,10 +8,10 @@ namespace GameFellowship.Data
 
         // FIXME: public string Password { get; init; } = "password";
 
-        public int[] GameIDs { get; set; } = { };
-        public int[] CreatedPostIDs { get; set; } = { };
-        public int[] JoinedPostIDs { get; set; } = { };
-        public int[] FriendIDs { get; set; } = { };
+        public int[] GameIDs { get; set; } = Array.Empty<int>();
+        public int[] CreatedPostIDs { get; set; } = Array.Empty<int>();
+        public int[] JoinedPostIDs { get; set; } = Array.Empty<int>();
+        public int[] FriendIDs { get; set; } = Array.Empty<int>();
 
         public string UserName { get; set; } = "Undefined Name";
         public string UserEmail { get; set; } = string.Empty;

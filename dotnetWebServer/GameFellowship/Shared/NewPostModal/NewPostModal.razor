@@ -1,6 +1,7 @@
 @inject IGameService GameService
 @inject IPostService PostService
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="modal fade" id="teamCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="teamCreateModalLabel" aria-hidden="true">
@@ -244,18 +245,22 @@
         }
     }
 
-    private void HandleValidSubmit()
+    private async void HandleValidSubmit()
     {
         if (createNewGame || !existedGame)
         {
-            // Tell user to create new game profile first
+            existedGame = await GameService.HasGameNameAsync(newPost.GameName);
+            if (!existedGame)
+            {
+                await JS.InvokeVoidAsync("createGameAlert", newPost.GameName);
+                return;                
+            }
         }
-        else
-        {
-            Console.WriteLine("Pass Validation");
+        
 
-            // Reload the page
-            // TODO: Navigation.NavigateTo(Navigation.Uri, true);
-        }
+        Console.WriteLine("Pass Validation");
+
+        // Reload the page
+        // TODO: Navigation.NavigateTo(Navigation.Uri, true);
     }
 }
