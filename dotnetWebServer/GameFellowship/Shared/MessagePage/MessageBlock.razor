@@ -2,10 +2,10 @@
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
-        <img class="rounded-2" src="@(user is null ? defaultIconURI : user.UserIconURI)"
+        <img class="rounded-2" src="@(userIconURI ?? defaultIconURI)" />
             alt="User Icon" width="50" height="50">
         <div>
-            <div class="fs-6 fw-bold">@(user is null ? "Loading" : user.UserName)</div>
+            <div class="fs-6 fw-bold">@(userName ?? "Мгдижа ...")</div>
             <small class="text-muted">@Content.SendTime.ToLocalTime()</small>
         </div>
     </div>
@@ -16,11 +16,13 @@
     [Parameter]
     public Conversation Content { get; set; } = new();
 
-    private User? user;
+    private string? userName;
+    private string? userIconURI;
     private string defaultIconURI = "images/GameIcons/gametitle.jpg";
 
     protected override async Task OnParametersSetAsync()
     {
-        user = await UserService.GetUserAsync(Content.UserID);
+        userName = await UserService.GetUserNameAsync(Content.UserID);
+        userIconURI = await UserService.GetUserIconURIAsync(Content.UserID);
     }
 }

@@ -81,20 +81,17 @@ namespace GameFellowship.Data
             return Task.FromResult(selectedGameIcon.First());
         }
 
-        public Task<string[]> GetGameNamesAsync(int[] gameIDs)
+        public Task<IEnumerable<string>> GetGameNamesAsync(IEnumerable<int> gameIDs)
         {
             var selectedGames =
                 from game in games
                 where gameIDs.Contains(game.GameID)
                 select game.GameName;
 
-            if (!selectedGames.Any())
-                return Task.FromResult(Array.Empty<string>());
-
-            return Task.FromResult(selectedGames.ToArray());
+            return Task.FromResult(selectedGames);
         }
 
-        public Task<string[]> GetGameNamesAsync(int count, string? prefix = null)
+        public Task<IEnumerable<string>> GetGameNamesAsync(int count, string? prefix = null)
         {
             IEnumerable<string> selectedGames;
 
@@ -116,7 +113,7 @@ namespace GameFellowship.Data
                 ).Take(count);
             }
 
-            return Task.FromResult(selectedGames.ToArray());
+            return Task.FromResult(selectedGames);
         }
 
         public Task<bool> HasGameNameAsync(string name)

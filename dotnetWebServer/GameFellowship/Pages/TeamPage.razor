@@ -59,7 +59,7 @@
             }
             else
             {
-                @if (posts.Length == 0)
+                @if (!posts.Any())
                 {
                     <div class="container-fluid m-auto d-flex align-items-center" style="height: 200px;">
                         <p>目前没有人在 @GameName 寻找组队 ...</p>
@@ -86,7 +86,7 @@
 
     private Post selectedPost { get; set; } = new();
 
-    private Post[]? posts;
+    private IEnumerable<Post>? posts;
     private Game? theGame;
 
     protected override async Task OnParametersSetAsync()

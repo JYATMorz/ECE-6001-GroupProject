@@ -4,16 +4,18 @@
     <div class="card h-100" style="min-width: 18rem;">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                @if (creator is null)
+                @if (!userExist)
                 {
                     <LoadingSpinner />
+                    <div class="validation-message">用户已注销</div>
                 }
                 else
                 {
-                    <div class="fs-6">@creator.UserName</div>
+                    <div class="fs-6">@(userName ?? "加载中 ...")</div>
                     <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <img class="rounded-circle" src="@creator.UserIconURI" alt="User" width="30" height="30">
+                        <img class="rounded-circle" src="@(userIconURI ?? "images/UserIcons/50913860_p9.jpg")"
+                            alt="User" width="30" height="30">
                     </button>
                     <ul class="dropdown-menu text-small shadow">
                         <li><button class="dropdown-item" type="button">个人资料</button></li>
@@ -74,11 +76,19 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
 
-    private User? creator { get; set; }
+    private bool userExist = false;
+    private string? userName;
+    private string? userIconURI;
 
     protected override async Task OnParametersSetAsync()
     {
-        creator = await UserService.GetUserAsync(Post.CreatorID);
+        userExist = await UserService.HasUserAsync(Post.CreatorID);
+        if (userExist)
+        {
+            userName = await UserService.GetUserNameAsync(Post.CreatorID);
+            userIconURI = await UserService.GetUserIconURIAsync(Post.CreatorID);
+
+        }
     }
 }
 

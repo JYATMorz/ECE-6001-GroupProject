@@ -1,9 +1,12 @@
-@foreach (var name in DataList)
+@if (DataList is not null)
 {
-    <option value="@name" />
+    @foreach (var name in DataList)
+    {
+        <option value="@name" />
+    }
 }
 
 @code {
     [Parameter, EditorRequired]
-    public string[] DataList { get; set; } = { };
+    public IEnumerable<string>? DataList { get; set; }
 }

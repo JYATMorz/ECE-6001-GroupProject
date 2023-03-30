@@ -241,13 +241,13 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        newPost.MatchTypeList = await PostService.GetMatchTypesAsync(searchResult, newPost.GameName);
-        newPost.AudioPlatformList = await PostService.GetAudioPlatformsAsync(searchResult);
+        newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(searchResult, newPost.GameName)).ToArray();
+        newPost.AudioPlatformList = (await PostService.GetAudioPlatformsAsync(searchResult)).ToArray();
     }
 
     private async void OnGameNameFocusAsync()
     {
-        newPost.MatchTypeList = await PostService.GetMatchTypesAsync(searchResult, newPost.GameName);
+        newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(searchResult, newPost.GameName)).ToArray();
 
         if (!string.IsNullOrWhiteSpace(newPost.GameName))
         {

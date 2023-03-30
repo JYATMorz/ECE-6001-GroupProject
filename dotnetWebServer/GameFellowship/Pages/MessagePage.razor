@@ -9,7 +9,11 @@
     <!-- vertical message navbar -->
     <div class="overflow-y-scroll pe-0 vh-100">
         <div class="list-group p-1">
-            @if (myPosts is null)
+            @if (!hasPost)
+            {
+                <div class="text-info">您还没有参加过组队，不试一试嘛❤</div>
+            }
+            else if (myPosts is null)
             {
                 <LoadingSpinner />
             }
@@ -46,8 +50,9 @@
     [Parameter]
     public int? PostID { get; set; }
 
-    private int[]? myPostIDs;
-    private Post[]? myPosts;
+    private IEnumerable<int>? myPostIDs;
+    private bool hasPost = true;
+    private IEnumerable<Post>? myPosts;
     private Post? selectedPost;
 
     // FIXME: Get It From UserStatus
@@ -55,8 +60,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        myPostIDs = (await UserService.GetUserAsync(userId)).JoinedPostIDs;
-        myPosts = await PostService.GetPostsAsync(myPostIDs);
+        myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userId);
+        if (myPostIDs is null || !myPostIDs.Any())
+        {
+            hasPost = false;
+        }
+        else
+        {
+            myPosts = await PostService.GetPostsAsync(myPostIDs);
+        }
     }
 
     protected override void OnParametersSet()

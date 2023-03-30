@@ -2,7 +2,13 @@
 {
     public interface IUserService
     {
-        Task<User> GetUserAsync(int id);
-        Task<User[]> GetUserGroupAsync(int[] ids);
+        // TODO: Try to integrate into one function
+        Task<string?> GetUserNameAsync(int userID);
+        Task<string?> GetUserIconURIAsync(int userID);
+        Task<IEnumerable<int>?> GetUserLikedGameIDsAsync(int userID);
+        Task<IEnumerable<int>?> GetUserJoinedPostIDsAsync(int userID);
+        Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userID);
+
+        Task<bool> HasUserAsync(int userID);
     }
 }

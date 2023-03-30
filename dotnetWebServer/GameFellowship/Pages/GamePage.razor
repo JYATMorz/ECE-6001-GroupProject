@@ -12,11 +12,11 @@
             <input class="form-control" list="searchGameList" type="search" placeholder="搜索游戏" aria-label="Search"
                 @bind="SearchName" @bind:event="oninput">
             <button class="btn btn-outline-success text-nowrap" type="button"
-                disabled="@_invalidSearch" @onclick="NavigateToGame">搜索</button>
+                disabled="@invalidSearch" @onclick="NavigateToGame">搜索</button>
             <datalist id="searchGameList">
-                @if (validGames is not null)
+                @if (existedGameNames is not null)
                 {
-                    <DataListOptions DataList="@validGames" />
+                    <DataListOptions DataList="@existedGameNames" />
                 }
             </datalist>
         </form>
@@ -51,9 +51,9 @@
 
 @code {
     private Game[]? existedGames;
-    private string[]? validGames;
+    private IEnumerable<string>? existedGameNames;
 
-    private bool _invalidSearch = true;
+    private bool invalidSearch = true;
     private string? _searchName;
     private string? SearchName
     {
@@ -72,9 +72,15 @@
 
     private async void OnSearchNameInputAsync()
     {
-        validGames = await GameService.GetGameNamesAsync(5, _searchName);
-        if (validGames.Length == 1 && validGames[0] == _searchName) _invalidSearch = false;
-        else _invalidSearch = true;
+        existedGameNames = await GameService.GetGameNamesAsync(5, _searchName);
+        if (existedGameNames.Count() == 1 && existedGameNames.First() == _searchName)
+        {
+            invalidSearch = false;
+        }
+        else
+        {
+            invalidSearch = true;
+        }
     }
 
     private void NavigateToGame()

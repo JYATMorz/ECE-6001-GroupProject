@@ -21,8 +21,8 @@
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-secondary">
                             <div class="d-flex justify-content-evenly align-items-center gap-1">
-                                <img class="rounded-circle" src="@user.UserIconURI" alt="User" width="40" height="40">
-                                <div class="fs-6 fw-bold text-break">@user.UserName</div>
+                                <img class="rounded-circle" src="@user.Value" alt="User" width="40" height="40">
+                                <div class="fs-6 fw-bold text-break">@user.Key</div>
                             </div>
                         </button>
                         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
@@ -38,7 +38,7 @@
                         </ul>
                     </div>
                 }
-                @for (int i = 0; i < (Total - currentUsers.Length); i++)
+                @for (int i = 0; i < (Total - Current); i++)
                 {
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-secondary">
@@ -67,14 +67,16 @@
 
 @code {
     [Parameter, EditorRequired]
-    public int[] CurrentUserIDs { get; set; } = { };
+    public HashSet<int> JoinedUserIDs { get; set; } = new();
     [Parameter, EditorRequired]
     public int Total { get; set; }
+    [Parameter, EditorRequired]
+    public int Current { get; set; }
 
-    private User[]? currentUsers;
+    private Dictionary<string, string>? currentUsers;
 
     protected override async Task OnParametersSetAsync()
     {
-        currentUsers = await UserService.GetUserGroupAsync(CurrentUserIDs);
+        currentUsers = await UserService.GetUserGroupNameIconPairAsync(JoinedUserIDs);
     }
 }

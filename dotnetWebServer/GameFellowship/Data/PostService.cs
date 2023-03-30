@@ -107,31 +107,28 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPost.First());
         }
 
-        public Task<Post[]> GetPostsAsync(string gameName)
+        public Task<IEnumerable<Post>> GetPostsAsync(string gameName)
         {
             var resultPosts =
                 from post in posts
                 where post.GameName == gameName
                 select post;
 
-            return Task.FromResult(resultPosts.ToArray());
+            return Task.FromResult(resultPosts);
         }
 
-        public Task<Post[]> GetPostsAsync(int[] postIDs)
+        public Task<IEnumerable<Post>> GetPostsAsync(IEnumerable<int> postIDs)
         {
             var resultPosts =
                 from post in posts
                 where postIDs.Contains(post.PostID)
                 select post;
 
-            if (!resultPosts.Any())
-                return Task.FromResult(Array.Empty<Post>());
-
-            return Task.FromResult(resultPosts.ToArray());
+            return Task.FromResult(resultPosts);
         }
 
         // TODO: Try add group by count
-        public Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)
+        public Task<IEnumerable<string>> GetMatchTypesAsync(int count, string? gameName = null)
         {
             IEnumerable<string> resultPosts;
 
@@ -151,20 +148,18 @@ namespace GameFellowship.Data
                 ).Take(count);
             }
 
-            return Task.FromResult(resultPosts.ToArray());
+            return Task.FromResult(resultPosts);
         }
 
-        public Task<string[]> GetAudioPlatformsAsync(int count)
+        public Task<IEnumerable<string>> GetAudioPlatformsAsync(int count)
         {
-            IEnumerable<string> resultPosts;
-
-            resultPosts = (
+            var resultPosts = (
                 from post in posts
                 where post.AudioChat
                 select post.AudioPlatform
                 ).Take(count);
 
-            return Task.FromResult(resultPosts.ToArray());
+            return Task.FromResult(resultPosts);
         }
     }
 }

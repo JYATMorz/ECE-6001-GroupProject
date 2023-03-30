@@ -3,7 +3,7 @@
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
-        @if (user is null || user.UserID <= 0)
+        @if (userID <= 0)
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -21,7 +21,8 @@
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                <img class="rounded-circle" src="@user.UserIconURI" alt="User" width="50" height="50">
+                <img class="rounded-circle" src="@(userIconURI ?? "images/UserIcons/50913860_p9.jpg")"
+                    alt="User" width="50" height="50">
             </button>
             <ul class="dropdown-menu text-small shadow">
                 <li><button class="dropdown-item" type="button">新帖子</button></li>
@@ -65,12 +66,25 @@
     // FIXME: User info should be obtained from UserStatus
     private int userID = 1;
 
-    private User? user;
-    private string[]? gameNames;
+    private string? userIconURI;
+    private IEnumerable<string>? gameNames;
+    private IEnumerable<int>? likedGames;
 
     protected override async Task OnInitializedAsync()
     {
-        user = await UserService.GetUserAsync(userID);
-        gameNames = await GameService.GetGameNamesAsync(user.LikedGameIDs);
+        bool userExist = await UserService.HasUserAsync(userID);
+        if (userExist)
+        {
+            userIconURI = await UserService.GetUserIconURIAsync(userID);
+            likedGames = await UserService.GetUserLikedGameIDsAsync(userID);
+            if (likedGames is not null && likedGames.Any())
+            {
+                gameNames = await GameService.GetGameNamesAsync(likedGames);
+            }
+        }
+        else
+        {
+            userID = -1;
+        }
     }
 }

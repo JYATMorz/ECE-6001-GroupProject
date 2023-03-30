@@ -9,10 +9,10 @@
 
         Task<bool> AddNewConversationAsync(int postID, Conversation conversation);
 
-        Task<string[]> GetAudioPlatformsAsync(int count);
-        Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
+        Task<IEnumerable<string>> GetAudioPlatformsAsync(int count);
+        Task<IEnumerable<string>> GetMatchTypesAsync(int count, string? gameName = null);
         Task<Post> GetPostAsync(int postID);
-        Task<Post[]> GetPostsAsync(int[] postIDs);
-        Task<Post[]> GetPostsAsync(string gameName);
+        Task<IEnumerable<Post>> GetPostsAsync(IEnumerable<int> postIDs);
+        Task<IEnumerable<Post>> GetPostsAsync(string gameName);
     }
 }
