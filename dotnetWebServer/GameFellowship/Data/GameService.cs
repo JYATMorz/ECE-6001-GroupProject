@@ -18,6 +18,22 @@ namespace GameFellowship.Data
             Game newGame = new(model);
             games.Add(newGame);
 
+            // TODO: IF everything goes well
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> UpdateNewLatestPostDate(string name)
+        {
+            var selectedGame =
+                from game in games
+                where game.GameName.ToLower() == name.ToLower()
+                select game;
+
+            if (!selectedGame.Any()) return Task.FromResult(false);
+
+            selectedGame.First().LastPostDate = DateTime.Now;
+            // TODO: Save it back to database
+
             return Task.FromResult(true);
         }
 

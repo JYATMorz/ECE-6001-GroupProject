@@ -8,10 +8,10 @@ namespace GameFellowship.Data
 
         // FIXME: public string Password { get; init; } = "password";
 
-        public int[] GameIDs { get; set; } = Array.Empty<int>();
-        public int[] CreatedPostIDs { get; set; } = Array.Empty<int>();
-        public int[] JoinedPostIDs { get; set; } = Array.Empty<int>();
-        public int[] FriendIDs { get; set; } = Array.Empty<int>();
+        public List<int> LikedGameIDs { get; set; } = new List<int>();
+        public List<int> CreatedPostIDs { get; set; } = new List<int>();
+        public List<int> JoinedPostIDs { get; set; } = new List<int>();
+        public List<int> FriendIDs { get; set; } = new List<int>();
 
         public string UserName { get; set; } = "Undefined Name";
         public string UserEmail { get; set; } = string.Empty;
@@ -34,16 +34,16 @@ namespace GameFellowship.Data
                 UserIconURI = icon;
 
             if (games is not null)
-                GameIDs = games;
+                LikedGameIDs = games.ToList();
 
             if (createdPosts is not null)
-                CreatedPostIDs = createdPosts;
+                CreatedPostIDs = createdPosts.ToList();
 
             if (joinedPosts is not null)
-                JoinedPostIDs = joinedPosts;
+                JoinedPostIDs = joinedPosts.ToList();
 
             if (friends is not null)
-                FriendIDs = friends;
+                FriendIDs = friends.ToList();
         }
     }
 }

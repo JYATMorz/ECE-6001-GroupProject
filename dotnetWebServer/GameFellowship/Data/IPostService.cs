@@ -2,12 +2,17 @@
 {
     public interface IPostService
     {
-        void CreateNewPost(PostModel model);
+        Task<bool> CreateNewPostAsync(PostModel model, int userID);
 
-        Task<string[]> GetAudioPlatformsAsync(int num);
-        Task<string[]> GetMatchTypesAsync(int num, string? game = null);
-        Task<Post> GetPostAsync(int id);
+        Task<bool> AddNewCurrentUserAsync(int postID, int userID);
+        Task<bool> DeleteCurrentUserAsync(int postID, int userID);
+
+        Task<bool> AddNewConversationAsync(int postID, Conversation conversation);
+
+        Task<string[]> GetAudioPlatformsAsync(int count);
+        Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
+        Task<Post> GetPostAsync(int postID);
         Task<Post[]> GetPostsAsync(int[] postIDs);
-        Task<Post[]> GetPostsAsync(string game);
+        Task<Post[]> GetPostsAsync(string gameName);
     }
 }

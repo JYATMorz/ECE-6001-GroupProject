@@ -37,20 +37,68 @@ namespace GameFellowship.Data
                 ),
             };
 
-        // TODO: Maybe use async method
-        public void CreateNewPost(PostModel model)
+        public Task<bool> CreateNewPostAsync(PostModel model, int userID)
         {
             // FIXME: Get UserID from UserStatus
-            Post newPost = new(model, 1, DateTime.Now);
-
+            Post newPost = new(model, userID, DateTime.Now);
             posts.Add(newPost);
+
+            // TODO: IF everything goes well
+            return Task.FromResult(true);
         }
 
-        public Task<Post> GetPostAsync(int id)
+        public Task<bool> AddNewCurrentUserAsync(int postID, int userID)
         {
             var resultPost =
                 from post in posts
-                where post.PostID == id
+                where post.PostID == postID
+                select post;
+
+            if (!resultPost.Any())
+                return Task.FromResult(false);
+
+            if (!resultPost.First().CurrentUserIDs.Add(userID))
+                return Task.FromResult(false);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> AddNewConversationAsync(int postID, Conversation conversation)
+        {
+            var resultPost =
+                from post in posts
+                where post.PostID == postID
+                select post;
+
+            if (!resultPost.Any())
+                return Task.FromResult(false);
+
+            resultPost.First().Conversations.Add(conversation);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> DeleteCurrentUserAsync(int postID, int userID)
+        {
+            var resultPost =
+                from post in posts
+                where post.PostID == postID
+                select post;
+
+            if (!resultPost.Any())
+                return Task.FromResult(false);
+
+            if(!resultPost.First().CurrentUserIDs.Remove(userID))
+                return Task.FromResult(false);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<Post> GetPostAsync(int postID)
+        {
+            var resultPost =
+                from post in posts
+                where post.PostID == postID
                 select post;
 
             if (!resultPost.Any())
@@ -59,11 +107,11 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPost.First());
         }
 
-        public Task<Post[]> GetPostsAsync(string game)
+        public Task<Post[]> GetPostsAsync(string gameName)
         {
             var resultPosts =
                 from post in posts
-                where post.GameName == game
+                where post.GameName == gameName
                 select post;
 
             return Task.FromResult(resultPosts.ToArray());
@@ -83,30 +131,30 @@ namespace GameFellowship.Data
         }
 
         // TODO: Try add group by count
-        public Task<string[]> GetMatchTypesAsync(int num, string? game = null)
+        public Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)
         {
             IEnumerable<string> resultPosts;
 
-            if (string.IsNullOrWhiteSpace(game))
+            if (string.IsNullOrWhiteSpace(gameName))
             {
                 resultPosts = (
                     from post in posts
                     select post.MatchType
-                    ).Take(num);
+                    ).Take(count);
             }
             else
             {
                 resultPosts = (
                     from post in posts
-                    where post.GameName.ToLower() == game.ToLower()
+                    where post.GameName.ToLower() == gameName.ToLower()
                     select post.MatchType
-                ).Take(num);
+                ).Take(count);
             }
 
             return Task.FromResult(resultPosts.ToArray());
         }
 
-        public Task<string[]> GetAudioPlatformsAsync(int num)
+        public Task<string[]> GetAudioPlatformsAsync(int count)
         {
             IEnumerable<string> resultPosts;
 
@@ -114,7 +162,7 @@ namespace GameFellowship.Data
                 from post in posts
                 where post.AudioChat
                 select post.AudioPlatform
-                ).Take(num);
+                ).Take(count);
 
             return Task.FromResult(resultPosts.ToArray());
         }

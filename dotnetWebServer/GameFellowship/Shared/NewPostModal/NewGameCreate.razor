@@ -2,11 +2,11 @@
 @inject IWebHostEnvironment Environment
 
 <div class="m-2 p-3 border rounded-3 border-dark-subtle">
-    @if (newGame.CreatingGame)
+    @if (creatingGame)
     {
         <LoadingSpinner />
     }
-    else
+    else if (!string.IsNullOrWhiteSpace(GameName))
     {
         <div><span class="fw-bold pe-1">@GameName</span>暂时未被收录，不考虑成为创建者🐎</div>
         <div class="form-check form-switch mt-1">
@@ -19,19 +19,35 @@
             <hr>
             <div class="d-flex align-items-stretch gap-3 mt-2">
                 <label class="form-label text-nowrap my-auto" for="IconUpload">给<span class="fw-bold px-1">@GameName</span>上传一个图标吧</label>
-                <InputFile class="form-control" id="IconUpload" accept="image/jpg, image/png, image/jpeg"
+                <InputFile class="form-control" id="IconUpload" accept="image/png, image/jpeg"
                     OnChange="@OnIconFileUploaded"/>
             </div>
             @if (iconUploading)
             {
-                <div>Uploading Icon ...</div>
+                <div>上传中 ...</div>
             }
+            else if (!uploadSuccess && uploadOnce)
+            {
+                <div class="validation-message">上传失败，再上传一遍试试吧</div>
+            }
+            else if (uploadOnce && !string.IsNullOrWhiteSpace(newGame.IconURI))
+            {
+                <div class="text-success">上传完成</div>
+            }
+            <hr>
             <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
+                <div class="me-auto">
+                    @if (!string.IsNullOrWhiteSpace(newGame.IconURI))
+                    {
+                        <img src="@newGame.IconURI" alt="上传图标" height="100" />
+                    }
+                </div>
                 <div class="form-check my-auto">
                     <input class="form-check-input" id="followCheck" type="checkbox" @bind="newGame.Follow">
                     <label class="form-check-label" for="followCheck">成为第1个关注者</label>
                 </div>
-                <button class="btn btn-primary" type="button" @onclick="OnNewGameCreateAsync">创建⭐游戏</button>
+                <button class="btn btn-primary my-auto" type="button" disabled="@(!uploadSuccess)"
+                    @onclick="OnNewGameCreateAsync">创建游戏</button>
             </div>
         }
     }
@@ -53,13 +69,21 @@
 
     private GameModel newGame = default!;
 
+    private bool uploadOnce = false;
+    private bool uploadSuccess = false;
     private bool iconUploading = false;
+    private bool creatingGame = false;
     private IBrowserFile? loadedIcon;
-    private long maxIconSize = 1024 * 1024 * 3; // 3MB
 
-    protected override void OnInitialized()
+    private readonly long _maxIconSize = 1024 * 1024 * 3; // 3MB
+    private readonly string _rootPath = "wwwroot";
+    private readonly string _saveFolderPath = "images";
+    private readonly string _iconPath = "GameIcons";
+    private readonly string _unsafePath = "unsafe";
+
+    protected override void OnParametersSet()
     {
-        base.OnInitialized();
+        base.OnParametersSet();
 
         newGame = new GameModel(GameName);
         _createGame = CreateNewGame;
@@ -72,44 +96,56 @@
 
     private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
     {
-        // FIXME: Handle image upload and rename file and get the uri
         iconUploading = true;
-        string path = string.Empty;
+        if (!uploadOnce) uploadOnce = true;
+
+        string imageName = GameName.ToLower() + ".jpeg";
+
         try
         {
-            loadedIcon = e.File;
+            loadedIcon = await e.File.RequestImageFileAsync("image/jpeg", 500, 500);
 
-            var trustedFileNameForFileStorage = Path.GetRandomFileName();
-            path = Path.Combine(Environment.ContentRootPath,
-                    Environment.EnvironmentName, "unsafe_uploads",
-                    trustedFileNameForFileStorage);
+            var path = Path.Combine(Environment.ContentRootPath,
+                    _rootPath, _saveFolderPath, _iconPath, _unsafePath, imageName);
 
             await using FileStream fs = new(path, FileMode.Create);
-            await loadedIcon.OpenReadStream(maxIconSize).CopyToAsync(fs);
+            await loadedIcon.OpenReadStream(_maxIconSize).CopyToAsync(fs);
+
+            uploadSuccess = true;
         }
-        catch (Exception ex)
+        catch
         {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(path);
+            uploadSuccess = false;
         }
         iconUploading = false;
-        
-        // TODO: Temp
-        newGame.IconURI = "images/GameIcons/gametitle.jpg";
+
+        if (uploadSuccess)
+        {
+            // FIXME: Don't Trust User !
+            newGame.IconURI = Path.Combine(_saveFolderPath, _iconPath, _unsafePath, imageName);
+        }
     }
 
     private async void OnNewGameCreateAsync()
     {
-        newGame.CreatingGame = true;
+        creatingGame = true;
 
         _ = await GameService.CreateNewGameAsync(newGame);
 
-        await Task.Delay(3000);
+        await Task.Delay(1000);
 
         bool existedNewGame = await GameService.HasGameNameAsync(newGame.GameName);
-        await ExistedGameChanged.InvokeAsync(existedNewGame);
 
-        newGame.CreatingGame = false;
-        StateHasChanged();
+        // TODO: User should follow the game if Game Existed after creation
+        if (newGame.Follow && existedNewGame)
+        {
+            // Follow the Game
+        }
+
+        // TODO: Use css to gradually close the div
+        await Task.Delay(1000);
+
+        await ExistedGameChanged.InvokeAsync(existedNewGame);
+        creatingGame = false;
     }
 }

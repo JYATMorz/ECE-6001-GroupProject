@@ -192,9 +192,13 @@
             </EditForm>
             </div>
             <div class="modal-footer justify-content-end">
+                @if(createOnce && !createSucceed)
+                {
+                    <div class="validation-message ms-2 me-auto">创建失败，请重试，谢谢茄子</div>                    
+                }
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    <button type="submit" form="newPostForm" class="btn btn-primary">创建</button>
+					<button type="submit" class="btn btn-primary mx-1" form="newPostForm">创建</button>
                 </div>
             </div>
         </div>
@@ -212,6 +216,9 @@
     private bool existedGame = true;
     private bool createNewGame = false;
 
+    private bool createOnce = false;
+    private bool createSucceed = false;
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -227,6 +234,9 @@
         base.OnParametersSet();
 
         newPost.GameName = GameName ?? string.Empty;
+
+        createOnce = false;
+        createSucceed = false;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -256,11 +266,18 @@
                 return;                
             }
         }
-        
 
-        Console.WriteLine("Pass Validation");
+        // FIXME: Get userID from userStatus
+        int userID = 1;
 
-        // Reload the page
-        // TODO: Navigation.NavigateTo(Navigation.Uri, true);
+        if (!createOnce) createOnce = true;
+        createSucceed = await PostService.CreateNewPostAsync(newPost, userID) &&
+                        await GameService.UpdateNewLatestPostDate(newPost.GameName);
+
+        if (createSucceed)
+        {
+            // Reload the page
+            Navigation.NavigateTo(Navigation.Uri, true);
+        }
     }
 }

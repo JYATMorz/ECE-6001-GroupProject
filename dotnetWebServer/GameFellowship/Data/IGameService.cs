@@ -4,6 +4,8 @@
     {
         Task<bool> CreateNewGameAsync(GameModel model);
 
+        Task<bool> UpdateNewLatestPostDate(string name);
+
         Task<Game[]> GetAllGameAsync();
         Task<Game> GetGameAsync(int id);
         Task<Game> GetGameAsync(string name);

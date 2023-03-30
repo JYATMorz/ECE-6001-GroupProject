@@ -6,7 +6,7 @@ namespace GameFellowship.Data
 
         public int PostID { get; init; } = -1;
         public int CreatorID { get; init; } = -1;
-        public int[] CurrentUserIDs { get; set; } = Array.Empty<int>();
+        public HashSet<int> CurrentUserIDs { get; set; } = new HashSet<int>();
 
         public DateTime LastUpdate { get; init; }
 
@@ -27,7 +27,7 @@ namespace GameFellowship.Data
         public string AudioPlatform { get; set; } = string.Empty;
         public string AudioLink { get; set; } = string.Empty;
 
-        public Conversation[] Conversations { get; set; } = Array.Empty<Conversation>();
+        public List<Conversation> Conversations { get; set; } = new List<Conversation>();
 
         public Post()
         {
@@ -47,7 +47,7 @@ namespace GameFellowship.Data
             TotalPeople = total;
             CurrentPeople = userIDs.Length;
             CreatorID = creator;
-            CurrentUserIDs = userIDs;
+            CurrentUserIDs = userIDs.ToHashSet();
 
             if (description is not null) Description = description;
 
@@ -75,7 +75,7 @@ namespace GameFellowship.Data
 
             if (conversations is not null)
             {
-                Conversations = conversations;
+                Conversations = conversations.ToList();
             }
         }
 
@@ -83,7 +83,7 @@ namespace GameFellowship.Data
         {
             PostID = ++_postID;
             CreatorID = userID;
-            CurrentUserIDs.Append(userID);
+            CurrentUserIDs.Add(userID);
 
             LastUpdate = update;
 
