@@ -11,10 +11,10 @@
                 }
                 else
                 {
-                    <div class="fs-6">@(userName ?? "加载中 ...")</div>
+                    <div class="fs-6">@(string.IsNullOrWhiteSpace(userName) ? "加载中 ..." : userName)</div>
                     <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <img class="rounded-circle" src="@(userIconURI ?? "images/UserIcons/50913860_p9.jpg")"
+                        <img class="rounded-circle" src="@(string.IsNullOrWhiteSpace(userIconURI) ? defaultIconURI : userIconURI)"
                             alt="User" width="30" height="30">
                     </button>
                     <ul class="dropdown-menu text-small shadow">
@@ -79,15 +79,16 @@
     private bool userExist = false;
     private string? userName;
     private string? userIconURI;
+    private string defaultIconURI = "images/GameIcons/gametitle.jpg";
 
     protected override async Task OnParametersSetAsync()
     {
         userExist = await UserService.HasUserAsync(Post.CreatorID);
         if (userExist)
         {
-            userName = await UserService.GetUserNameAsync(Post.CreatorID);
-            userIconURI = await UserService.GetUserIconURIAsync(Post.CreatorID);
-
+            var (name, icon) = await UserService.GetUserNameIconPairAsync(Post.CreatorID);
+            userName = name;
+            userIconURI = icon;
         }
     }
 }

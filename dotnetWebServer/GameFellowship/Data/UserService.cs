@@ -79,6 +79,24 @@ namespace GameFellowship.Data
             }
         }
 
+        public Task<(string, string)> GetUserNameIconPairAsync(int userID)
+        {
+            var resultUser =
+                from user in users
+                where user.UserID == userID
+                select user;
+
+            if (!resultUser.Any())
+            {
+                return Task.FromResult((string.Empty, string.Empty));
+            }
+            else
+            {
+                return Task.FromResult(
+                    (resultUser.First().UserName, resultUser.First().UserIconURI));
+            }
+        }
+
         public Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userIDs)
         {
             var resultUsers = 

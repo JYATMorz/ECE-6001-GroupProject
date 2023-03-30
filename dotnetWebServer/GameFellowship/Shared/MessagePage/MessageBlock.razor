@@ -2,10 +2,10 @@
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
-        <img class="rounded-2" src="@(userIconURI ?? defaultIconURI)" />
+        <img class="rounded-2" src="@(string.IsNullOrWhiteSpace(userIconURI) ? defaultIconURI : userIconURI)" />
             alt="User Icon" width="50" height="50">
         <div>
-            <div class="fs-6 fw-bold">@(userName ?? "加载中 ...")</div>
+            <div class="fs-6 fw-bold">@(string.IsNullOrWhiteSpace(userName) ? "加载中 ..." : userName)</div>
             <small class="text-muted">@Content.SendTime.ToLocalTime()</small>
         </div>
     </div>
@@ -22,7 +22,12 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        userName = await UserService.GetUserNameAsync(Content.UserID);
-        userIconURI = await UserService.GetUserIconURIAsync(Content.UserID);
+        if (await UserService.HasUserAsync(Content.UserID))
+        {
+            var (name, icon) = await UserService.GetUserNameIconPairAsync(Content.UserID);
+            userName = name;
+            userIconURI = icon;
+        }
+        
     }
 }
