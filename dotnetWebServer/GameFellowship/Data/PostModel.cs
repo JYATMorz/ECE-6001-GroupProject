@@ -18,7 +18,7 @@ namespace GameFellowship.Data
                 OnNameChangeAsync();
             }
         }
-        public IEnumerable<string>? GameNameList { get; set; }
+        public string[]? GameNameList { get; set; }
 
         [PostGameValidator(10, "类型")]
         public string MatchType { get; set; } = string.Empty;

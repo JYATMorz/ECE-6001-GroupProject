@@ -41,7 +41,7 @@
         <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
             style="min-height: 0;">
             <div class="flex-grow-1 overflow-y-scroll pe-1">
-                @if (Post.Conversations is not null && Post.Conversations.Count > 0)
+                @if (Post.Conversations is not null && Post.Conversations.Any())
                 {
                     @foreach (var conversation in Post.Conversations)
                     {

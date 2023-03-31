@@ -107,59 +107,84 @@ namespace GameFellowship.Data
             return Task.FromResult(resultPost.First());
         }
 
-        public Task<IEnumerable<Post>> GetPostsAsync(string gameName)
+        public Task<Post[]> GetPostsAsync(string gameName)
         {
             var resultPosts =
                 from post in posts
                 where post.GameName == gameName
                 select post;
 
-            return Task.FromResult(resultPosts);
+            if (!resultPosts.Any())
+            {
+                return Task.FromResult(Array.Empty<Post>());
+            }
+
+            return Task.FromResult(resultPosts.ToArray());
         }
 
-        public Task<IEnumerable<Post>> GetPostsAsync(IEnumerable<int> postIDs)
+        public Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs)
         {
+            if (!postIDs.Any())
+            {
+                return Task.FromResult(Array.Empty<Post>());
+            }
+
             var resultPosts =
                 from post in posts
                 where postIDs.Contains(post.PostID)
                 select post;
 
-            return Task.FromResult(resultPosts);
+            if (!resultPosts.Any())
+            {
+                return Task.FromResult(Array.Empty<Post>());
+            }
+
+            return Task.FromResult(resultPosts.ToArray());
         }
 
         // TODO: Try add group by count
-        public Task<IEnumerable<string>> GetMatchTypesAsync(int count, string? gameName = null)
+        public Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)
         {
-            IEnumerable<string> resultPosts;
+            IEnumerable<string> resultMatchTypes;
 
             if (string.IsNullOrWhiteSpace(gameName))
             {
-                resultPosts = (
+                resultMatchTypes = (
                     from post in posts
                     select post.MatchType
                     ).Take(count);
             }
             else
             {
-                resultPosts = (
+                resultMatchTypes = (
                     from post in posts
                     where post.GameName.ToLower() == gameName.ToLower()
                     select post.MatchType
                 ).Take(count);
             }
 
-            return Task.FromResult(resultPosts);
+            if (!resultMatchTypes.Any())
+            {
+                return Task.FromResult(Array.Empty<string>());
+            }
+
+            return Task.FromResult(resultMatchTypes.ToArray());
         }
 
-        public Task<IEnumerable<string>> GetAudioPlatformsAsync(int count)
+        public Task<string[]> GetAudioPlatformsAsync(int count)
         {
-            var resultPosts = (
+            var resultPlatforms = (
                 from post in posts
                 where post.AudioChat
                 select post.AudioPlatform
                 ).Take(count);
 
-            return Task.FromResult(resultPosts);
+            if (!resultPlatforms.Any())
+            {
+                return Task.FromResult(Array.Empty<string>());
+            }
+
+            return Task.FromResult(resultPlatforms.ToArray());
         }
     }
 }

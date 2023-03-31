@@ -10,8 +10,8 @@
         Task<Game> GetGameAsync(int id);
         Task<Game> GetGameAsync(string name);
         Task<string> GetGameIconAsync(string name);
-        Task<IEnumerable<string>> GetGameNamesAsync(int count, string? prefix = null);
-        Task<IEnumerable<string>> GetGameNamesAsync(IEnumerable<int> gameIDs);
+        Task<string[]> GetGameNamesAsync(int count, string? prefix = null);
+        Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs);
 
         Task<bool> HasGameNameAsync(string name);
     }

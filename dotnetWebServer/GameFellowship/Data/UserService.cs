@@ -45,38 +45,34 @@ namespace GameFellowship.Data
             }
         }
 
-        public Task<IEnumerable<int>?> GetUserLikedGameIDsAsync(int userID)
+        public Task<int[]> GetUserLikedGameIDsAsync(int userID)
         {
             var resultUser =
                 from user in users
                 where user.UserID == userID
                 select user;
 
-            if (resultUser is not null && resultUser.Any())
+            if (!resultUser.Any())
             {
-                return Task.FromResult<IEnumerable<int>?>(resultUser.First().LikedGameIDs);
+                return Task.FromResult(Array.Empty<int>());
             }
-            else
-            {
-                return Task.FromResult<IEnumerable<int>?>(null);
-            }
+
+            return Task.FromResult(resultUser.First().LikedGameIDs.ToArray());
         }
 
-        public Task<IEnumerable<int>?> GetUserJoinedPostIDsAsync(int userID)
+        public Task<int[]> GetUserJoinedPostIDsAsync(int userID)
         {
             var resultUser =
                 from user in users
                 where user.UserID == userID
                 select user;
 
-            if (resultUser is not null && resultUser.Any())
+            if (!resultUser.Any())
             {
-                return Task.FromResult<IEnumerable<int>?>(resultUser.First().JoinedPostIDs);
+                return Task.FromResult(Array.Empty<int>());
             }
-            else
-            {
-                return Task.FromResult<IEnumerable<int>?>(null);
-            }
+            
+            return Task.FromResult(resultUser.First().JoinedPostIDs.ToArray());
         }
 
         public Task<(string, string)> GetUserNameIconPairAsync(int userID)

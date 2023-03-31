@@ -29,7 +29,10 @@ namespace GameFellowship.Data
                 where game.GameName.ToLower() == name.ToLower()
                 select game;
 
-            if (!selectedGame.Any()) return Task.FromResult(false);
+            if (!selectedGame.Any())
+            {
+                return Task.FromResult(false);
+            }
 
             selectedGame.First().LastPostDate = DateTime.Now;
             // TODO: Save it back to database
@@ -44,60 +47,65 @@ namespace GameFellowship.Data
 
         public Task<Game> GetGameAsync(int id)
         {
-            var selectedGame =
+            var resultGame =
                 from game in games
                 where game.GameID == id
                 select game;
 
-            if (!selectedGame.Any())
+            if (!resultGame.Any())
                 return Task.FromResult(new Game());
 
-            return Task.FromResult(selectedGame.First());
+            return Task.FromResult(resultGame.First());
         }
 
         public Task<Game> GetGameAsync(string name)
         {
-            var selectedGame =
+            var resultGame =
                 from game in games
                 where game.GameName.ToLower() == name.ToLower()
                 select game;
 
-            if (!selectedGame.Any())
+            if (!resultGame.Any())
                 return Task.FromResult(new Game());
 
-            return Task.FromResult(selectedGame.First());
+            return Task.FromResult(resultGame.First());
         }
 
         public Task<string> GetGameIconAsync(string name)
         {
-            var selectedGameIcon =
+            var resultGameIcon =
                 from game in games
                 where game.GameName.ToLower() == name.ToLower()
                 select game.IconURI;
 
-            if (!selectedGameIcon.Any())
+            if (!resultGameIcon.Any())
                 return Task.FromResult("images/GameIcons/gametitle.jpg");
 
-            return Task.FromResult(selectedGameIcon.First());
+            return Task.FromResult(resultGameIcon.First());
         }
 
-        public Task<IEnumerable<string>> GetGameNamesAsync(IEnumerable<int> gameIDs)
+        public Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs)
         {
-            var selectedGames =
+            var resultGames =
                 from game in games
                 where gameIDs.Contains(game.GameID)
                 select game.GameName;
 
-            return Task.FromResult(selectedGames);
+            if(!resultGames.Any())
+            {
+                return Task.FromResult(Array.Empty<string>());
+            }
+
+            return Task.FromResult(resultGames.ToArray());
         }
 
-        public Task<IEnumerable<string>> GetGameNamesAsync(int count, string? prefix = null)
+        public Task<string[]> GetGameNamesAsync(int count, string? prefix = null)
         {
-            IEnumerable<string> selectedGames;
+            IEnumerable<string> resultGames;
 
             if (string.IsNullOrWhiteSpace(prefix))
             {
-                selectedGames = (
+                resultGames = (
                     from game in games
                     orderby game.Followers descending
                     select game.GameName
@@ -105,7 +113,7 @@ namespace GameFellowship.Data
             }
             else
             {
-                selectedGames = (
+                resultGames = (
                     from game in games
                     where game.GameName.Contains(prefix)
                     orderby game.Followers descending
@@ -113,7 +121,12 @@ namespace GameFellowship.Data
                 ).Take(count);
             }
 
-            return Task.FromResult(selectedGames);
+            if (!resultGames.Any())
+            {
+                return Task.FromResult(Array.Empty<string>());
+            }
+
+            return Task.FromResult(resultGames.ToArray());
         }
 
         public Task<bool> HasGameNameAsync(string name)
