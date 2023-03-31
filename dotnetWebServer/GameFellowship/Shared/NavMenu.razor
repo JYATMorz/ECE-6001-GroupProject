@@ -7,23 +7,24 @@
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
-                <img class="rounded-circle" src="images/GameIcons/gametitle.jpg" alt="User" width="50" height="50">
+                <img class="rounded-circle" src="@(UserService.DefaultUserIconURI)" alt="UserIcon" width="50" height="50">
             </button>
             <ul class="dropdown-menu text-small shadow">
                 <li><a class="dropdown-item" href="login">登录</a></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="login/register">注册</a></li>
+                <li><a class="dropdown-item" href="register">注册</a></li>
             </ul>
         }
         else
         {
-            <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                <img class="rounded-circle" src="@(userIconURI ?? "images/UserIcons/50913860_p9.jpg")"
-                    alt="User" width="50" height="50">
+            <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button"
+				data-bs-toggle="dropdown" aria-expanded="false">
+                <img class="rounded-circle" src="@(userIconURI ?? UserService.DefaultUserIconURI)"
+                    alt="UserIcon" width="50" height="50">
             </button>
+            <!--TODO: change button to a-->
             <ul class="dropdown-menu text-small shadow">
                 <li><button class="dropdown-item" type="button">新帖子</button></li>
                 <li><button class="dropdown-item" type="button">我的帖子</button></li>
@@ -53,12 +54,12 @@
             <NavLink class="nav-link" href="messages">消息</NavLink>
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">设置</NavLink>
+            <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">设置</NavLink>
         </li>
     </ul>
     <hr>
-    <a class="navbar-brand m-0" href="games">
-        <div class="fs-5 fw-bolder text-light-emphasis m-auto">Game<br>Fellowship</div>
+    <a class="navbar-brand m-0" href="">
+        <div class="fs-5 fw-bolder text-light-emphasis ms-2">Game<br>Fellowship</div>
     </a>
 </div>
 

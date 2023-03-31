@@ -3,9 +3,11 @@
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+        <PageTitle>页面不存在</PageTitle>
+        <LayoutView Layout="@typeof(ErrorLayout)">
+            <p id="errorPageTitle">404</p>
+            <p id="errorPageSubTitle">Not Found</p>
+            <p class="m-5 pb-5">网址错了捏，这里什么东西都没有捏😓</p>
         </LayoutView>
     </NotFound>
 </Router>

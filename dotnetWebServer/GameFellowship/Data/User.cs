@@ -13,7 +13,7 @@ namespace GameFellowship.Data
         public List<int> JoinedPostIDs { get; set; } = new List<int>();
         public List<int> FriendIDs { get; set; } = new List<int>();
 
-        public string UserName { get; set; } = "Undefined Name";
+        public string UserName { get; set; } = "Anonymous";
         public string UserEmail { get; set; } = string.Empty;
         public string UserIconURI { get; set; } = "images/UserIcons/50913860_p9.jpg";
 

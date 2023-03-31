@@ -1,0 +1,58 @@
+﻿@inject IGameService GameService
+@inject NavigationManager Navigation
+
+<form class="d-flex m-auto py-3 gap-3 w-75" role="search">
+    <input class="form-control @(LargeSearchBar ? _largeSearch : string.Empty)"
+        list="searchGameList" type="search" placeholder="搜索游戏" aria-label="Search"
+        @bind="SearchName" @bind:event="oninput">
+    <button class="btn btn-outline-success text-nowrap @(LargeSearchBar ? _largeButton : string.Empty)"
+        type="button" disabled="@invalidSearch" @onclick="NavigateToGame">搜索</button>
+    <datalist id="searchGameList">
+        @if (existedGameNames is not null)
+        {
+            <DataListOptions DataList="@existedGameNames" />
+        }
+    </datalist>
+</form>
+
+@code {
+    [Parameter]
+    public bool LargeSearchBar { get; set; } = false;
+
+    private readonly int _resultCount = 5;
+    private readonly string _largeSearch = "form-control-lg";
+    private readonly string _largeButton = "btn-lg";
+
+    private string? _searchName;
+    private string? SearchName
+    {
+        get => _searchName;
+        set
+        {
+            _searchName = value;
+            OnSearchNameInputAsync();
+        }
+    }
+    private string[]? existedGameNames;
+    private bool invalidSearch = true;
+
+    private async void OnSearchNameInputAsync()
+    {
+        existedGameNames = await GameService.GetGameNamesAsync(_resultCount, SearchName);
+
+        if (existedGameNames.Length == 1 && !string.IsNullOrWhiteSpace(SearchName)
+            && existedGameNames.First().ToLower() == SearchName.ToLower())
+        {
+            invalidSearch = false;
+        }
+        else
+        {
+            invalidSearch = true;
+        }
+    }
+
+    private void NavigateToGame()
+    {
+        Navigation.NavigateTo($"/teams/{_searchName}");
+    }
+}

@@ -11,7 +11,10 @@ namespace GameFellowship.Data
             new User("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
         };
 
-        public Task<string?> GetUserNameAsync(int userID)
+        public string DefaultUserIconURI { get; } = "images/UserIcons/50913860_p9.jpg";
+        public string DefaultUserName { get; } = "用户已注销";
+
+        public Task<string> GetUserNameAsync(int userID)
         {
             var resultUser =
                 from user in users
@@ -20,15 +23,15 @@ namespace GameFellowship.Data
 
             if (resultUser is not null && resultUser.Any())
             {
-                return Task.FromResult<string?>(resultUser.First().UserIconURI);
+                return Task.FromResult(resultUser.First().UserName);
             }
             else
             {
-                return Task.FromResult<string?>(null);
+                return Task.FromResult(DefaultUserName);
             }
         }
 
-        public Task<string?> GetUserIconURIAsync(int userID)
+        public Task<string> GetUserIconURIAsync(int userID)
         {
             var resultUser = 
                 from user in users
@@ -37,11 +40,11 @@ namespace GameFellowship.Data
 
             if(resultUser is not null && resultUser.Any())
             {
-                return Task.FromResult<string?>(resultUser.First().UserName);
+                return Task.FromResult(resultUser.First().UserIconURI);
             }
             else
             {
-                return Task.FromResult<string?>(null);
+                return Task.FromResult(DefaultUserIconURI);
             }
         }
 

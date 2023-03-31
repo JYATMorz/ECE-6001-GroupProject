@@ -1,25 +1,13 @@
 @page "/games"
 
 @inject IGameService GameService
-@inject NavigationManager Navigation
 
-<PageTitle>Find Your Game</PageTitle>
+<PageTitle>找找你的游戏</PageTitle>
 
 <div class="d-flex flex-column h-100">
     <!-- Search Bar -->
     <div class="d-flex gap-1">
-        <form class="d-flex m-auto py-3 gap-1 w-75" role="search">
-            <input class="form-control" list="searchGameList" type="search" placeholder="搜索游戏" aria-label="Search"
-                @bind="SearchName" @bind:event="oninput">
-            <button class="btn btn-outline-success text-nowrap" type="button"
-                disabled="@invalidSearch" @onclick="NavigateToGame">搜索</button>
-            <datalist id="searchGameList">
-                @if (existedGameNames is not null)
-                {
-                    <DataListOptions DataList="@existedGameNames" />
-                }
-            </datalist>
-        </form>
+        <GameSearchBar />
         <!-- Start a New Post -->
         <div class="btn-group m-auto" role="group" aria-label="New Post Button">
             <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
@@ -51,40 +39,9 @@
 
 @code {
     private Game[]? existedGames;
-    private IEnumerable<string>? existedGameNames;
-
-    private bool invalidSearch = true;
-    private string? _searchName;
-    private string? SearchName
-    {
-        get => _searchName;
-        set
-        {
-            _searchName = value;
-            OnSearchNameInputAsync();
-        }
-    }
 
     protected override async Task OnInitializedAsync()
     {
         existedGames = await GameService.GetAllGameAsync();
-    }
-
-    private async void OnSearchNameInputAsync()
-    {
-        existedGameNames = await GameService.GetGameNamesAsync(5, _searchName);
-        if (existedGameNames.Count() == 1 && existedGameNames.First() == _searchName)
-        {
-            invalidSearch = false;
-        }
-        else
-        {
-            invalidSearch = true;
-        }
-    }
-
-    private void NavigateToGame()
-    {
-        Navigation.NavigateTo($"/teams/{_searchName}");
     }
 }
