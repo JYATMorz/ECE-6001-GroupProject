@@ -2,7 +2,7 @@
 {
     public interface IPostService
     {
-        Task<bool> CreateNewPostAsync(PostModel model, int userID);
+        Task<bool> CreateNewPostAsync(PostModel model);
 
         Task<bool> AddNewCurrentUserAsync(int postID, int userID);
         Task<bool> DeleteCurrentUserAsync(int postID, int userID);

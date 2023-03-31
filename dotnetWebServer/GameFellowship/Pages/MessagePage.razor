@@ -55,12 +55,9 @@
     private IEnumerable<Post>? myPosts;
     private Post? selectedPost;
 
-    // FIXME: Get It From UserStatus
-    private int userId = 1;
-
     protected override async Task OnInitializedAsync()
     {
-        myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userId);
+        myPostIDs = await UserService.GetLoginUserJoinedPostIDsAsync();
         if (myPostIDs is null || !myPostIDs.Any())
         {
             hasPost = false;

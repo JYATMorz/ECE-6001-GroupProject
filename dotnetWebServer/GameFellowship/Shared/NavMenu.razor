@@ -3,7 +3,7 @@
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
-        @if (userID <= 0)
+        @if (!UserService.UserHasLogin)
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -64,28 +64,22 @@
 </div>
 
 @code {
-    // FIXME: User info should be obtained from UserStatus
-    private int userID = 1;
-
     private string? userIconURI;
     private IEnumerable<string>? gameNames;
-    private IEnumerable<int>? likedGames;
 
     protected override async Task OnInitializedAsync()
     {
-        bool userExist = await UserService.HasUserAsync(userID);
-        if (userExist)
+        if (UserService.UserHasLogin)
         {
-            userIconURI = await UserService.GetUserIconURIAsync(userID);
-            likedGames = await UserService.GetUserLikedGameIDsAsync(userID);
-            if (likedGames is not null && likedGames.Any())
+            userIconURI = await UserService.GetUserIconURIAsync(UserService.LoginUserID);
+
+            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(UserService.LoginUserID);
+            if (likedGames.Any())
             {
                 gameNames = await GameService.GetGameNamesAsync(likedGames);
             }
         }
-        else
-        {
-            userID = -1;
-        }
     }
+
+    // TODO: User Logout
 }

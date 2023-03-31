@@ -267,17 +267,23 @@
             }
         }
 
-        // FIXME: Get userID from userStatus
-        int userID = 1;
-
         if (!createOnce) createOnce = true;
-        createSucceed = await PostService.CreateNewPostAsync(newPost, userID) &&
-                        await GameService.UpdateNewLatestPostDate(newPost.GameName);
 
-        if (createSucceed)
+        createSucceed = await PostService.CreateNewPostAsync(newPost);
+        if (!createSucceed)
         {
-            // Reload the page
-            Navigation.NavigateTo(Navigation.Uri, true);
+            await JS.InvokeVoidAsync("userLoginAlert", newPost.GameName);
+            return;
         }
+
+        createSucceed = await GameService.UpdateNewLatestPostDate(newPost.GameName);
+        if (!createSucceed)
+        {
+            await JS.InvokeVoidAsync("createGameAlert", newPost.GameName);
+            return;
+        }
+
+        // Reload the page
+        Navigation.NavigateTo(Navigation.Uri, true);
     }
 }

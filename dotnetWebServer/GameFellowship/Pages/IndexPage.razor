@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@inject IUserService UserService
 @inject NavigationManager Navigation
 
 <PageTitle>欢迎来到GameFellowship</PageTitle>
@@ -13,7 +14,7 @@
 	<div class="w-75 mx-auto my-5">
 		<GameSearchBar LargeSearchBar="@true" />
 	</div>
-	@if (!userLogin)
+	@if (!UserService.UserHasLogin)
 	{
 		<div class="d-flex flex-wrap justify-content-center gap-5 m-5">
 			<a role="button" href="/register"
@@ -23,8 +24,3 @@
 		</div>
 	}
 </div>
-
-@code {
-	// FIXME: Get it from User Status
-	private bool userLogin = false;
-}

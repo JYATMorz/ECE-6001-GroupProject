@@ -11,6 +11,9 @@ namespace GameFellowship.Data
             new User("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
         };
 
+        public int LoginUserID { get; private set; } = -1;
+        public bool UserHasLogin => LoginUserID > 0;
+
         public string DefaultUserIconURI { get; } = "images/UserIcons/50913860_p9.jpg";
         public string DefaultUserName { get; } = "用户已注销";
 
@@ -78,6 +81,16 @@ namespace GameFellowship.Data
             return Task.FromResult(resultUser.First().JoinedPostIDs.ToArray());
         }
 
+        public Task<int[]> GetLoginUserJoinedPostIDsAsync()
+        {
+            if (!UserHasLogin)
+            {
+                return Task.FromResult(Array.Empty<int>());
+            }
+
+            return GetUserJoinedPostIDsAsync(LoginUserID);
+        }
+
         public Task<(string, string)> GetUserNameIconPairAsync(int userID)
         {
             var resultUser =
@@ -111,5 +124,32 @@ namespace GameFellowship.Data
             return Task.FromResult(users.Any(user => user.UserID == userID));
         }
 
+        public Task<bool> UserLoginAsync(string userName, string password)
+        {
+            var resultUser = 
+                from user in users
+                where userName.Equals(user.UserName)
+                select user;
+
+            if (!resultUser.Any())
+            {
+                return Task.FromResult(false);
+            }
+
+            LoginUserID = resultUser.First().UserID;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> UserLogoutAsync()
+        {
+            if (users.Any(user => user.UserID == LoginUserID))
+            {
+                LoginUserID = -1;
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(true);
+        }
     }
 }
