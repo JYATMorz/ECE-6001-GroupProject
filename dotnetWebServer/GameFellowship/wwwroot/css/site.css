@@ -71,6 +71,19 @@ hr {
     margin-left: 5px;
 }
 
+.loginFormLabel {
+    width: 9rem;
+    font-size: larger;
+}
+
+.loginFormInput {
+    width: 16rem;
+}
+
+.loginFormError {
+    height: 1.5rem;
+}
+
 #postTotalPeople, #postCurrentPeople {
     width: 4rem;
 }

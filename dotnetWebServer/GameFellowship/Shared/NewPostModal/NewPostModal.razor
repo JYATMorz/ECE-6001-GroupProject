@@ -272,7 +272,7 @@
         createSucceed = await PostService.CreateNewPostAsync(newPost);
         if (!createSucceed)
         {
-            await JS.InvokeVoidAsync("userLoginAlert", newPost.GameName);
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
 

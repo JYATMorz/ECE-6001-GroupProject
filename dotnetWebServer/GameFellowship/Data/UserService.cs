@@ -124,7 +124,17 @@ namespace GameFellowship.Data
             return Task.FromResult(users.Any(user => user.UserID == userID));
         }
 
-        public Task<bool> UserLoginAsync(string userName, string password)
+		public Task<bool> HasUserAsync(string userName)
+        {
+            return Task.FromResult(users.Any(user => userName.Equals(user.UserName)));
+        }
+
+        public Task<bool> HasEmailAsync(string email)
+        {
+            return Task.FromResult(users.Any(user => email.Equals(user.UserEmail)));
+        }
+
+		public Task<bool> UserLoginAsync(string userName, string password)
         {
             var resultUser = 
                 from user in users
@@ -132,6 +142,17 @@ namespace GameFellowship.Data
                 select user;
 
             if (!resultUser.Any())
+            {
+                return Task.FromResult(false);
+            }
+
+            if (LoginUserID == resultUser.First().UserID)
+            {
+                return Task.FromResult(false);
+            }
+
+            // FIXME: Check the password
+            if (string.IsNullOrWhiteSpace(password))
             {
                 return Task.FromResult(false);
             }
@@ -149,7 +170,7 @@ namespace GameFellowship.Data
                 return Task.FromResult(true);
             }
 
-            return Task.FromResult(true);
+            return Task.FromResult(false);
         }
     }
 }

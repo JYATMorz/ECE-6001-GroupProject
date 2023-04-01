@@ -17,8 +17,10 @@
         Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userID);
 
         Task<bool> HasUserAsync(int userID);
+		Task<bool> HasUserAsync(string userName);
+		Task<bool> HasEmailAsync(string email);
 
-        Task<bool> UserLoginAsync(string userName, string password);
+		Task<bool> UserLoginAsync(string userName, string password);
         Task<bool> UserLogoutAsync();
     }
 }

@@ -13,13 +13,23 @@ namespace GameFellowship.Data
         public List<int> JoinedPostIDs { get; set; } = new List<int>();
         public List<int> FriendIDs { get; set; } = new List<int>();
 
-        public string UserName { get; set; } = "Anonymous";
-        public string UserEmail { get; set; } = string.Empty;
-        public string UserIconURI { get; set; } = "images/UserIcons/50913860_p9.jpg";
+        public string UserName { get; private set; } = "Anonymous";
+        public string UserEmail { get; private set; } = string.Empty;
+        public string UserIconURI { get; private set; } = "images/UserIcons/50913860_p9.jpg";
 
         public User()
         {
             UserID = ++_userID;
+        }
+
+        public User(UserModel model)
+        {
+            UserID = ++_userID;
+
+            UserName = model.UserName;
+            // FIXME: User Password
+            UserEmail = model.UserEmail;
+            UserIconURI = model.UserIconURI;
         }
 
         public User(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)

@@ -1,7 +1,31 @@
 ﻿@page "/register"
 
-<h3>RegisterPage</h3>
+@inject IUserService UserService
+@inject NavigationManager Navigation
+
+<PageTitle>注册GameFellowship</PageTitle>
+
+<div class="h-100">
+	<div class="h-25"></div>
+	<div class="d-flex flex-column align-items-center gap-3">
+		<h1>欢迎注册</h1>
+		<h1 class="fw-bold">GameFellowship</h1>
+	</div>
+	<div class="mx-auto my-5">
+		<!--TODO: register EditForm Here-->
+	</div>
+	<div class="d-flex flex-wrap justify-content-evenly gap-5 m-5">
+		<button class="btn btn-outline-info btn-lg px-4 py-3"
+			@onclick="OnReturnToLogin">返回登录</button>
+		<button class="btn btn-primary btn-lg px-4 py-3">立刻注册</button>
+	</div>
+</div>
 
 @code {
 
+
+	private void OnReturnToLogin()
+	{
+		Navigation.NavigateTo("login");
+	}
 }

@@ -1,5 +1,7 @@
 ﻿@inject IUserService UserService
 @inject IGameService GameService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
@@ -32,7 +34,7 @@
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><button class="dropdown-item" type="button">退出登录</button></li>
+                <li><button class="dropdown-item" type="button" @onclick="OnUserLogout">退出登录</button></li>
             </ul>
         }
     </div>
@@ -82,4 +84,16 @@
     }
 
     // TODO: User Logout
+    private async Task OnUserLogout()
+    {
+        bool logoutSucceed = await UserService.UserLogoutAsync();
+
+        if (!logoutSucceed)
+        {
+            await JS.InvokeVoidAsync("userLogoutFailAlert");
+            return;
+        }
+
+        Navigation.NavigateTo(Navigation.Uri, true);
+    }
 }

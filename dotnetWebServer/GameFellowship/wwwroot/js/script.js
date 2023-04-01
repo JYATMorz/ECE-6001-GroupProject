@@ -9,6 +9,16 @@ window.createGameAlert = (gameName) => {
     document.getElementById("postGameName").focus();
 }
 
-window.userLoginAlert = () => {
-    alert(`请先登录⏳真的很快的`);
+window.userLoginPostConfirm = (loginURL) => {
+    if (confirm(`请先登录⏳再发帖`)) {
+        window.location = loginURL;
+    }
+}
+
+window.userLoginFailAlert = () => {
+    alert(`登录失败⏳请重试`);
+}
+
+window.userLogoutFailAlert = () => {
+    alert(`登出失败⏳请重试`);
 }
