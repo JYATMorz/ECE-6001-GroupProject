@@ -11,6 +11,7 @@ namespace GameFellowship.Data
             new User("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
         };
 
+        // FIXME: Seperate the UserStatus Out !!!!!!!
         public int LoginUserID { get; private set; } = -1;
         public bool UserHasLogin => LoginUserID > 0;
 

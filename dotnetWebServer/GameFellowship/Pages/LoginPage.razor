@@ -17,8 +17,8 @@
 			<fieldset class="text-center" disabled="@userLoggingIn">
 				<div class="d-inline-flex align-items-baseline gap-2">
 					<label class="form-label text-nowrap text-end loginFormLabel" for="userLoginName">用户名 / 邮箱：</label>
-					<input class="form-control loginFormInput @((!userNameModified || UserNameValid) ? validDivClass : invalidDivClass) @(userNameModified ? modifiedDivClass : string.Empty)"
-						id="userLoginName" type="text" @bind="UserName" required>
+					<input class="form-control loginFormInput @((!userLoginNameModified || UserLoginNameValid) ? validDivClass : invalidDivClass) @(userLoginNameModified ? modifiedDivClass : string.Empty)"
+						id="userLoginName" type="text" @bind="UserLoginName" required>
 				</div>
 				<div class="loginFormError mb-3">
 					<small class="form-text validation-message">Test for error notification</small>
@@ -38,24 +38,24 @@
 		<button class="btn btn-outline-info btn-lg px-4 py-3"
 			@onclick="OnUserRegister">立刻注册</button>
 		<button class="btn btn-primary btn-lg px-4 py-3" @onclick="OnUserLogin"
-			disabled="@(!UserNameValid || !UserPasswordValid)">登陆账号</button>
+			disabled="@(!UserLoginNameValid || !UserPasswordValid)">登陆账号</button>
 	</div>
 </div>
 
 @code {
-	private string _userName = string.Empty;
-	private string UserName
+	private string _userLoginName = string.Empty;
+	private string UserLoginName
 	{
-		get => _userName;
+		get => _userLoginName;
 		set
 		{
-			_userName = value;
+			_userLoginName = value;
 			OnUserNameChange();
 		}
 	}
 	private bool userExisted = false;
-	private bool UserNameValid => !string.IsNullOrWhiteSpace(UserName) && userExisted;
-	private bool userNameModified = false;
+	private bool UserLoginNameValid => !string.IsNullOrWhiteSpace(UserLoginName) && userExisted;
+	private bool userLoginNameModified = false;
 
 	private string _userPassword = string.Empty;
 	private string UserPassword
@@ -75,17 +75,27 @@
 	private string invalidDivClass = "invalid";
 	private string modifiedDivClass = "modified";
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		userLoginNameModified = false;
+		userPasswordModified = false;
+		userLoggingIn = false;
+	}
+
 	private async void OnUserNameChange()
 	{
-		if (!userNameModified) userNameModified = true;
+		if (!userLoginNameModified) userLoginNameModified = true;
 
-		userExisted = await UserService.HasUserAsync(UserName);
+		userExisted = await UserService.HasUserAsync(UserLoginName)
+			|| await UserService.HasEmailAsync(UserLoginName);
 	}
 
 	private async Task OnUserLogin()
 	{
 		userLoggingIn = true;
-		bool loginSucceed = await UserService.UserLoginAsync(UserName, _userPassword);
+		bool loginSucceed = await UserService.UserLoginAsync(UserLoginName, _userPassword);
 
 		if (!loginSucceed)
 		{
@@ -100,8 +110,13 @@
 
 	private void OnUserRegister()
 	{
-		// TODO: Go to register page with username if it is written
-
-		Navigation.NavigateTo("register");
+		if (!string.IsNullOrWhiteSpace(UserLoginName) && !userExisted)
+		{
+			Navigation.NavigateTo("register?name=" + UserLoginName);
+		}
+		else
+		{
+			Navigation.NavigateTo("register");
+		}
 	}
 }

@@ -22,7 +22,32 @@
 </div>
 
 @code {
+	[Parameter]
+	[SupplyParameterFromQuery]
+	public string? Name { get; set; }
 
+	private UserModel newUser = default!;
+	private EditContext? editContext;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+
+		newUser = new UserModel(UserService);
+
+		editContext = new EditContext(newUser);
+		editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
+	}
+
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+
+		if (!string.IsNullOrWhiteSpace(Name))
+		{
+			newUser.UserName = Name;
+		}
+	}
 
 	private void OnReturnToLogin()
 	{
