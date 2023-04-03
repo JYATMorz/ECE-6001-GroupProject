@@ -77,9 +77,9 @@ namespace GameFellowship.Data
 
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if (value is null || value is not DateTime)
+            if (value is null)
             {
-                return new ValidationResult("请是个正常日期");
+                return ValidationResult.Success;
             }
 
             if ((DateTime)value < DateTime.Today)

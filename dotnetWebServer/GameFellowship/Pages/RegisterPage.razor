@@ -13,11 +13,48 @@
 	</div>
 	<div class="mx-auto my-5">
 		<!--TODO: register EditForm Here-->
+		<EditForm id="newUserForm" EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+		<div class="my-2">
+			<div class="d-inline-flex align-items-baseline my-1">
+				<label class="fw-bold" for="newUserName">用户名：</label>
+				<ValidationMessage For="() => newUser.UserName"/>
+			</div>
+			<InputText id="newUserName" class="form-control" placeholder="用户名最多12个字符"
+				@bind-Value="newUser.UserName"/>
+
+			@if (newUser.UserNameExisted)
+			{
+				<div class="validation-message">有没有可能当前用户名已经有人用了😊</div>
+			}
+		</div>
+		<div class="my-2">
+			<div class="d-inline-flex align-items-baseline my-1">
+				<label class="fw-bold" for="newUserPassword">密码：</label>
+				<ValidationMessage For="() => newUser.UserPassword"/>
+			</div>
+			<InputText id="newUserPassword" class="form-control" placeholder="@_passwordPlaceholder"
+				@bind-Value="newUser.UserPassword" type="password"/>
+
+			<div class="my-1">
+				<label class="fw-bold" for="repeatPassword">重复密码：</label>
+			</div>
+			<InputText id="repeatPassword" class="form-control" placeholder="@_passwordPlaceholder"
+				@bind-Value="newUser.PasswordRepeat" type="password" />
+
+			@if (!newUser.ValidPassword && newUser.PasswordModified)
+			{
+				<div class="validation-message">俺寻思您这两个密码不一样啊</div>
+			}
+		</div>
+		</EditForm>
 	</div>
 	<div class="d-flex flex-wrap justify-content-evenly gap-5 m-5">
-		<button class="btn btn-outline-info btn-lg px-4 py-3"
+		<button class="btn btn-outline-info btn-lg px-4 py-3" type="button"
 			@onclick="OnReturnToLogin">返回登录</button>
-		<button class="btn btn-primary btn-lg px-4 py-3">立刻注册</button>
+		<button class="btn btn-primary btn-lg px-4 py-3" type="submit"
+			form="newUserForm">立刻注册</button>
 	</div>
 </div>
 
@@ -26,8 +63,12 @@
 	[SupplyParameterFromQuery]
 	public string? Name { get; set; }
 
+	private bool registerSucceed = true;
+
 	private UserModel newUser = default!;
 	private EditContext? editContext;
+
+	private readonly string _passwordPlaceholder = "密码长度6~20个字符，允许数字、大小写字母、！、？、@、-";
 
 	protected override void OnInitialized()
 	{
@@ -51,6 +92,26 @@
 
 	private void OnReturnToLogin()
 	{
+		Navigation.NavigateTo("login");
+	}
+
+	private async void HandleValidSubmit()
+	{
+		// DO sth
+
+
+		if (string.IsNullOrWhiteSpace(newUser.UserIconURI))
+		{
+			newUser.UserIconURI = UserService.DefaultUserIconURI;
+		}
+
+		registerSucceed = await UserService.CreateNewUserAsync(newUser);
+		if (!registerSucceed)
+		{
+			// js notification
+			return;
+		}
+
 		Navigation.NavigateTo("login");
 	}
 }

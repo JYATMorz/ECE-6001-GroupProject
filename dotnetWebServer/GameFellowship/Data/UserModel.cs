@@ -1,24 +1,26 @@
 namespace GameFellowship.Data
 {
-    public class UserModel
-    {
-        private readonly IUserService userService;
+	public class UserModel
+	{
+		private readonly IUserService userService;
 
-        private string _userName = string.Empty;
+		private string _userName = string.Empty;
 		[UserNameValidator(12)]
 		public string UserName
-        {
-            get => _userName;
-            set
-            {
-                _userName = value;
-                OnUserNameChange();
+		{
+			get => _userName;
+			set
+			{
+				_userName = value;
+				OnUserNameChange();
 			}
-        }
+		}
 		[UserExistValidator("ÓÃ»§Ãû")]
 		public bool UserNameExisted { get; private set; } = false;
 
 		private string _userEmail = string.Empty;
+		private string _passwordRepeat = string.Empty;
+
 		[UserEmailValidator]
 		public string UserEmail
 		{
@@ -33,22 +35,33 @@ namespace GameFellowship.Data
 		public bool UserEmailExisted { get; private set; } = false;
 
 		[UserPasswordValidator(6, 20)]
-		public string Password { get; set; } = string.Empty;
-		// public bool ValidPassword => !string.IsNullOrWhiteSpace(Password);
+		public string UserPassword { get; set; } = string.Empty;
+		public bool PasswordModified { get; set; } = false;
+		public string PasswordRepeat
+		{
+			get => _passwordRepeat;
+			set
+			{
+                _passwordRepeat = value;
+                if (!PasswordModified) PasswordModified = true;
+			}
+		}
+		[UserPasswordCheckValidator]
+		public bool ValidPassword => UserPassword == PasswordRepeat;
 
-        public string UserIconURI { get; set; } = string.Empty;
+		public string UserIconURI { get; set; } = string.Empty;
 
 		public UserModel(IUserService service)
-        {
+		{
 			userService = service;
-        }
+		}
 
 		private async void OnUserNameChange()
 		{
-            if (!string.IsNullOrWhiteSpace(UserName))
+			if (!string.IsNullOrWhiteSpace(UserName))
 			{
-                UserNameExisted = await userService.HasUserAsync(UserName);
-            }
+				UserNameExisted = await userService.HasUserAsync(UserName);
+			}
 			else
 			{
 				UserNameExisted = false;
@@ -58,9 +71,9 @@ namespace GameFellowship.Data
 		private async void OnUserEmailChange()
 		{
 			if (!string.IsNullOrWhiteSpace(UserEmail))
-            {
-                UserEmailExisted = await userService.HasEmailAsync(UserEmail);
-            }
+			{
+				UserEmailExisted = await userService.HasEmailAsync(UserEmail);
+			}
 			else
 			{
 				UserEmailExisted = false;

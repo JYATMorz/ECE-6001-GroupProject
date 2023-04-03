@@ -67,8 +67,7 @@ hr {
     color: #dc3545;
     font-size: medium;
     letter-spacing: 1px;
-    margin-top: 5px;
-    margin-left: 5px;
+    margin: 0;
 }
 
 .loginFormLabel {

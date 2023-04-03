@@ -9,6 +9,10 @@ window.createGameAlert = (gameName) => {
     document.getElementById("postGameName").focus();
 }
 
+window.createPostAlert = () => {
+    alert(`新建帖子失败⏳重新提交一下吧`);
+}
+
 window.userLoginPostConfirm = (loginURL) => {
     if (confirm(`请先登录⏳再发帖`)) {
         window.location = loginURL;

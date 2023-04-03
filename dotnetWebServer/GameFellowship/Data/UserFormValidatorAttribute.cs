@@ -172,8 +172,23 @@ namespace GameFellowship.Data
             }
             else
             {
-                return new ValidationResult($"有没有可能当前{_existType}已经有人用了😓");
+                return new ValidationResult($"有没有可能当前{_existType}已经有人用了😊");
             }
         }
     }
+
+	public class UserPasswordCheckValidatorAttribute : ValidationAttribute
+	{
+		protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+		{
+			if (value is not null && (bool)value)
+			{
+				return ValidationResult.Success;
+			}
+			else
+			{
+				return new ValidationResult($"请再次输入正确密码");
+			}
+		}
+	}
 }

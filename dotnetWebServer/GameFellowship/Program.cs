@@ -7,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<IGameService, GameService>();
+
+// BUG: Cann't handle reloading page when using Scoped, Cann't handle multi-users when using Singleton
+builder.Services.AddSingleton<IUserStatus, UserStatus>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<IPostService, PostService>();
 
 var app = builder.Build();

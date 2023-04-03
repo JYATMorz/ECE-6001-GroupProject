@@ -1,15 +1,7 @@
-using Microsoft.Extensions.Configuration.UserSecrets;
-
 namespace GameFellowship.Data
 {
     public class PostService : IPostService
     {
-        private readonly IUserService userService;
-        public PostService(IUserService user)
-        {
-            userService = user;
-        }
-
         private List<Post> posts = new() {
                 new Post(
                     new DateTime(2023, 2, 2, 2, 2, 2),
@@ -45,14 +37,11 @@ namespace GameFellowship.Data
                 ),
             };
 
-        public Task<bool> CreateNewPostAsync(PostModel model)
+        public Task<bool> CreateNewPostAsync(PostModel model, int userID)
         {
-            if (!userService.UserHasLogin)
-            {
-                return Task.FromResult(false);
-            }
+            if (userID <= 0) return Task.FromResult(false);
 
-            Post newPost = new(model, userService.LoginUserID, DateTime.Now);
+            Post newPost = new(model, userID, DateTime.Now);
             posts.Add(newPost);
 
             return Task.FromResult(true);

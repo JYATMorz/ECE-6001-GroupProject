@@ -1,5 +1,6 @@
 ﻿@page "/login"
 
+@inject IUserStatus UserStatus
 @inject IUserService UserService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -21,15 +22,21 @@
 						id="userLoginName" type="text" @bind="UserLoginName" required>
 				</div>
 				<div class="loginFormError mb-3">
-					<small class="form-text validation-message">Test for error notification</small>
+					@if (userLoginNameModified && !UserLoginNameValid)
+					{
+						<small class="form-text validation-message">用户名不存在</small>
+					}
 				</div>
 				<div class="d-inline-flex align-items-baseline gap-2">
 					<label class="form-label text-nowrap text-end loginFormLabel" for="userLoginPassword">密码：</label>
 					<input class="form-control loginFormInput @((!userPasswordModified || UserPasswordValid) ? validDivClass : invalidDivClass) @(userPasswordModified ? modifiedDivClass : string.Empty)"
-						id="userLoginPassword" type="password" @bind="_userPassword" required>
+						id="userLoginPassword" type="password" @bind="UserPassword" required>
 				</div>
 				<div class="loginFormError mb-3">
-					<small class="form-text validation-message">Test for error notification</small>
+					@if (userPasswordModified && !UserPasswordValid)
+					{
+						<small class="form-text validation-message">你这密码为什么是空的啊</small>
+					}
 				</div>
 			</fieldset>
 		</form>
@@ -95,7 +102,7 @@
 	private async Task OnUserLogin()
 	{
 		userLoggingIn = true;
-		bool loginSucceed = await UserService.UserLoginAsync(UserLoginName, _userPassword);
+		bool loginSucceed = await UserStatus.UserLoginAsync(UserLoginName, _userPassword);
 
 		if (!loginSucceed)
 		{

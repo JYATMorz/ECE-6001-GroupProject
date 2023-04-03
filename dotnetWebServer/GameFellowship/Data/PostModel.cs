@@ -48,8 +48,8 @@ namespace GameFellowship.Data
         public DateTime EndDate { get; set; } = DateTime.Today;
         public DateTime EndTime { get; set; } = DateTime.Now;
         [PostCompareValidator("开始日期", "结束日期")]
-        public bool ValidDate => StartDate < EndDate ||
-                                 (StartDate == EndDate && StartTime <= EndTime);
+		public bool ValidDate => PlayNow || (!PlayNow && (StartDate < EndDate ||
+                                 (StartDate == EndDate && StartTime <= EndTime)));
 
         [Required]
         public bool AudioChat { get; set; }
@@ -63,15 +63,15 @@ namespace GameFellowship.Data
         [PostAcceptNullValidator("语音地址")]
         public bool ValidAudioLink => !AudioChat || !string.IsNullOrWhiteSpace(AudioLink);
 
-        private async void OnNameChangeAsync()
-        {
-            GameNameList = await _gameServiceModel.GetGameNamesAsync(_resultCount, GameName);
-        }
-
         public PostModel(int count, IGameService gameService)
         {
             _resultCount = count;
             _gameServiceModel = gameService;
         }
-    }
+
+		private async void OnNameChangeAsync()
+		{
+			GameNameList = await _gameServiceModel.GetGameNamesAsync(_resultCount, GameName);
+		}
+	}
 }

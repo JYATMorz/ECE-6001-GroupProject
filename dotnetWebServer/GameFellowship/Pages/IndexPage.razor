@@ -1,5 +1,6 @@
 ﻿@page "/"
 
+@inject IUserStatus UserStatus
 @inject IUserService UserService
 @inject NavigationManager Navigation
 
@@ -14,7 +15,7 @@
 	<div class="w-75 mx-auto my-5">
 		<GameSearchBar LargeSearchBar="@true" />
 	</div>
-	@if (!UserService.UserHasLogin)
+	@if (!UserStatus.UserHasLogin)
 	{
 		<div class="d-flex flex-wrap justify-content-center gap-5 m-5">
 			<a role="button" href="/register"

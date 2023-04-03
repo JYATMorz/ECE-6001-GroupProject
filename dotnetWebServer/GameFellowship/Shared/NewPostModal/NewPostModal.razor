@@ -1,3 +1,4 @@
+@inject IUserStatus UserStatus
 @inject IGameService GameService
 @inject IPostService PostService
 @inject NavigationManager Navigation
@@ -267,12 +268,18 @@
             }
         }
 
-        if (!createOnce) createOnce = true;
-
-        createSucceed = await PostService.CreateNewPostAsync(newPost);
-        if (!createSucceed)
+        if (!UserStatus.UserHasLogin)
         {
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+
+        if (!createOnce) createOnce = true;
+
+        createSucceed = await PostService.CreateNewPostAsync(newPost, UserStatus.LoginUserID);
+        if (!createSucceed)
+        {
+            await JS.InvokeVoidAsync("createPostAlert");
             return;
         }
 

@@ -2,6 +2,7 @@
 
 @inject IUserService UserService
 @inject IPostService PostService
+@inject IUserStatus UserStatus
 
 <PageTitle>你的消息</PageTitle>
 
@@ -57,7 +58,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        myPostIDs = await UserService.GetLoginUserJoinedPostIDsAsync();
+        if (!UserStatus.UserHasLogin)
+        {
+            return;
+        }
+
+        myPostIDs = await UserService.GetUserJoinedPostIDsAsync(UserStatus.LoginUserID);
         if (myPostIDs is null || !myPostIDs.Any())
         {
             hasPost = false;

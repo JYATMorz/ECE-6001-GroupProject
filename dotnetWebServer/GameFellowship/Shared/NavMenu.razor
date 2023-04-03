@@ -1,11 +1,12 @@
-﻿@inject IUserService UserService
+﻿@inject IUserStatus UserStatus
+@inject IUserService UserService
 @inject IGameService GameService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
-        @if (!UserService.UserHasLogin)
+        @if (!UserStatus.UserHasLogin)
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -53,10 +54,13 @@
             }
         }
         <li class="nav-item mt-auto">
-            <NavLink class="nav-link" href="messages">消息</NavLink>
+            @if (UserStatus.UserHasLogin)
+            {
+                <NavLink class="nav-link" href="messages">消息</NavLink>
+            }
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link" href="login" Match="NavLinkMatch.All">设置</NavLink>
+            <NavLink class="nav-link" href="login">设置</NavLink>
         </li>
     </ul>
     <hr>
@@ -71,11 +75,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (UserService.UserHasLogin)
+        if (UserStatus.UserHasLogin)
         {
-            userIconURI = await UserService.GetUserIconURIAsync(UserService.LoginUserID);
+            userIconURI = await UserService.GetUserIconURIAsync(UserStatus.LoginUserID);
 
-            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(UserService.LoginUserID);
+            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(UserStatus.LoginUserID);
             if (likedGames.Any())
             {
                 gameNames = await GameService.GetGameNamesAsync(likedGames);
@@ -86,7 +90,7 @@
     // TODO: User Logout
     private async Task OnUserLogout()
     {
-        bool logoutSucceed = await UserService.UserLogoutAsync();
+        bool logoutSucceed = await UserStatus.UserLogoutAsync();
 
         if (!logoutSucceed)
         {
