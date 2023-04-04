@@ -1,5 +1,9 @@
+@inject IUserStatusService UserStatus
+@inject IUserService UserService
 @inject IGameService GameService
+@inject IIconUploadService IconUpload
 @inject IWebHostEnvironment Environment
+@inject IJSRuntime JS
 
 <div class="m-2 p-3 border rounded-3 border-dark-subtle">
     @if (creatingGame)
@@ -73,13 +77,6 @@
     private bool uploadSuccess = false;
     private bool iconUploading = false;
     private bool creatingGame = false;
-    private IBrowserFile? loadedIcon;
-
-    private readonly long _maxIconSize = 1024 * 1024 * 3; // 3MB
-    private readonly string _rootPath = "wwwroot";
-    private readonly string _saveFolderPath = "images";
-    private readonly string _iconPath = "GameIcons";
-    private readonly string _unsafePath = "UserUpload";
 
     protected override void OnParametersSet()
     {
@@ -99,53 +96,37 @@
         iconUploading = true;
         if (!uploadOnce) uploadOnce = true;
 
-        string imageName = GameName.ToLower() + ".jpeg";
+        (uploadSuccess, string message) = await IconUpload.IconUploadToJpg(e, Environment, GameService.DefaultGameIconFolder, GameName);
 
-        try
-        {
-            loadedIcon = await e.File.RequestImageFileAsync("image/jpeg", 500, 500);
-
-            var path = Path.Combine(Environment.ContentRootPath,
-                    _rootPath, _saveFolderPath, _iconPath, _unsafePath, imageName);
-
-            await using FileStream fs = new(path, FileMode.Create);
-            await loadedIcon.OpenReadStream(_maxIconSize).CopyToAsync(fs);
-
-            uploadSuccess = true;
-        }
-        catch
-        {
-            uploadSuccess = false;
-        }
         iconUploading = false;
 
-        if (uploadSuccess)
-        {
-            // FIXME: Don't Trust User !
-            newGame.IconURI = Path.Combine(_saveFolderPath, _iconPath, _unsafePath, imageName);
-        }
+        newGame.IconURI = uploadSuccess ? message : GameService.DefaultGameIconUri;
     }
 
     private async void OnNewGameCreateAsync()
     {
         creatingGame = true;
+        (bool createSuccess, int gameID) = await GameService.CreateNewGameAsync(newGame);
 
-        _ = await GameService.CreateNewGameAsync(newGame);
+        if (!createSuccess)
+        {
+            creatingGame = false;
+            await JS.InvokeVoidAsync("createGameAlert");
+            return;
+        }
 
         await Task.Delay(1000);
 
-        bool existedNewGame = await GameService.HasGameNameAsync(newGame.GameName);
-
-        // TODO: User should follow the game if Game Existed after creation
-        if (newGame.Follow && existedNewGame)
+        if (newGame.Follow)
         {
-            // Follow the Game
+            await UserService.AddNewLikedGame(UserStatus.LoginUserID, gameID);
+            // FIXME: NavMenu not update
         }
 
         // TODO: Use css to gradually close the div
         await Task.Delay(1000);
 
-        await ExistedGameChanged.InvokeAsync(existedNewGame);
+        await ExistedGameChanged.InvokeAsync(true);
         creatingGame = false;
     }
 }

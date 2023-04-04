@@ -4,12 +4,15 @@ namespace GameFellowship.Data.Services;
 
 public interface IUserService
 {
-	public List<User> Users { get; }
+	List<User> Users { get; }
 
-	public string DefaultUserIconURI { get; }
-	public string DefaultUserName { get; }
+	string DefaultUserIconUri { get; }
+	string DefaultUserIconFolder { get; }
+	string DefaultUserName { get; }
 
 	Task<bool> CreateNewUserAsync(UserModel user);
+
+	Task<bool> AddNewLikedGame(int userID, int GameID);
 
 	Task<string> GetUserNameAsync(int userID);
 	Task<string> GetUserIconURIAsync(int userID);

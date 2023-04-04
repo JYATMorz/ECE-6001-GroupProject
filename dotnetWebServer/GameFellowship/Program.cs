@@ -12,6 +12,7 @@ builder.Services.AddSingleton<IUserStatusService, UserStatusService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<IPostService, PostService>();
+builder.Services.AddTransient<IIconUploadService, IconUploadService>();
 
 var app = builder.Build();
 

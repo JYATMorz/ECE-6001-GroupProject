@@ -13,7 +13,8 @@ public class UserService : IUserService
 		new User("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
 	};
 
-	public string DefaultUserIconURI { get; } = "images/UserIcons/50913860_p9.jpg";
+	public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
+	public string DefaultUserIconFolder { get; } = "UserIcons";
 	public string DefaultUserName { get; } = "用户已注销";
 
 	public async Task<bool> CreateNewUserAsync(UserModel user)
@@ -33,7 +34,24 @@ public class UserService : IUserService
 		return true;
 	}
 
-	public Task<string> GetUserNameAsync(int userID)
+	public Task<bool> AddNewLikedGame(int userID, int GameID)
+	{
+        var resultUser =
+            from user in Users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || resultUser.Any())
+        {
+			return Task.FromResult(false);
+        }
+
+        resultUser.First().LikedGameIDs.Add(GameID);
+        return Task.FromResult(true);
+    }
+
+
+    public Task<string> GetUserNameAsync(int userID)
 	{
 		var resultUser =
 			from user in Users
@@ -63,7 +81,7 @@ public class UserService : IUserService
 		}
 		else
 		{
-			return Task.FromResult(DefaultUserIconURI);
+			return Task.FromResult(DefaultUserIconUri);
 		}
 	}
 

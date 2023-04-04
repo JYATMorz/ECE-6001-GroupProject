@@ -4,7 +4,10 @@ namespace GameFellowship.Data.Services;
 
 public interface IGameService
 {
-	Task<bool> CreateNewGameAsync(GameModel model);
+    string DefaultGameIconUri { get; }
+	string DefaultGameIconFolder { get; }
+
+	Task<(bool, int)> CreateNewGameAsync(GameModel model);
 
 	Task<bool> UpdateNewLatestPostDate(string name);
 

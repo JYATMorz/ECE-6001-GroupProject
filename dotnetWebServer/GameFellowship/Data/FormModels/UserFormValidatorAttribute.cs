@@ -177,7 +177,7 @@ public class UserExistValidatorAttribute : ValidationAttribute
 	}
 }
 
-public class UserPasswordCheckValidatorAttribute : ValidationAttribute
+public class UserValidCheckValidatorAttribute : ValidationAttribute
 {
 	protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
 	{
@@ -187,7 +187,7 @@ public class UserPasswordCheckValidatorAttribute : ValidationAttribute
 		}
 		else
 		{
-			return new ValidationResult($"请再次输入正确密码");
+			return new ValidationResult("内容不符合要求");
 		}
 	}
 }

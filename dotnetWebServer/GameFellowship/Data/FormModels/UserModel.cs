@@ -6,19 +6,25 @@ public class UserModel
 {
 	private readonly IUserService userService;
 
+	private const int _userNameMaxLength = 12;
+	private const int _userPasswordMinLength = 6;
+	private const int _userPasswordMaxLength = 20;
+
 	private string _userName = string.Empty;
-	[UserNameValidator(12)]
+	[UserNameValidator(_userNameMaxLength)]
 	public string UserName
 	{
 		get => _userName;
 		set
 		{
-			_userName = value;
+			_userName = value.Trim();
 			OnUserNameChange();
 		}
 	}
 	[UserExistValidator("ÓÃ»§Ãû")]
 	public bool UserNameExisted { get; private set; } = false;
+	[UserValidCheckValidator]
+	public bool ValidUserName => !string.IsNullOrWhiteSpace(UserName) && UserName.Length <= _userNameMaxLength && !UserNameExisted;
 
 	private string _userEmail = string.Empty;
 	private string _passwordRepeat = string.Empty;
@@ -29,14 +35,14 @@ public class UserModel
 		get => _userEmail;
 		set
 		{
-			_userEmail = value;
+			_userEmail = value.Trim();
 			OnUserEmailChange();
 		}
 	}
 	[UserExistValidator("ÓÊÏä")]
 	public bool UserEmailExisted { get; private set; } = false;
 
-	[UserPasswordValidator(6, 20)]
+	[UserPasswordValidator(_userPasswordMinLength, _userPasswordMaxLength)]
 	public string UserPassword { get; set; } = string.Empty;
 	public bool PasswordModified { get; set; } = false;
 	public string PasswordRepeat
@@ -44,12 +50,12 @@ public class UserModel
 		get => _passwordRepeat;
 		set
 		{
-			_passwordRepeat = value;
+			_passwordRepeat = value.Trim();
 			if (!PasswordModified) PasswordModified = true;
 		}
 	}
-	[UserPasswordCheckValidator]
-	public bool ValidPassword => UserPassword == PasswordRepeat;
+	[UserValidCheckValidator]
+	public bool ValidPassword => !string.IsNullOrWhiteSpace(UserPassword) && UserPassword == PasswordRepeat;
 
 	public string UserIconURI { get; set; } = string.Empty;
 

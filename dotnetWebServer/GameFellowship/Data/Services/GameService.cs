@@ -15,13 +15,16 @@ public class GameService : IGameService
 		new Game ("CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
 	};
 
-	public Task<bool> CreateNewGameAsync(GameModel model)
+	public string DefaultGameIconUri { get; } = "images/GameIcons/gametitle.jpg";
+	public string DefaultGameIconFolder { get; } = "GameIcons";
+
+	public Task<(bool, int)> CreateNewGameAsync(GameModel model)
 	{
 		Game newGame = new(model);
 		games.Add(newGame);
 
 		// TODO: IF everything goes well
-		return Task.FromResult(true);
+		return Task.FromResult((true, newGame.GameID));
 	}
 
 	public Task<bool> UpdateNewLatestPostDate(string name)
@@ -81,7 +84,7 @@ public class GameService : IGameService
 			select game.IconURI;
 
 		if (!resultGameIcon.Any())
-			return Task.FromResult("images/GameIcons/gametitle.jpg");
+			return Task.FromResult(DefaultGameIconUri);
 
 		return Task.FromResult(resultGameIcon.First());
 	}
