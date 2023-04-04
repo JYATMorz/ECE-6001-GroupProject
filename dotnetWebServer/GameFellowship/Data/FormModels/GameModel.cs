@@ -8,6 +8,6 @@ public class GameModel
 
 	public GameModel(string name)
 	{
-		GameName = name;
+		GameName = name.Trim();
 	}
 }

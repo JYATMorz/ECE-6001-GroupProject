@@ -15,7 +15,7 @@ public class PostModel
 		get => _gameName;
 		set
 		{
-			_gameName = value;
+			_gameName = value.Trim();
 			OnNameChangeAsync();
 		}
 	}
