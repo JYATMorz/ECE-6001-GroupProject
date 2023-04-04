@@ -1,19 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 
-namespace GameFellowship.Data
+namespace GameFellowship.Data.FormModels;
+
+public class BootstrapValidationClassProvider : FieldCssClassProvider
 {
-    public class BootstrapValidationClassProvider : FieldCssClassProvider
-    {
-        public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
-        {
-            var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
+	public override string GetFieldCssClass(EditContext editContext, in FieldIdentifier fieldIdentifier)
+	{
+		var isValid = !editContext.GetValidationMessages(fieldIdentifier).Any();
 
-            if (editContext.IsModified(fieldIdentifier))
-            {
-                return isValid ? "modified valid" : "modified invalid";
-            }
+		if (editContext.IsModified(fieldIdentifier))
+		{
+			return isValid ? "modified valid" : "modified invalid";
+		}
 
-            return isValid ? "valid" : "invalid";
-        }
-    }
+		return isValid ? "valid" : "invalid";
+	}
 }

@@ -1,57 +1,56 @@
-﻿namespace GameFellowship.Data
+﻿namespace GameFellowship.Data.Services;
+
+public class UserStatusService : IUserStatusService
 {
-	public class UserStatusService : IUserStatusService
+	private readonly IUserService userService;
+
+	// FIXME: Still for one user only
+	// TODO: Local Session Storage to seperate user
+	// https://www.cnblogs.com/towerbit/p/15044935.html
+	public int LoginUserID { get; private set; } = -1;
+	public bool UserHasLogin => LoginUserID > 0;
+
+	public UserStatusService(IUserService service)
 	{
-		private readonly IUserService userService;
+		userService = service;
+	}
 
-		// FIXME: Still for one user only
-		// TODO: Local Session Storage to seperate user
-		// https://www.cnblogs.com/towerbit/p/15044935.html
-		public int LoginUserID { get; private set; } = -1;
-		public bool UserHasLogin => LoginUserID > 0;
+	public Task<bool> UserLoginAsync(string userName, string password)
+	{
+		var resultUser =
+			from user in userService.Users
+			where userName.Equals(user.UserName)
+			select user;
 
-		public UserStatusService(IUserService service)
+		if (!resultUser.Any())
 		{
-			userService = service;
+			return Task.FromResult(false);
 		}
 
-		public Task<bool> UserLoginAsync(string userName, string password)
+		if (LoginUserID == resultUser.First().UserID)
 		{
-			var resultUser =
-				from user in userService.Users
-				where userName.Equals(user.UserName)
-				select user;
+			return Task.FromResult(false);
+		}
 
-			if (!resultUser.Any())
-			{
-				return Task.FromResult(false);
-			}
+		// FIXME: Check the password
+		if (string.IsNullOrWhiteSpace(password))
+		{
+			return Task.FromResult(false);
+		}
 
-			if (LoginUserID == resultUser.First().UserID)
-			{
-				return Task.FromResult(false);
-			}
+		LoginUserID = resultUser.First().UserID;
 
-			// FIXME: Check the password
-			if (string.IsNullOrWhiteSpace(password))
-			{
-				return Task.FromResult(false);
-			}
+		return Task.FromResult(true);
+	}
 
-			LoginUserID = resultUser.First().UserID;
-
+	public Task<bool> UserLogoutAsync()
+	{
+		if (userService.Users.Any(user => user.UserID == LoginUserID))
+		{
+			LoginUserID = -1;
 			return Task.FromResult(true);
 		}
 
-		public Task<bool> UserLogoutAsync()
-		{
-			if (userService.Users.Any(user => user.UserID == LoginUserID))
-			{
-				LoginUserID = -1;
-				return Task.FromResult(true);
-			}
-
-			return Task.FromResult(false);
-		}
+		return Task.FromResult(false);
 	}
 }

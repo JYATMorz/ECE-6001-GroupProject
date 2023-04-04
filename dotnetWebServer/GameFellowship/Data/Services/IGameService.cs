@@ -1,18 +1,19 @@
-﻿namespace GameFellowship.Data
+﻿using GameFellowship.Data.FormModels;
+
+namespace GameFellowship.Data.Services;
+
+public interface IGameService
 {
-    public interface IGameService
-    {
-        Task<bool> CreateNewGameAsync(GameModel model);
+	Task<bool> CreateNewGameAsync(GameModel model);
 
-        Task<bool> UpdateNewLatestPostDate(string name);
+	Task<bool> UpdateNewLatestPostDate(string name);
 
-        Task<Game[]> GetAllGameAsync();
-        Task<Game> GetGameAsync(int id);
-        Task<Game> GetGameAsync(string name);
-        Task<string> GetGameIconAsync(string name);
-        Task<string[]> GetGameNamesAsync(int count, string? prefix = null);
-        Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs);
+	Task<Game[]> GetAllGameAsync();
+	Task<Game> GetGameAsync(int id);
+	Task<Game> GetGameAsync(string name);
+	Task<string> GetGameIconAsync(string name);
+	Task<string[]> GetGameNamesAsync(int count, string? prefix = null);
+	Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs);
 
-        Task<bool> HasGameNameAsync(string name);
-    }
+	Task<bool> HasGameNameAsync(string name);
 }

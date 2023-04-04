@@ -1,4 +1,4 @@
-using GameFellowship.Data;
+using GameFellowship.Data.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 

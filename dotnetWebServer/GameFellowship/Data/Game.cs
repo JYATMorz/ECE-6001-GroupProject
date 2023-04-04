@@ -1,40 +1,41 @@
-namespace GameFellowship.Data
+using GameFellowship.Data.FormModels;
+
+namespace GameFellowship.Data;
+
+public class Game
 {
-    public class Game
+    private static int _gameID;
+
+    public int GameID { get; init; } = -1;
+    public string GameName { get; set; } = "Empty Name";
+    public int Followers { get; set; } = 0;
+    public string IconURI { get; set; } = "images/GameIcons/gametitle.jpg";
+    public DateTime LastPostDate { get; set; } = DateTime.MinValue;
+
+    public Game()
     {
-        private static int _gameID;
+        GameID = ++_gameID;
+    }
 
-        public int GameID { get; init; } = -1;
-        public string GameName { get; set; } = "Empty Name";
-        public int Followers { get; set; } = 0;
-        public string IconURI { get; set; } = "images/GameIcons/gametitle.jpg";
-        public DateTime LastPostDate { get; set; } = DateTime.MinValue;
+    public Game(GameModel model)
+    {
+        GameID = ++_gameID;
 
-        public Game()
-        {
-            GameID = ++_gameID;
-        }
+        GameName = model.GameName;
+        Followers = model.Follow ? 1 : 0;
+        IconURI = model.IconURI;
+    }
 
-        public Game(GameModel model)
-        {
-            GameID = ++_gameID;
+    public Game(string name, int followers, DateTime? lastPost = null, string? icon = null)
+    {
+        GameID = ++_gameID;
+        GameName = name;
+        Followers = followers;
 
-            GameName = model.GameName;
-            Followers = model.Follow ? 1 : 0;
-            IconURI = model.IconURI;
-        }
+        if (lastPost is not null && lastPost != DateTime.MinValue)
+            LastPostDate = (DateTime)lastPost;
 
-        public Game(string name, int followers, DateTime? lastPost = null, string? icon = null)
-        {
-            GameID = ++_gameID;
-            GameName = name;
-            Followers = followers;
-
-            if (lastPost is not null && lastPost != DateTime.MinValue)
-                LastPostDate = (DateTime)lastPost;
-
-            if (icon is not null)
-                IconURI = icon;
-        }
+        if (icon is not null)
+            IconURI = icon;
     }
 }

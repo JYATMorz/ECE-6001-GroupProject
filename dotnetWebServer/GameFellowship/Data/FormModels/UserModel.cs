@@ -1,83 +1,84 @@
-namespace GameFellowship.Data
+using GameFellowship.Data.Services;
+
+namespace GameFellowship.Data.FormModels;
+
+public class UserModel
 {
-	public class UserModel
+	private readonly IUserService userService;
+
+	private string _userName = string.Empty;
+	[UserNameValidator(12)]
+	public string UserName
 	{
-		private readonly IUserService userService;
-
-		private string _userName = string.Empty;
-		[UserNameValidator(12)]
-		public string UserName
+		get => _userName;
+		set
 		{
-			get => _userName;
-			set
-			{
-				_userName = value;
-				OnUserNameChange();
-			}
+			_userName = value;
+			OnUserNameChange();
 		}
-		[UserExistValidator("用户名")]
-		public bool UserNameExisted { get; private set; } = false;
+	}
+	[UserExistValidator("用户名")]
+	public bool UserNameExisted { get; private set; } = false;
 
-		private string _userEmail = string.Empty;
-		private string _passwordRepeat = string.Empty;
+	private string _userEmail = string.Empty;
+	private string _passwordRepeat = string.Empty;
 
-		[UserEmailValidator]
-		public string UserEmail
+	[UserEmailValidator]
+	public string UserEmail
+	{
+		get => _userEmail;
+		set
 		{
-			get => _userEmail;
-			set
-			{
-				_userEmail = value;
-				OnUserEmailChange();
-			}
+			_userEmail = value;
+			OnUserEmailChange();
 		}
-		[UserExistValidator("邮箱")]
-		public bool UserEmailExisted { get; private set; } = false;
+	}
+	[UserExistValidator("邮箱")]
+	public bool UserEmailExisted { get; private set; } = false;
 
-		[UserPasswordValidator(6, 20)]
-		public string UserPassword { get; set; } = string.Empty;
-		public bool PasswordModified { get; set; } = false;
-		public string PasswordRepeat
+	[UserPasswordValidator(6, 20)]
+	public string UserPassword { get; set; } = string.Empty;
+	public bool PasswordModified { get; set; } = false;
+	public string PasswordRepeat
+	{
+		get => _passwordRepeat;
+		set
 		{
-			get => _passwordRepeat;
-			set
-			{
-                _passwordRepeat = value;
-                if (!PasswordModified) PasswordModified = true;
-			}
+			_passwordRepeat = value;
+			if (!PasswordModified) PasswordModified = true;
 		}
-		[UserPasswordCheckValidator]
-		public bool ValidPassword => UserPassword == PasswordRepeat;
+	}
+	[UserPasswordCheckValidator]
+	public bool ValidPassword => UserPassword == PasswordRepeat;
 
-		public string UserIconURI { get; set; } = string.Empty;
+	public string UserIconURI { get; set; } = string.Empty;
 
-		public UserModel(IUserService service)
+	public UserModel(IUserService service)
+	{
+		userService = service;
+	}
+
+	private async void OnUserNameChange()
+	{
+		if (!string.IsNullOrWhiteSpace(UserName))
 		{
-			userService = service;
+			UserNameExisted = await userService.HasUserAsync(UserName);
 		}
-
-		private async void OnUserNameChange()
+		else
 		{
-			if (!string.IsNullOrWhiteSpace(UserName))
-			{
-				UserNameExisted = await userService.HasUserAsync(UserName);
-			}
-			else
-			{
-				UserNameExisted = false;
-			}
+			UserNameExisted = false;
 		}
+	}
 
-		private async void OnUserEmailChange()
+	private async void OnUserEmailChange()
+	{
+		if (!string.IsNullOrWhiteSpace(UserEmail))
 		{
-			if (!string.IsNullOrWhiteSpace(UserEmail))
-			{
-				UserEmailExisted = await userService.HasEmailAsync(UserEmail);
-			}
-			else
-			{
-				UserEmailExisted = false;
-			}
+			UserEmailExisted = await userService.HasEmailAsync(UserEmail);
+		}
+		else
+		{
+			UserEmailExisted = false;
 		}
 	}
 }
