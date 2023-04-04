@@ -26,3 +26,7 @@ window.userLoginFailAlert = () => {
 window.userLogoutFailAlert = () => {
     alert(`登出失败⏳请重试`);
 }
+
+window.userRegisterFailAlert = () => {
+    alert(`注册失败⏳请重试`);
+}
