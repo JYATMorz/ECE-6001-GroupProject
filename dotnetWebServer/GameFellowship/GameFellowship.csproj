@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\GameIcons\UserUpload\" />
+    <Folder Include="wwwroot\images\UserIcons\UserUpload\" />
+  </ItemGroup>
+
 </Project>

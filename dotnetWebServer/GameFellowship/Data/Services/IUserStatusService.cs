@@ -1,6 +1,6 @@
 ﻿namespace GameFellowship.Data
 {
-	public interface IUserStatus
+	public interface IUserStatusService
 	{
 		int LoginUserID { get; }
 		bool UserHasLogin { get; }

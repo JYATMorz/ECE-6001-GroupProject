@@ -1,6 +1,6 @@
 ﻿namespace GameFellowship.Data
 {
-	public class UserStatus : IUserStatus
+	public class UserStatusService : IUserStatusService
 	{
 		private readonly IUserService userService;
 
@@ -10,7 +10,7 @@
 		public int LoginUserID { get; private set; } = -1;
 		public bool UserHasLogin => LoginUserID > 0;
 
-		public UserStatus(IUserService service)
+		public UserStatusService(IUserService service)
 		{
 			userService = service;
 		}
