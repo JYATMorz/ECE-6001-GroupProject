@@ -1,5 +1,8 @@
 @page "/teams/{GameName}"
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
 @inject IUserStatusService UserStatus
 @inject IPostService PostService
 @inject IGameService GameService
@@ -48,7 +51,7 @@
             <!-- TODO: Start a New Post -->
             <div class="btn-group me-1 ms-auto" role="group" aria-label="New Post Button">
                 <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                        data-bs-target="#teamCreateModal" disabled="@(!UserStatus.UserHasLogin)">
+                        data-bs-target="#teamCreateModal" disabled="@(!userHasLogin)">
                     新组队
                 </button>
             </div>
@@ -87,8 +90,9 @@
     [Parameter]
     public string GameName { get; set; } = string.Empty;
 
-    private Post selectedPost { get; set; } = new();
+    private bool userHasLogin = false;
 
+    private Post selectedPost { get; set; } = new();
     private IEnumerable<Post>? posts;
     private Game? theGame;
 
@@ -96,6 +100,14 @@
     {
         posts = await PostService.GetPostsAsync(GameName);
         theGame = await GameService.GetGameAsync(GameName);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+
+        StateHasChanged();
     }
 
     private void ShowTeamDetail(Post post)

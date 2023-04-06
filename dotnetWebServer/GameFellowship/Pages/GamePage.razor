@@ -1,5 +1,8 @@
 @page "/games"
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
 @inject IUserStatusService UserStatus
 @inject IGameService GameService
 
@@ -12,7 +15,7 @@
         <!-- Start a New Post -->
         <div class="btn-group m-auto" role="group" aria-label="New Post Button">
             <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                    data-bs-target="#teamCreateModal" disabled="@(!UserStatus.UserHasLogin)">
+                    data-bs-target="#teamCreateModal" disabled="@(!userHasLogin)">
                 新组队
             </button>
         </div>
@@ -42,9 +45,18 @@
 
 @code {
     private Game[]? existedGames;
+    private bool userHasLogin = false;
 
     protected override async Task OnInitializedAsync()
     {
         existedGames = await GameService.GetAllGameAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var userIdResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        userHasLogin = userIdResult.Success && UserStatus.UserHasLogin(userIdResult.Value);
+
+        StateHasChanged();
     }
 }

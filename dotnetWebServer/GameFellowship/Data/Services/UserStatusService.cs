@@ -3,19 +3,21 @@
 public class UserStatusService : IUserStatusService
 {
 	private readonly IUserService userService;
+	private HashSet<int> loginUsers = new();
 
-	// FIXME: Still for one user only
-	// TODO: Local Session Storage to seperate user
-	// https://www.cnblogs.com/towerbit/p/15044935.html
-	public int LoginUserID { get; private set; } = -1;
-	public bool UserHasLogin => LoginUserID > 0;
+	public string SessionStorageKey { get; } = "userid";
 
 	public UserStatusService(IUserService service)
 	{
 		userService = service;
 	}
 
-	public Task<bool> UserLoginAsync(string userName, string password)
+	public bool UserHasLogin(int userId)
+	{
+        return loginUsers.Contains(userId);
+	}
+
+	public (bool, int) UserLogin(string userName, string password)
 	{
 		var resultUser =
 			from user in userService.Users
@@ -24,33 +26,29 @@ public class UserStatusService : IUserStatusService
 
 		if (!resultUser.Any())
 		{
-			return Task.FromResult(false);
+			return (false, -1);
 		}
 
-		if (LoginUserID == resultUser.First().UserID)
-		{
-			return Task.FromResult(false);
-		}
-
-		// FIXME: Check the password
 		if (string.IsNullOrWhiteSpace(password))
 		{
-			return Task.FromResult(false);
+			return (false, -1);
+		}
+		else
+		{
+            // FIXME: Check the password
+        }
+
+		int userId = resultUser.First().UserID;
+		if (!loginUsers.Add(userId))
+		{
+			return (false, -1);
 		}
 
-		LoginUserID = resultUser.First().UserID;
-
-		return Task.FromResult(true);
+		return (true, userId);
 	}
 
-	public Task<bool> UserLogoutAsync()
+	public bool UserLogout(int userId)
 	{
-		if (userService.Users.Any(user => user.UserID == LoginUserID))
-		{
-			LoginUserID = -1;
-			return Task.FromResult(true);
-		}
-
-		return Task.FromResult(false);
+        return loginUsers.Remove(userId);
 	}
 }

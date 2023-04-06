@@ -1,5 +1,8 @@
 @page "/messages/{PostID:int?}"
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
 @inject IUserService UserService
 @inject IPostService PostService
 @inject IUserStatusService UserStatus
@@ -51,33 +54,29 @@
     [Parameter]
     public int? PostID { get; set; }
 
-    private IEnumerable<int>? myPostIDs;
     private bool hasPost = true;
     private IEnumerable<Post>? myPosts;
     private Post? selectedPost;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!UserStatus.UserHasLogin)
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+
+        if (!userLoginResult.Success)
         {
+            hasPost = false;
             return;
         }
 
-        myPostIDs = await UserService.GetUserJoinedPostIDsAsync(UserStatus.LoginUserID);
+        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userLoginResult.Value);
         if (myPostIDs is null || !myPostIDs.Any())
         {
             hasPost = false;
+            return;
         }
-        else
-        {
-            myPosts = await PostService.GetPostsAsync(myPostIDs);
-        }
-    }
 
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        
+        myPosts = await PostService.GetPostsAsync(myPostIDs);
+
         if (PostID is not null && myPosts is not null)
         {
             selectedPost = (
@@ -86,5 +85,7 @@
                 select post
             ).First();
         }
+
+        StateHasChanged();
     }
 }

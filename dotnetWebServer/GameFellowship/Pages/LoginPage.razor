@@ -1,5 +1,8 @@
 ﻿@page "/login"
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
 @inject IUserStatusService UserStatus
 @inject IUserService UserService
 @inject NavigationManager Navigation
@@ -102,14 +105,16 @@
 	private async Task OnUserLogin()
 	{
 		userLoggingIn = true;
-		bool loginSucceed = await UserStatus.UserLoginAsync(UserLoginName, _userPassword);
+
+		(bool loginSucceed, int userId) = UserStatus.UserLogin(UserLoginName, UserPassword);
 
 		if (!loginSucceed)
 		{
-			await JS.InvokeVoidAsync("");
+			await JS.InvokeVoidAsync("userLoginFailAlert");
 			userLoggingIn = false;
 			return;
 		}
+		await SessionStorage.SetAsync(UserStatus.SessionStorageKey, userId);
 
 		userLoggingIn = false;
 		Navigation.NavigateTo("games", true);

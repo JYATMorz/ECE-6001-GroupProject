@@ -1,4 +1,7 @@
-﻿@inject IUserStatusService UserStatus
+﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
+@inject IUserStatusService UserStatus
 @inject IUserService UserService
 @inject IGameService GameService
 @inject NavigationManager Navigation
@@ -6,7 +9,7 @@
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
-        @if (!UserStatus.UserHasLogin)
+        @if (!userHasLogin)
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -54,7 +57,7 @@
             }
         }
         <li class="nav-item mt-auto">
-            @if (UserStatus.UserHasLogin)
+            @if (userHasLogin)
             {
                 <NavLink class="nav-link" href="messages">消息</NavLink>
             }
@@ -70,33 +73,41 @@
 </div>
 
 @code {
+    private bool userHasLogin = false;
     private string? userIconURI;
     private IEnumerable<string>? gameNames;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (UserStatus.UserHasLogin)
-        {
-            userIconURI = await UserService.GetUserIconURIAsync(UserStatus.LoginUserID);
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
 
-            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(UserStatus.LoginUserID);
+        if (userHasLogin)
+        {
+            userIconURI = await UserService.GetUserIconURIAsync(userLoginResult.Value);
+
+            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(userLoginResult.Value);
             if (likedGames.Any())
             {
                 gameNames = await GameService.GetGameNamesAsync(likedGames);
             }
+
+            StateHasChanged();
         }
     }
 
-    // TODO: User Logout
     private async Task OnUserLogout()
     {
-        bool logoutSucceed = await UserStatus.UserLogoutAsync();
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+
+        bool logoutSucceed = userLoginResult.Success && UserStatus.UserLogout(userLoginResult.Value);
 
         if (!logoutSucceed)
         {
             await JS.InvokeVoidAsync("userLogoutFailAlert");
             return;
         }
+        await SessionStorage.DeleteAsync(UserStatus.SessionStorageKey);
 
         Navigation.NavigateTo(Navigation.Uri, true);
     }

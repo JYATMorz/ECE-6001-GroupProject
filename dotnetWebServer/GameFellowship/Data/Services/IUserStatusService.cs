@@ -2,9 +2,9 @@
 
 public interface IUserStatusService
 {
-	int LoginUserID { get; }
-	bool UserHasLogin { get; }
+    string SessionStorageKey { get; }
 
-	Task<bool> UserLoginAsync(string userName, string password);
-	Task<bool> UserLogoutAsync();
+    bool UserHasLogin(int userId);
+    (bool, int) UserLogin(string userName, string password);
+	bool UserLogout(int userId);
 }
