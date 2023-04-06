@@ -1,5 +1,6 @@
 @page "/games"
 
+@inject IUserStatusService UserStatus
 @inject IGameService GameService
 
 <PageTitle>找找你的游戏</PageTitle>
@@ -11,7 +12,9 @@
         <!-- Start a New Post -->
         <div class="btn-group m-auto" role="group" aria-label="New Post Button">
             <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                data-bs-target="#teamCreateModal">新组队</button>
+                    data-bs-target="#teamCreateModal" disabled="@(!UserStatus.UserHasLogin)">
+                新组队
+            </button>
         </div>
     </div>
 

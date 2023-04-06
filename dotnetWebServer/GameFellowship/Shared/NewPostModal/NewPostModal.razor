@@ -32,7 +32,7 @@
                     </datalist>
                     @if (!existedGame && !editContext!.GetValidationMessages(()=>newPost.GameName).Any())
                     {
-                        <NewGameCreate GameName="@newPost.GameName" @bind-CreateNewGame="createNewGame" @bind-ExistedGame="existedGame" />
+                        <NewGameCreate GameName="@newPost.GameName" @bind-ExistedGame="existedGame" />
                     }
                 </div>
                 <!-- Match Type -->
@@ -215,7 +215,6 @@
 
     private const int searchResult = 5;
     private bool existedGame = true;
-    private bool createNewGame = false;
 
     private bool createOnce = false;
     private bool createSucceed = false;
@@ -258,7 +257,7 @@
 
     private async void HandleValidSubmit()
     {
-        if (createNewGame || !existedGame)
+        if (!existedGame)
         {
             existedGame = await GameService.HasGameNameAsync(newPost.GameName);
             if (!existedGame)

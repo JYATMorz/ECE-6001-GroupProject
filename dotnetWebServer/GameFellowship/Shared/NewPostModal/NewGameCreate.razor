@@ -6,54 +6,50 @@
 @inject IJSRuntime JS
 
 <div class="m-2 p-3 border rounded-3 border-dark-subtle">
-    @if (creatingGame)
+    @if (!UserStatus.UserHasLogin)
+    {
+        <div class="validation-message">请先登录</div>
+    }
+    else if (creatingGame)
     {
         <LoadingSpinner />
     }
     else if (!string.IsNullOrWhiteSpace(GameName))
     {
-        <div><span class="fw-bold pe-1">@GameName</span>暂时未被收录，不考虑成为创建者🐎</div>
-        <div class="form-check form-switch mt-1">
-            <input class="form-check-input" id="createGameSwitch" type="checkbox" role="switch"
-                @bind="_createGame" @oninput="OnCreateGameSwitchAsync">
-            <label class="form-check-label" for="createGameSwitch">新建游戏？</label>
+        <div><span class="fw-bold pe-1">@GameName</span>暂时未被收录，不成为创建者🐎</div>
+        <hr>
+        <div class="d-flex align-items-stretch gap-3 mt-2">
+            <label class="form-label text-nowrap my-auto" for="IconUpload">给<span class="fw-bold px-1">@GameName</span>上传一个图标吧</label>
+            <InputFile class="form-control" id="IconUpload" accept="image/png, image/jpeg"
+                OnChange="@OnIconFileUploaded"/>
         </div>
-        @if (_createGame)
+        @if (iconUploading)
         {
-            <hr>
-            <div class="d-flex align-items-stretch gap-3 mt-2">
-                <label class="form-label text-nowrap my-auto" for="IconUpload">给<span class="fw-bold px-1">@GameName</span>上传一个图标吧</label>
-                <InputFile class="form-control" id="IconUpload" accept="image/png, image/jpeg"
-                    OnChange="@OnIconFileUploaded"/>
-            </div>
-            @if (iconUploading)
-            {
-                <div>上传中 ...</div>
-            }
-            else if (!uploadSuccess && uploadOnce)
-            {
-                <div class="validation-message">上传失败，再上传一遍试试吧</div>
-            }
-            else if (uploadOnce && !string.IsNullOrWhiteSpace(newGame.IconURI))
-            {
-                <div class="text-success">上传完成</div>
-            }
-            <hr>
-            <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
-                <div class="me-auto">
-                    @if (!string.IsNullOrWhiteSpace(newGame.IconURI))
-                    {
-                        <img src="@newGame.IconURI" alt="上传图标" height="100" />
-                    }
-                </div>
-                <div class="form-check my-auto">
-                    <input class="form-check-input" id="followCheck" type="checkbox" @bind="newGame.Follow">
-                    <label class="form-check-label" for="followCheck">成为第1个关注者</label>
-                </div>
-                <button class="btn btn-primary my-auto" type="button" disabled="@(!uploadSuccess)"
-                    @onclick="OnNewGameCreateAsync">创建游戏</button>
-            </div>
+            <div>上传中 ...</div>
         }
+        else if (!uploadSuccess && uploadOnce)
+        {
+            <div class="validation-message">上传失败，再上传一遍试试吧</div>
+        }
+        else if (uploadOnce && !string.IsNullOrWhiteSpace(newGame.IconURI))
+        {
+            <div class="text-success">上传完成</div>
+        }
+        <hr>
+        <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
+            <div class="me-auto">
+                @if (!string.IsNullOrWhiteSpace(newGame.IconURI))
+                {
+                    <img src="@newGame.IconURI" alt="上传图标" height="100" />
+                }
+            </div>
+            <div class="form-check my-auto">
+                <input class="form-check-input" id="followCheck" type="checkbox" @bind="newGame.Follow">
+                <label class="form-check-label" for="followCheck">成为第1个关注者</label>
+            </div>
+            <button class="btn btn-primary my-auto" type="button"
+                @onclick="OnNewGameCreateAsync">创建游戏</button>
+        </div>
     }
 </div>
 
@@ -61,15 +57,9 @@
     [Parameter, EditorRequired]
     public string GameName { get; set; } = string.Empty;
     [Parameter]
-    public bool CreateNewGame { get; set; } = false;
-    [Parameter]
-    public EventCallback<bool> CreateNewGameChanged { get; set; }
-    [Parameter]
     public bool ExistedGame {get;set;} = false;
     [Parameter]
     public EventCallback<bool> ExistedGameChanged { get; set; }
-
-    private bool _createGame = false;
 
     private GameModel newGame = default!;
 
@@ -83,12 +73,6 @@
         base.OnParametersSet();
 
         newGame = new GameModel(GameName);
-        _createGame = CreateNewGame;
-    }
-
-    private async void OnCreateGameSwitchAsync()
-    {
-        await CreateNewGameChanged.InvokeAsync(_createGame);
     }
 
     private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
@@ -106,6 +90,11 @@
     private async void OnNewGameCreateAsync()
     {
         creatingGame = true;
+
+        if (!uploadOnce || !uploadSuccess)
+        {
+            newGame.IconURI = GameService.DefaultGameIconUri;
+        }
         (bool createSuccess, int gameID) = await GameService.CreateNewGameAsync(newGame);
 
         if (!createSuccess)
