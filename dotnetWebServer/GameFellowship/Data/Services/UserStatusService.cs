@@ -19,7 +19,7 @@ public class UserStatusService : IUserStatusService
 
 	public async Task<(bool, int)> UserLoginAsync(string userName, string password)
 	{
-		(bool correct, int userId) = await _userService.CheckUserPassword(userName, password);
+		(bool correct, int userId) = await _userService.CheckUserPasswordAsync(userName, password);
 
 		if (!correct)
 		{

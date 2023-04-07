@@ -8,10 +8,10 @@ public class Conversation
 
     public Conversation() { }
 
-    public Conversation(int id, DateTime time, string context)
+    public Conversation(int userId, string context, DateTime? time = null)
     {
-        UserID = id;
-        SendTime = time;
+        UserID = userId;
+        SendTime = time ?? DateTime.Now;
         Context = context;
     }
 }

@@ -2,6 +2,7 @@
 @inject ProtectedSessionStorage SessionStorage
 
 @inject IUserStatusService UserStatus
+@inject IUserService UserService
 @inject IGameService GameService
 @inject IPostService PostService
 @inject NavigationManager Navigation
@@ -278,20 +279,22 @@
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
+        int userId = userLoginResult.Value;
 
         if (!_createOnce) _createOnce = true;
 
-        _createSucceed = await PostService.CreateNewPostAsync(_newPost, userLoginResult.Value);
+        (_createSucceed, int postId) = await PostService.CreateNewPostAsync(_newPost, userId);
         if (!_createSucceed)
         {
             await JS.InvokeVoidAsync("createPostAlert");
             return;
         }
 
-        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName);
+        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName)
+                      && await UserService.AddNewCreatePostAsync(userId, postId);
         if (!_createSucceed)
         {
-            await JS.InvokeVoidAsync("createGameAlert", _newPost.GameName);
+            await JS.InvokeVoidAsync("updatePostAlert", _newPost.GameName);
             return;
         }
 

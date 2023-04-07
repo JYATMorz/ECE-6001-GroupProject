@@ -8,9 +8,15 @@ public interface IUserService
 	string DefaultUserIconFolder { get; }
 	string DefaultUserName { get; }
 
-	Task<bool> CreateNewUserAsync(UserModel user);
+	Task<bool> CreateNewUserAsync(UserModel model);
 
-	Task<bool> AddNewLikedGame(int userID, int GameID);
+	Task<bool> AddNewLikedGameAsync(int userID, int gameID);
+	Task<bool> AddNewJoinedPostAsync(int userID, int postID);
+	Task<bool> AddNewCreatePostAsync(int userID, int postID);
+
+	Task<bool> DeleteLikedGameAsync(int userID, int gameID);
+	Task<bool> DeleteJoinedPostAsync(int userID, int postID);
+	Task<bool> DeleteCreatePostAsync(int userID, int postID);
 
 	Task<string> GetUserNameAsync(int userID);
 	Task<string> GetUserIconURIAsync(int userID);
@@ -19,7 +25,7 @@ public interface IUserService
 	Task<(string, string)> GetUserNameIconPairAsync(int userID);
 	Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userID);
 
-    Task<(bool, int)> CheckUserPassword(string userName, string password);
+    Task<(bool, int)> CheckUserPasswordAsync(string userName, string password);
 
     Task<bool> HasUserAsync(int userID);
 	Task<bool> HasUserAsync(string userName);

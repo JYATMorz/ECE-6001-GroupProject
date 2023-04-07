@@ -1,3 +1,12 @@
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
+@inject IUserStatusService UserStatus
+@inject IUserService UserService
+@inject IPostService PostService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
 <div class="modal fade" id="teamInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="teamInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
@@ -65,7 +74,7 @@
                 <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary">加入！</button>
+                    <button type="button" class="btn btn-primary" @onclick="OnUserJoinPostAsync">加入！</button>
                 </div>
             </div>
         </div>
@@ -76,5 +85,28 @@
     [Parameter]
     public Post Post { get; set; } = new();
 
-    // FIXME: Join The Group
+    private async void OnUserJoinPostAsync()
+    {
+        if (Post.PostID <= 0) return;
+
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+
+        if (!userHasLogin)
+        {
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+        int userId = userLoginResult.Value;
+
+        bool joinSucceed = await UserService.AddNewJoinedPostAsync(userId, Post.PostID)
+                        && await PostService.AddNewCurrentUserAsync(Post.PostID, userId);
+        if (!joinSucceed)
+        {
+            await JS.InvokeVoidAsync("updatePostAlert");
+            return;
+        }
+
+        Navigation.NavigateTo($"messages", true);
+    }
 }

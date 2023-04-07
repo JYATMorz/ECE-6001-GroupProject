@@ -1,15 +1,10 @@
 @inject IGameService GameService
 
-<a class="list-group-item list-group-item-action @(IsActive ? _active : string.Empty)" href=@("messages/" + Post.PostID)>
-    <div class="d-inline-flex gap-2 flex-wrap align-items-end">
-        @if (_gameIcon is null)
-        {
-            <div style="height: 40px;">@Post.GameName</div>
-        }
-        else
-        {
-            <img class="rounded-3" src="@_gameIcon" alt="GameIcon" width="40" height="40">
-        }
+<button class="list-group-item list-group-item-action @(SelectedPostId == Post.PostID ? _active : string.Empty)"
+    type="button" @onclick="OnSelectedPostChange">
+    <div class="d-inline-flex gap-2 align-items-end">
+        <img class="rounded-3" alt="GameIcon" width="40" height="40"
+             src="@(_gameIcon ?? GameService.DefaultGameIconUri)">
         <div class="fs-4">@Post.GameName</div>
     </div>
     <div class="border-top border-bottom border-dark-subtle py-1">
@@ -17,15 +12,15 @@
         <div><i class="bi bi-file-person-fill"></i>: @Post.CurrentPeople / @Post.TotalPeople</div>
     </div>
     <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
-    <!-- TODO: New Message Notification -->
-    <div class="m-1 badge text-bg-danger rounded-pill">有新消息！</div>
-</a>
+</button>
 
 @code {
     [Parameter, EditorRequired]
     public Post Post { get; set; } = new Post();
     [Parameter]
-    public bool IsActive { get; set; } = false;
+    public int SelectedPostId { get; set; } = -1;
+    [Parameter]
+    public EventCallback<int> SelectedPostIdChange { get; set; }
 
     private string _active = "active";
 
@@ -34,5 +29,11 @@
     protected override async Task OnParametersSetAsync()
     {
         _gameIcon = await GameService.GetGameIconAsync(Post.GameName);
+    }
+
+    private async Task OnSelectedPostChange()
+    {
+        int nextPostId = SelectedPostId == Post.PostID ? -1 : Post.PostID;
+        await SelectedPostIdChange.InvokeAsync(nextPostId);
     }
 }

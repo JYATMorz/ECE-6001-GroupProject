@@ -4,7 +4,7 @@ namespace GameFellowship.Data.Services;
 
 public class UserService : IUserService
 {
-	private List<User> _users { get; } = new() {
+	private List<User> _users = new() {
 		new User("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),
 		new User("User 2 with long", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1,2}, null),
 		new User("User 3", null, null, null, null, new int[]{1,2}, null),
@@ -15,39 +15,119 @@ public class UserService : IUserService
 
 	public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
 	public string DefaultUserIconFolder { get; } = "UserIcons";
-	public string DefaultUserName { get; } = "用户已注销";
+	public string DefaultUserName { get; } = "鍖垮悕";
 
-	public async Task<bool> CreateNewUserAsync(UserModel user)
+	public async Task<bool> CreateNewUserAsync(UserModel model)
 	{
-		if (await HasUserAsync(user.UserName))
+		if (await HasUserAsync(model.UserName))
 		{
 			return false;
 		}
-		if (!string.IsNullOrWhiteSpace(user.UserEmail) && await HasEmailAsync(user.UserEmail))
+		if (!string.IsNullOrWhiteSpace(model.UserEmail) && await HasEmailAsync(model.UserEmail))
 		{
 			return false;
 		}
 
-		User newUser = new(user);
+		User newUser = new(model);
 		_users.Add(newUser);
 
 		return true;
 	}
 
-	public Task<bool> AddNewLikedGame(int userID, int GameID)
+	public Task<bool> AddNewLikedGameAsync(int userID, int gameID)
 	{
         var resultUser =
             from user in _users
             where user.UserID == userID
             select user;
 
-        if (resultUser is null || resultUser.Any())
+        if (resultUser is null || !resultUser.Any())
         {
 			return Task.FromResult(false);
         }
 
-        resultUser.First().LikedGameIDs.Add(GameID);
+        resultUser.First().LikedGameIDs.Add(gameID);
         return Task.FromResult(true);
+    }
+
+    public Task<bool> AddNewJoinedPostAsync(int userID, int postID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return Task.FromResult(false);
+        }
+
+        resultUser.First().JoinedPostIDs.Add(postID);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> AddNewCreatePostAsync(int userID, int postID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return Task.FromResult(false);
+        }
+
+		resultUser.First().CreatedPostIDs.Add(postID);
+        resultUser.First().JoinedPostIDs.Add(postID);
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> DeleteLikedGameAsync(int userID, int gameID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return Task.FromResult(false);
+        }
+
+        return Task.FromResult(resultUser.First().LikedGameIDs.Remove(gameID));
+    }
+
+    public Task<bool> DeleteJoinedPostAsync(int userID, int postID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return Task.FromResult(false);
+        }
+
+        return Task.FromResult(resultUser.First().JoinedPostIDs.Remove(postID));
+    }
+
+    public Task<bool> DeleteCreatePostAsync(int userID, int postID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return Task.FromResult(false);
+        }
+
+		resultUser.First().JoinedPostIDs.Remove(postID);
+
+        return Task.FromResult(resultUser.First().CreatedPostIDs.Remove(postID));
     }
 
     public Task<string> GetUserNameAsync(int userID)
@@ -142,7 +222,7 @@ public class UserService : IUserService
 		return Task.FromResult(resultUsers.ToDictionary(user => user.UserName, user => user.UserIconURI));
 	}
 
-	public Task<(bool, int)> CheckUserPassword(string userName, string password)
+	public Task<(bool, int)> CheckUserPasswordAsync(string userName, string password)
 	{
         var resultUser =
             from user in _users
@@ -180,4 +260,19 @@ public class UserService : IUserService
 	{
 		return Task.FromResult(_users.Any(user => email.Equals(user.UserEmail)));
 	}
+
+	private User? GetUserById(int userID)
+	{
+        var resultUser =
+            from user in _users
+            where user.UserID == userID
+            select user;
+
+        if (resultUser is null || !resultUser.Any())
+        {
+            return null;
+        }
+
+		return resultUser.First();
+    }
 }

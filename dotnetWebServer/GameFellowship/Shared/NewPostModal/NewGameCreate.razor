@@ -134,7 +134,7 @@
 
         if (_newGame.Follow)
         {
-            await UserService.AddNewLikedGame(userId, gameID);
+            await UserService.AddNewLikedGameAsync(userId, gameID);
         }
 
         // TODO: Use css to gradually close the div

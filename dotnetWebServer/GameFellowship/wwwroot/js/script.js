@@ -17,8 +17,12 @@ window.createGameAlert = () => {
     alert(`新建游戏失败⏳重新提交一下吧`);
 }
 
+window.updatePostAlert = () => {
+    alert(`更新帖子失败⏳手动刷新一下吧`);
+}
+
 window.userLoginPostConfirm = (loginURL) => {
-    if (confirm(`请先登录⏳再发帖`)) {
+    if (confirm(`请先登录⏳`)) {
         window.location = loginURL;
     }
 }

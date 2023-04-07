@@ -1,4 +1,4 @@
-@page "/messages/{PostID:int?}"
+@page "/messages"
 
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage SessionStorage
@@ -6,13 +6,15 @@
 @inject IUserService UserService
 @inject IPostService PostService
 @inject IUserStatusService UserStatus
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
 
 <PageTitle>你的消息</PageTitle>
 
 <div class="d-flex">
     <!-- vertical message navbar -->
-    <div class="overflow-y-scroll pe-0 vh-100">
-        <div class="list-group p-1">
+	<div class="overflow-x-hidden overflow-y-scroll pe-0 vh-100">
+        <div class="list-group p-1" style="min-width:150px">
             @if (!_hasPost)
             {
                 <div class="text-info">您还没有参加过组队，不试一试嘛❤</div>
@@ -25,23 +27,19 @@
             {
                 @foreach (var post in _myPosts)
                 {
-                    if (post.PostID == PostID)
-                    {
-                        <MessageNavbar Post="@post" IsActive="@true" />
-                    }
-                    else
-                    {
-                        <MessageNavbar Post="@post" IsActive="@false" />
-                    }
+                    <MessageNavbar Post="@post" SelectedPostId="@_selectedPostId"
+                        SelectedPostIdChange="@OnSelectedPostChange" />
                 }
             }
         </div>
     </div>
     <!-- message tabs -->
-    <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
+    <div class="flex-grow-1 vh-100 ps-2 pe-1">
         @if (_selectedPost is null)
         {
-            <p>选择任意对话开始浏览</p>
+            <div class="d-flex align-items-center justify-content-center text-center h-100">
+				<p class="fs-3">选择任意对话开始浏览</p>
+            </div>
         }
         else
         {
@@ -51,24 +49,25 @@
 </div>
 
 @code {
-    [Parameter]
-    public int? PostID { get; set; }
-
     private bool _hasPost = true;
+
     private IEnumerable<Post>? _myPosts;
+    private int _selectedPostId = -1;
     private Post? _selectedPost;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
 
-        if (!userLoginResult.Success)
+        if (!userHasLogin)
         {
             _hasPost = false;
             return;
         }
+        int userId = userLoginResult.Value;
 
-        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userLoginResult.Value);
+        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userId);
         if (myPostIDs is null || !myPostIDs.Any())
         {
             _hasPost = false;
@@ -77,15 +76,31 @@
 
         _myPosts = await PostService.GetPostsAsync(myPostIDs);
 
-        if (PostID is not null && _myPosts is not null)
+        StateHasChanged();
+    }
+
+    private void OnSelectedPostChange(int selectedPostId)
+    {
+        _selectedPostId = selectedPostId;
+
+        if (_selectedPostId <= 0)
         {
-            _selectedPost = (
-                from post in _myPosts
-                where post.PostID == PostID
-                select post
-            ).First();
+            _selectedPost = null;
+            return;
         }
 
-        StateHasChanged();
+        var resultPost =
+            from post in _myPosts
+            where post.PostID == _selectedPostId
+            select post;
+
+        if(resultPost.Any())
+        {
+            _selectedPost = resultPost.First();
+        }
+        else
+        {
+            _selectedPost = null;
+        }
     }
 }

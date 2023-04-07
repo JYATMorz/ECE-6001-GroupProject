@@ -10,7 +10,7 @@ public class Post
     public int CreatorID { get; init; } = -1;
     public HashSet<int> CurrentUserIDs { get; set; } = new HashSet<int>();
 
-    public DateTime LastUpdate { get; init; }
+    public DateTime LastUpdate { get; set; }
 
     public string GameName { get; set; } = string.Empty;
     public string MatchType { get; set; } = string.Empty;

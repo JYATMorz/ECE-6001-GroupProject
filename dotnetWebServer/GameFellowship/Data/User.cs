@@ -10,10 +10,10 @@ public class User
 
     // FIXME: public string Password { get; init; } = "password";
 
-    public List<int> LikedGameIDs { get; set; } = new List<int>();
-    public List<int> CreatedPostIDs { get; set; } = new List<int>();
-    public List<int> JoinedPostIDs { get; set; } = new List<int>();
-    public List<int> FriendIDs { get; set; } = new List<int>();
+    public HashSet<int> LikedGameIDs { get; set; } = new();
+    public HashSet<int> CreatedPostIDs { get; set; } = new();
+    public HashSet<int> JoinedPostIDs { get; set; } = new();
+    public HashSet<int> FriendIDs { get; set; } = new();
 
     public string UserName { get; private set; } = "Anonymous";
     public string UserEmail { get; private set; } = string.Empty;
@@ -46,15 +46,15 @@ public class User
             UserIconURI = icon;
 
         if (games is not null)
-            LikedGameIDs = games.ToList();
+            LikedGameIDs = games.ToHashSet();
 
         if (createdPosts is not null)
-            CreatedPostIDs = createdPosts.ToList();
+            CreatedPostIDs = createdPosts.ToHashSet();
 
         if (joinedPosts is not null)
-            JoinedPostIDs = joinedPosts.ToList();
+            JoinedPostIDs = joinedPosts.ToHashSet();
 
         if (friends is not null)
-            FriendIDs = friends.ToList();
+            FriendIDs = friends.ToHashSet();
     }
 }

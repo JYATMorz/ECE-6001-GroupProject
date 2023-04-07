@@ -1,3 +1,12 @@
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage SessionStorage
+
+@inject IUserStatusService UserStatus
+@inject IUserService UserService
+@inject IPostService PostService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
 <div class="d-flex flex-column h-100">
     <!-- Title -->
     <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
@@ -19,7 +28,8 @@
         </div>
         <button class="btn btn-success rounded-3 ms-auto" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#teamMemberOffcanvas" aria-controls="teamMemberOffcanvas">成员</button>
-        <button class="btn btn-outline-danger rounded-3" type="button">退出</button>
+        <button class="btn btn-outline-danger rounded-3" type="button"
+            @onclick="OnUserQuitAsync">退出</button>
     </div>
     <!-- Content -->
     <div class="d-flex flex-column flex-grow-1 gap-2 pe-2" style="min-height: 0;">
@@ -45,17 +55,20 @@
                 {
                     @foreach (var conversation in Post.Conversations)
                     {
-                        <MessageBlock Content="@conversation" />
+                        <ConversationBlock Content="@conversation" />
                     }
                 }
             </div>
             <hr style="margin: 0.5rem 0;">
             <div class="d-flex gap-1">
                 <textarea class="form-control rounded-3" name="chatMessageGroup1" id="chatMessageText1"
-                    placeholder="Any Message?" style="resize: none; height: 100px;"></textarea>
+                    placeholder="发点不为空的消息？" style="resize: none; height: 100px;"
+                    @bind="_conversationText"></textarea>
                 <div class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
-                    <button class="btn btn-outline-primary text-nowrap" type="button">发送</button>
-					<button class="btn btn-outline-secondary text-nowrap" type="button">清空</button>
+                    <button class="btn btn-outline-primary text-nowrap" type="button"
+                        @onclick="OnConversationSendAsync">发送</button>
+					<button class="btn btn-outline-secondary text-nowrap" type="button"
+                        @onclick="() => _conversationText = string.Empty">清空</button>
                 </div>
             </div>
         </div>
@@ -64,14 +77,13 @@
             @if (Post.AudioChat)
             {
                 <label class="form-label fs-6 fw-bold" for="audioChatNameMessage">语音<i
-                        class="bi bi-mic-fill mx-2"></i></label>
+                    class="bi bi-mic-fill mx-2"></i></label>
                 <input class="form-control form-control-sm form-control-plaintext" type="text" name="teamDetailsMessage"
                     id="audioChatNameMessage" @bind=Post.AudioPlatform style="width: 4rem;" readonly>
                 <label class="form-label fs-5 fw-bold" for="audioChatLinkMessage"><i
-                        class="bi bi-link-45deg mx-2"></i></label>
+                    class="bi bi-link-45deg mx-2"></i></label>
                 <input class="form-control form-control-sm form-control-plaintext w-auto" type="text"
                     name="teamDetailsMessage" @bind=Post.AudioLink placeholder="Audio Link From User" readonly>
-                <button class="btn btn-outline-secondary p-1" type="button">复制</button>
             }
             else
             {
@@ -87,4 +99,55 @@
     [Parameter]
     public Post Post { get; set; } = new();
 
+    private string _conversationText = string.Empty;
+
+    private async void OnUserQuitAsync()
+    {
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+
+        if (!userHasLogin)
+        {
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+        int userId = userLoginResult.Value;
+
+        bool deleteSucceed = await PostService.DeleteCurrentUserAsync(Post.PostID, userId)
+                          && await UserService.DeleteJoinedPostAsync(userId, Post.PostID);
+        if (!deleteSucceed)
+        {
+            await JS.InvokeVoidAsync("updatePostAlert");
+            return;
+        }
+
+        Navigation.NavigateTo("messages", true);
+    }
+
+    private async void OnConversationSendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_conversationText))
+        {
+            _conversationText = string.Empty;
+            return;
+        }
+
+        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+
+        if (!userHasLogin)
+        {
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+        int userId = userLoginResult.Value;
+
+        Conversation newConversation = new(userId, _conversationText);
+        if (!(await PostService.AddNewConversationAsync(Post.PostID, newConversation)))
+        {
+            await JS.InvokeVoidAsync("updatePostAlert");
+            return;
+        }
+        _conversationText = string.Empty;
+    }
 }

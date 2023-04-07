@@ -4,6 +4,8 @@ namespace GameFellowship.Data.Services;
 
 public class PostService : IPostService
 {
+	private readonly IUserService _userService;
+
 	private List<Post> _posts = new() {
 		new Post(
 			new DateTime(2023, 2, 2, 2, 2, 2),
@@ -14,8 +16,8 @@ public class PostService : IPostService
 			new DateTime(2023,3,21), new DateTime(2023,12,29),
 			"Kook", "https://www.baidu.com",
 			new Conversation[] {
-				new(1, new DateTime(2023, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
-				new(2, new DateTime(2023, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
+				new(1, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 1, 11, 11, 11, 11)),
+				new(2, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 2, 22, 22, 22, 22))
 			}
 		),
 		new Post(
@@ -33,20 +35,25 @@ public class PostService : IPostService
 			6, 4, new int[] {4,5},
 			null, null, null, null,
 			new Conversation[] {
-				new(4, new DateTime(2022, 1, 11, 11, 11, 11), "Test, Test, \r\n, Long Context Test1"),
-				new(5, new DateTime(2022, 2, 22, 22, 22, 22), "Test, Test, \r\n, Long Context Test1")
+				new(4, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 1, 11, 11, 11, 11)),
+				new(5, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 2, 22, 22, 22, 22))
 			}
 		),
 	};
 
-	public Task<bool> CreateNewPostAsync(PostModel model, int userID)
+	public PostService(IUserService userService)
 	{
-		if (userID <= 0) return Task.FromResult(false);
+		_userService = userService;
+	}
+
+	public Task<(bool, int)> CreateNewPostAsync(PostModel model, int userID)
+	{
+		if (userID <= 0) return Task.FromResult((false, -1));
 
 		Post newPost = new(model, userID, DateTime.Now);
 		_posts.Add(newPost);
 
-		return Task.FromResult(true);
+		return Task.FromResult((true, newPost.PostID));
 	}
 
 	public Task<bool> AddNewCurrentUserAsync(int postID, int userID)
@@ -57,10 +64,14 @@ public class PostService : IPostService
 			select post;
 
 		if (!resultPost.Any())
-			return Task.FromResult(false);
+		{
+            return Task.FromResult(false);
+        }
 
-		if (!resultPost.First().CurrentUserIDs.Add(userID))
-			return Task.FromResult(false);
+		if (resultPost.First().CurrentUserIDs.Add(userID))
+		{
+			++resultPost.First().CurrentPeople;
+		}
 
 		return Task.FromResult(true);
 	}
@@ -76,6 +87,7 @@ public class PostService : IPostService
 			return Task.FromResult(false);
 
 		resultPost.First().Conversations.Add(conversation);
+        resultPost.First().LastUpdate = conversation.SendTime;
 
 		return Task.FromResult(true);
 	}
@@ -93,7 +105,13 @@ public class PostService : IPostService
 		if (!resultPost.First().CurrentUserIDs.Remove(userID))
 			return Task.FromResult(false);
 
-		return Task.FromResult(true);
+		if (--resultPost.First().CurrentPeople <= 0)
+		{
+			_userService.DeleteCreatePostAsync(resultPost.First().CreatorID, postID);
+			_posts.Remove(resultPost.First());
+		}
+
+        return Task.FromResult(true);
 	}
 
 	public Task<Post> GetPostAsync(int postID)
