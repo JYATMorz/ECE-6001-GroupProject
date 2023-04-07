@@ -2,10 +2,10 @@
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
-        <img class="rounded-2" src="@(string.IsNullOrWhiteSpace(userIconURI) ? defaultIconURI : userIconURI)"
+        <img class="rounded-2" src="@(string.IsNullOrWhiteSpace(_userIconURI) ? _defaultIconURI : _userIconURI)"
             alt="User Icon" width="50" height="50">
         <div>
-            <div class="fs-6 fw-bold">@(string.IsNullOrWhiteSpace(userName) ? "加载中 ..." : userName)</div>
+            <div class="fs-6 fw-bold">@(string.IsNullOrWhiteSpace(_userName) ? "加载中 ..." : _userName)</div>
             <small class="text-muted">@Content.SendTime.ToLocalTime()</small>
         </div>
     </div>
@@ -16,17 +16,17 @@
     [Parameter]
     public Conversation Content { get; set; } = new();
 
-    private string? userName;
-    private string? userIconURI;
-    private string defaultIconURI = "images/GameIcons/gametitle.jpg";
+    private string? _userName;
+    private string? _userIconURI;
+    private string _defaultIconURI = "images/GameIcons/gametitle.jpg";
 
     protected override async Task OnParametersSetAsync()
     {
         if (await UserService.HasUserAsync(Content.UserID))
         {
             var (name, icon) = await UserService.GetUserNameIconPairAsync(Content.UserID);
-            userName = name;
-            userIconURI = icon;
+            _userName = name;
+            _userIconURI = icon;
         }
         
     }

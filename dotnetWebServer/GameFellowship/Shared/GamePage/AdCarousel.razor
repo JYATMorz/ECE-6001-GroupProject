@@ -22,11 +22,11 @@
 </div>
 
 @code {
-    const string carouselName = "adsCarousel";
+    private const string _carouselName = "adsCarousel";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        object[] args = { carouselName };
+        object[] args = { _carouselName };
         await JSRuntime.InvokeVoidAsync("startCarousel", args);
     }
 }

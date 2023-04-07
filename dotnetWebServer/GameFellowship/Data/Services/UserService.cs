@@ -4,7 +4,7 @@ namespace GameFellowship.Data.Services;
 
 public class UserService : IUserService
 {
-	public List<User> Users { get; } = new() {
+	private List<User> _users { get; } = new() {
 		new User("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),
 		new User("User 2 with long", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1,2}, null),
 		new User("User 3", null, null, null, null, new int[]{1,2}, null),
@@ -29,7 +29,7 @@ public class UserService : IUserService
 		}
 
 		User newUser = new(user);
-		Users.Add(newUser);
+		_users.Add(newUser);
 
 		return true;
 	}
@@ -37,7 +37,7 @@ public class UserService : IUserService
 	public Task<bool> AddNewLikedGame(int userID, int GameID)
 	{
         var resultUser =
-            from user in Users
+            from user in _users
             where user.UserID == userID
             select user;
 
@@ -50,11 +50,10 @@ public class UserService : IUserService
         return Task.FromResult(true);
     }
 
-
     public Task<string> GetUserNameAsync(int userID)
 	{
 		var resultUser =
-			from user in Users
+			from user in _users
 			where user.UserID == userID
 			select user;
 
@@ -71,7 +70,7 @@ public class UserService : IUserService
 	public Task<string> GetUserIconURIAsync(int userID)
 	{
 		var resultUser =
-			from user in Users
+			from user in _users
 			where user.UserID == userID
 			select user;
 
@@ -88,7 +87,7 @@ public class UserService : IUserService
 	public Task<int[]> GetUserLikedGameIDsAsync(int userID)
 	{
 		var resultUser =
-			from user in Users
+			from user in _users
 			where user.UserID == userID
 			select user;
 
@@ -103,7 +102,7 @@ public class UserService : IUserService
 	public Task<int[]> GetUserJoinedPostIDsAsync(int userID)
 	{
 		var resultUser =
-			from user in Users
+			from user in _users
 			where user.UserID == userID
 			select user;
 
@@ -118,7 +117,7 @@ public class UserService : IUserService
 	public Task<(string, string)> GetUserNameIconPairAsync(int userID)
 	{
 		var resultUser =
-			from user in Users
+			from user in _users
 			where user.UserID == userID
 			select user;
 
@@ -136,25 +135,49 @@ public class UserService : IUserService
 	public Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userIDs)
 	{
 		var resultUsers =
-			from user in Users
+			from user in _users
 			where userIDs.Contains(user.UserID)
 			select user;
 
 		return Task.FromResult(resultUsers.ToDictionary(user => user.UserName, user => user.UserIconURI));
 	}
 
-	public Task<bool> HasUserAsync(int userID)
+	public Task<(bool, int)> CheckUserPassword(string userName, string password)
 	{
-		return Task.FromResult(Users.Any(user => user.UserID == userID));
+        var resultUser =
+            from user in _users
+            where userName.Equals(user.UserName)
+            select user;
+
+        if (!resultUser.Any())
+		{
+			return Task.FromResult((false, -1));
+		}
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            return Task.FromResult((false, -1));
+        }
+        else
+        {
+            // FIXME: Check the password
+        }
+
+		return Task.FromResult((true, resultUser.First().UserID));
+    }
+
+    public Task<bool> HasUserAsync(int userID)
+	{
+		return Task.FromResult(_users.Any(user => user.UserID == userID));
 	}
 
 	public Task<bool> HasUserAsync(string userName)
 	{
-		return Task.FromResult(Users.Any(user => userName.Equals(user.UserName)));
+		return Task.FromResult(_users.Any(user => userName.Equals(user.UserName)));
 	}
 
 	public Task<bool> HasEmailAsync(string email)
 	{
-		return Task.FromResult(Users.Any(user => email.Equals(user.UserEmail)));
+		return Task.FromResult(_users.Any(user => email.Equals(user.UserEmail)));
 	}
 }

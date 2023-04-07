@@ -1,14 +1,14 @@
 @inject IGameService GameService
 
-<a class="list-group-item list-group-item-action @(IsActive ? active : string.Empty)" href=@("messages/" + Post.PostID)>
+<a class="list-group-item list-group-item-action @(IsActive ? _active : string.Empty)" href=@("messages/" + Post.PostID)>
     <div class="d-inline-flex gap-2 flex-wrap align-items-end">
-        @if (gameIcon is null)
+        @if (_gameIcon is null)
         {
             <div style="height: 40px;">@Post.GameName</div>
         }
         else
         {
-            <img class="rounded-3" src="@gameIcon" alt="GameIcon" width="40" height="40">
+            <img class="rounded-3" src="@_gameIcon" alt="GameIcon" width="40" height="40">
         }
         <div class="fs-4">@Post.GameName</div>
     </div>
@@ -27,12 +27,12 @@
     [Parameter]
     public bool IsActive { get; set; } = false;
 
-    private string active = "active";
+    private string _active = "active";
 
-    private string? gameIcon;
+    private string? _gameIcon;
 
     protected override async Task OnParametersSetAsync()
     {
-        gameIcon = await GameService.GetGameIconAsync(Post.GameName);
+        _gameIcon = await GameService.GetGameIconAsync(Post.GameName);
     }
 }

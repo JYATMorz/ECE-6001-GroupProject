@@ -13,17 +13,17 @@
     <!-- vertical message navbar -->
     <div class="overflow-y-scroll pe-0 vh-100">
         <div class="list-group p-1">
-            @if (!hasPost)
+            @if (!_hasPost)
             {
                 <div class="text-info">您还没有参加过组队，不试一试嘛❤</div>
             }
-            else if (myPosts is null)
+            else if (_myPosts is null)
             {
                 <LoadingSpinner />
             }
             else
             {
-                @foreach (var post in myPosts)
+                @foreach (var post in _myPosts)
                 {
                     if (post.PostID == PostID)
                     {
@@ -39,13 +39,13 @@
     </div>
     <!-- message tabs -->
     <div class="container-fluid vh-100 ps-2 pe-1 flex-grow-1">
-        @if (selectedPost is null)
+        @if (_selectedPost is null)
         {
             <p>选择任意对话开始浏览</p>
         }
         else
         {
-            <MessageDetail Post="@selectedPost" />
+            <MessageDetail Post="@_selectedPost" />
         }
     </div>
 </div>
@@ -54,9 +54,9 @@
     [Parameter]
     public int? PostID { get; set; }
 
-    private bool hasPost = true;
-    private IEnumerable<Post>? myPosts;
-    private Post? selectedPost;
+    private bool _hasPost = true;
+    private IEnumerable<Post>? _myPosts;
+    private Post? _selectedPost;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -64,23 +64,23 @@
 
         if (!userLoginResult.Success)
         {
-            hasPost = false;
+            _hasPost = false;
             return;
         }
 
         IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userLoginResult.Value);
         if (myPostIDs is null || !myPostIDs.Any())
         {
-            hasPost = false;
+            _hasPost = false;
             return;
         }
 
-        myPosts = await PostService.GetPostsAsync(myPostIDs);
+        _myPosts = await PostService.GetPostsAsync(myPostIDs);
 
-        if (PostID is not null && myPosts is not null)
+        if (PostID is not null && _myPosts is not null)
         {
-            selectedPost = (
-                from post in myPosts
+            _selectedPost = (
+                from post in _myPosts
                 where post.PostID == PostID
                 select post
             ).First();

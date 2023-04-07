@@ -16,7 +16,7 @@
 	</div>
 	<div class="mx-auto my-5 col-11 col-md-10 col-lg-9 col-xl-8">
 		<!--TODO: register EditForm Here-->
-		<EditForm id="newUserForm" EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+		<EditForm id="newUserForm" EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit">
         <DataAnnotationsValidator />
 
 		<div class="d-flex">
@@ -24,13 +24,13 @@
 				<div class="my-2">
 					<div class="d-inline-flex align-items-baseline my-1">
 						<label class="fw-bold text-nowrap" for="newUserName">用户名：</label>
-						@if (!newUser.ValidUserName)
+						@if (!_newUser.ValidUserName)
 						{
 							<div class="validation-message">@_namePlaceholder</div>
 						}
-						else if (!newUser.UserNameExisted)
+						else if (!_newUser.UserNameExisted)
 						{
-							<ValidationMessage For="() => newUser.UserName" />
+							<ValidationMessage For="() => _newUser.UserName" />
 						}
 						else
 						{
@@ -38,35 +38,35 @@
 						}
 					</div>
 					<InputText id="newUserName" class="form-control" placeholder="@_namePlaceholder"
-						@bind-Value="newUser.UserName" />
+						@bind-Value="_newUser.UserName" />
 				</div>
 				<div class="my-2">
 					<div class="d-inline-flex align-items-baseline my-1">
 						<label class="fw-bold text-nowrap" for="newUserPassword">密码：</label>
-						<ValidationMessage For="() => newUser.UserPassword" />
+						<ValidationMessage For="() => _newUser.UserPassword" />
 					</div>
 					<InputText id="newUserPassword" class="form-control" placeholder="@_passwordPlaceholder"
-						@bind-Value="newUser.UserPassword" type="password" />
+						@bind-Value="_newUser.UserPassword" type="password" />
 
 					<div class="d-inline-flex align-items-baseline my-1">
 						<label class="fw-bold text-nowrap" for="repeatPassword">重复密码：</label>
-						@if (!newUser.ValidPassword && newUser.PasswordModified)
+						@if (!_newUser.ValidPassword && _newUser.PasswordModified)
 						{
 							<div class="validation-message">俺寻思您这两个密码不一样啊</div>
 						}
 					</div>
 					<InputText id="repeatPassword" class="form-control" placeholder="@_passwordPlaceholder"
-						@bind-Value="newUser.PasswordRepeat" type="password" />
+						@bind-Value="_newUser.PasswordRepeat" type="password" />
 				</div>
 				<div class="my-2">
 					<div class="d-inline-flex align-items-baseline my-1">
 						<label class="fw-bold text-nowrap" for="newUserEmail">邮箱 [选填]：</label>
-						<ValidationMessage For="() => newUser.UserEmail" />
+						<ValidationMessage For="() => _newUser.UserEmail" />
 					</div>
 					<InputText id="newUserEmail" class="form-control" type="email"
-						@bind-Value="newUser.UserEmail" />
+						@bind-Value="_newUser.UserEmail" />
 
-					@if (newUser.UserEmailExisted)
+					@if (_newUser.UserEmailExisted)
 					{
 						<div class="validation-message">这个邮箱有人用了捏</div>
 					}
@@ -76,20 +76,20 @@
 			<div class="d-none d-md-inline-flex flex-column my-auto" style="width:300px">
 				<div class="d-inline-flex align-items-baseline my-1">
 					<label class="fw-bold text-nowrap" for="newUserIcon">自定义头像 [可选]：</label>
-					@if (!newUser.ValidUserName || !newUser.ValidPassword)
+					@if (!_newUser.ValidUserName || !_newUser.ValidPassword)
 					{
 						<small class="text-muted">先给完善个人信息吧</small>
 					}
 				</div>
 				<InputFile class="form-control" id="newUserIcon" accept="image/png, image/jpeg"
-					OnChange="@OnIconFileUploaded" disabled="@(!newUser.ValidUserName || !newUser.ValidPassword)" />
+					OnChange="@OnIconFileUploaded" disabled="@(!_newUser.ValidUserName || !_newUser.ValidPassword)" />
 				<div class="mx-auto my-2 text-center border border-danger rounded-5 overflow-hidden">
-					@if(uploadComplete && uploadSucceed)
+					@if(_uploadComplete && _uploadSucceed)
 					{
 						<img alt="用户头像" width="250" height="250"
-							src="@(!string.IsNullOrWhiteSpace(newUser.UserIconURI) ? newUser.UserIconURI : UserService.DefaultUserIconUri)" />
+							src="@(!string.IsNullOrWhiteSpace(_newUser.UserIconURI) ? _newUser.UserIconURI : UserService.DefaultUserIconUri)" />
 					}
-					else if (!uploadSucceed)
+					else if (!_uploadSucceed)
 					{
 						<div class="validation-message">上传失败惹，若有需求则请重新上传</div>
 					}
@@ -102,7 +102,7 @@
 		<button class="btn btn-outline-info btn-lg px-4 py-3" type="button"
 			@onclick="OnReturnToLogin">返回登录</button>
 		<button class="btn btn-primary btn-lg px-4 py-3" type="submit" form="newUserForm"
-			disabled="@(!newUser.ValidPassword || !newUser.ValidUserName)">立刻注册</button>
+			disabled="@(!_newUser.ValidPassword || !_newUser.ValidUserName)">立刻注册</button>
 	</div>
 </div>
 
@@ -111,12 +111,12 @@
 	[SupplyParameterFromQuery]
 	public string? Name { get; set; }
 
-	private bool registerSucceed = false;
-	private bool uploadSucceed = true;
-	private bool uploadComplete = false;
+	private bool _registerSucceed = false;
+	private bool _uploadSucceed = true;
+	private bool _uploadComplete = false;
 
-	private UserModel newUser = default!;
-	private EditContext? editContext;
+	private UserModel _newUser = default!;
+	private EditContext? _editContext;
 
 	private readonly string _namePlaceholder = "用户名最多12个字符，数字、字母、.、@、-";
 	private readonly string _passwordPlaceholder = "密码长度6~20个字符，数字、字母、！、？、@、-";
@@ -125,23 +125,23 @@
 	{
 		base.OnInitialized();
 
-		newUser = new UserModel(UserService);
+		_newUser = new UserModel(UserService);
 
-		editContext = new EditContext(newUser);
-		editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
+		_editContext = new EditContext(_newUser);
+		_editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
 	}
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		registerSucceed = false;
-		uploadSucceed = true;
-		uploadComplete = false;
+		_registerSucceed = false;
+		_uploadSucceed = true;
+		_uploadComplete = false;
 
 		if (!string.IsNullOrWhiteSpace(Name))
 		{
-			newUser.UserName = Name;
+			_newUser.UserName = Name;
 		}
 	}
 
@@ -152,21 +152,21 @@
 
 	private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
 	{
-		(uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, newUser.UserName);
+		(_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, _newUser.UserName);
 
-		newUser.UserIconURI = uploadSucceed ? message : UserService.DefaultUserIconUri;
-		uploadComplete = true;
+		_newUser.UserIconURI = _uploadSucceed ? message : UserService.DefaultUserIconUri;
+		_uploadComplete = true;
 	}
 
 	private async void HandleValidSubmit()
 	{
-		if (string.IsNullOrWhiteSpace(newUser.UserIconURI))
+		if (string.IsNullOrWhiteSpace(_newUser.UserIconURI))
 		{
-			newUser.UserIconURI = UserService.DefaultUserIconUri;
+			_newUser.UserIconURI = UserService.DefaultUserIconUri;
 		}
 
-		registerSucceed = await UserService.CreateNewUserAsync(newUser);
-		if (!registerSucceed)
+		_registerSucceed = await UserService.CreateNewUserAsync(_newUser);
+		if (!_registerSucceed)
 		{
 			await JS.InvokeVoidAsync("userRegisterFailAlert");
 			return;

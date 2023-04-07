@@ -4,7 +4,7 @@ namespace GameFellowship.Data.FormModels;
 
 public class UserModel
 {
-	private readonly IUserService userService;
+	private readonly IUserService _userService;
 
 	private const int _userNameMaxLength = 12;
 	private const int _userPasswordMinLength = 6;
@@ -27,8 +27,6 @@ public class UserModel
 	public bool ValidUserName => !string.IsNullOrWhiteSpace(UserName) && UserName.Length <= _userNameMaxLength && !UserNameExisted;
 
 	private string _userEmail = string.Empty;
-	private string _passwordRepeat = string.Empty;
-
 	[UserEmailValidator]
 	public string UserEmail
 	{
@@ -45,7 +43,9 @@ public class UserModel
 	[UserPasswordValidator(_userPasswordMinLength, _userPasswordMaxLength)]
 	public string UserPassword { get; set; } = string.Empty;
 	public bool PasswordModified { get; set; } = false;
-	public string PasswordRepeat
+
+    private string _passwordRepeat = string.Empty;
+    public string PasswordRepeat
 	{
 		get => _passwordRepeat;
 		set
@@ -61,14 +61,14 @@ public class UserModel
 
 	public UserModel(IUserService service)
 	{
-		userService = service;
+		_userService = service;
 	}
 
 	private async void OnUserNameChange()
 	{
 		if (!string.IsNullOrWhiteSpace(UserName))
 		{
-			UserNameExisted = await userService.HasUserAsync(UserName);
+			UserNameExisted = await _userService.HasUserAsync(UserName);
 		}
 		else
 		{
@@ -80,7 +80,7 @@ public class UserModel
 	{
 		if (!string.IsNullOrWhiteSpace(UserEmail))
 		{
-			UserEmailExisted = await userService.HasEmailAsync(UserEmail);
+			UserEmailExisted = await _userService.HasEmailAsync(UserEmail);
 		}
 		else
 		{

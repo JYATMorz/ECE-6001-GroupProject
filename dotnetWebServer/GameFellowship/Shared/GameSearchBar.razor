@@ -6,11 +6,11 @@
         list="searchGameList" type="search" placeholder="搜索游戏" aria-label="Search"
         @bind="SearchName" @bind:event="oninput">
     <button class="btn btn-outline-success text-nowrap @(LargeSearchBar ? _largeButton : string.Empty)"
-        type="button" disabled="@invalidSearch" @onclick="NavigateToGame">搜索</button>
+        type="button" disabled="@_invalidSearch" @onclick="NavigateToGame">搜索</button>
     <datalist id="searchGameList">
-        @if (existedGameNames is not null)
+        @if (_existedGameNames is not null)
         {
-            <DataListOptions DataList="@existedGameNames" />
+            <DataListOptions DataList="@_existedGameNames" />
         }
     </datalist>
 </form>
@@ -33,21 +33,21 @@
             OnSearchNameInputAsync();
         }
     }
-    private string[]? existedGameNames;
-    private bool invalidSearch = true;
+    private string[]? _existedGameNames;
+    private bool _invalidSearch = true;
 
     private async void OnSearchNameInputAsync()
     {
-        existedGameNames = await GameService.GetGameNamesAsync(_resultCount, SearchName);
+        _existedGameNames = await GameService.GetGameNamesAsync(_resultCount, SearchName);
 
-        if (existedGameNames.Length == 1 && !string.IsNullOrWhiteSpace(SearchName)
-            && existedGameNames.First().ToLower() == SearchName.ToLower())
+        if (_existedGameNames.Length == 1 && !string.IsNullOrWhiteSpace(SearchName)
+            && _existedGameNames.First().ToLower() == SearchName.ToLower())
         {
-            invalidSearch = false;
+            _invalidSearch = false;
         }
         else
         {
-            invalidSearch = true;
+            _invalidSearch = true;
         }
     }
 

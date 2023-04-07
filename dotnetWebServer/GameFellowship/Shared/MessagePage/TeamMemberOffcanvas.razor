@@ -10,13 +10,13 @@
         <!-- User Icons -->
         <div class="h-100 p-2 d-flex flex-column gap-2 overflow-y-auto border border-info-subtle rounded-4">
             <!-- User Icon -->
-            @if (currentUsers is null)
+            @if (_currentUsers is null)
             {
                 <LoadingSpinner />
             }
             else
             {
-                @foreach (var user in currentUsers)
+                @foreach (var user in _currentUsers)
                 {
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-secondary">
@@ -73,10 +73,10 @@
     [Parameter, EditorRequired]
     public int Current { get; set; }
 
-    private Dictionary<string, string>? currentUsers;
+    private Dictionary<string, string>? _currentUsers;
 
     protected override async Task OnParametersSetAsync()
     {
-        currentUsers = await UserService.GetUserGroupNameIconPairAsync(JoinedUserIDs);
+        _currentUsers = await UserService.GetUserGroupNameIconPairAsync(JoinedUserIDs);
     }
 }

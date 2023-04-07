@@ -4,8 +4,6 @@ namespace GameFellowship.Data.Services;
 
 public interface IUserService
 {
-	List<User> Users { get; }
-
 	string DefaultUserIconUri { get; }
 	string DefaultUserIconFolder { get; }
 	string DefaultUserName { get; }
@@ -21,7 +19,9 @@ public interface IUserService
 	Task<(string, string)> GetUserNameIconPairAsync(int userID);
 	Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userID);
 
-	Task<bool> HasUserAsync(int userID);
+    Task<(bool, int)> CheckUserPassword(string userName, string password);
+
+    Task<bool> HasUserAsync(int userID);
 	Task<bool> HasUserAsync(string userName);
 	Task<bool> HasEmailAsync(string email);
 }

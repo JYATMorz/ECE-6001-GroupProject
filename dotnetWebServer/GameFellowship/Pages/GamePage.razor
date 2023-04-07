@@ -15,7 +15,7 @@
         <!-- Start a New Post -->
         <div class="btn-group m-auto" role="group" aria-label="New Post Button">
             <button type="button" class="btn btn-outline-info" data-bs-toggle="modal"
-                    data-bs-target="#teamCreateModal" disabled="@(!userHasLogin)">
+                    data-bs-target="#teamCreateModal" disabled="@(!_userHasLogin)">
                 新组队
             </button>
         </div>
@@ -26,13 +26,13 @@
 
         <AdCarousel />
         <div class="row row-cols-auto g-3 m-0">
-            @if (existedGames is null)
+            @if (_existedGames is null)
             {
                 <LoadingSpinner />
             }
             else
             {
-                @foreach (var game in existedGames)
+                @foreach (var game in _existedGames)
                 {
                     <GameCard Game="@game" />
                 }
@@ -44,18 +44,18 @@
 <NewPostModal />
 
 @code {
-    private Game[]? existedGames;
-    private bool userHasLogin = false;
+    private Game[]? _existedGames;
+    private bool _userHasLogin = false;
 
     protected override async Task OnInitializedAsync()
     {
-        existedGames = await GameService.GetAllGameAsync();
+        _existedGames = await GameService.GetAllGameAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userIdResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        userHasLogin = userIdResult.Success && UserStatus.UserHasLogin(userIdResult.Value);
+        _userHasLogin = userIdResult.Success && UserStatus.UserHasLogin(userIdResult.Value);
 
         StateHasChanged();
     }

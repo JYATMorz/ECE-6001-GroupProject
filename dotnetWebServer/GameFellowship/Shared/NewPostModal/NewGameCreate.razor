@@ -9,11 +9,11 @@
 @inject IJSRuntime JS
 
 <div class="m-2 p-3 border rounded-3 border-dark-subtle">
-    @if (!userHasLogin)
+    @if (!_userHasLogin)
     {
         <div class="validation-message">请先登录</div>
     }
-    else if (creatingGame)
+    else if (_creatingGame)
     {
         <LoadingSpinner />
     }
@@ -26,28 +26,28 @@
             <InputFile class="form-control" id="IconUpload" accept="image/png, image/jpeg"
                 OnChange="@OnIconFileUploaded"/>
         </div>
-        @if (iconUploading)
+        @if (_iconUploading)
         {
             <div>上传中 ...</div>
         }
-        else if (!uploadSuccess && uploadOnce)
+        else if (!_uploadSuccess && _uploadOnce)
         {
             <div class="validation-message">上传失败，再上传一遍试试吧</div>
         }
-        else if (uploadOnce && !string.IsNullOrWhiteSpace(newGame.IconURI))
+        else if (_uploadOnce && !string.IsNullOrWhiteSpace(_newGame.IconURI))
         {
             <div class="text-success">上传完成</div>
         }
         <hr>
         <div class="d-flex justify-content-end align-items-stretch gap-3 mt-3">
             <div class="me-auto">
-                @if (!string.IsNullOrWhiteSpace(newGame.IconURI))
+                @if (!string.IsNullOrWhiteSpace(_newGame.IconURI))
                 {
-                    <img src="@newGame.IconURI" alt="上传图标" height="100" />
+                    <img src="@_newGame.IconURI" alt="上传图标" height="100" />
                 }
             </div>
             <div class="form-check my-auto">
-                <input class="form-check-input" id="followCheck" type="checkbox" @bind="newGame.Follow">
+                <input class="form-check-input" id="followCheck" type="checkbox" @bind="_newGame.Follow">
                 <label class="form-check-label" for="followCheck">成为第1个关注者</label>
             </div>
             <button class="btn btn-primary my-auto" type="button"
@@ -64,75 +64,75 @@
     [Parameter]
     public EventCallback<bool> ExistedGameChanged { get; set; }
 
-    private GameModel newGame = default!;
+    private GameModel _newGame = default!;
 
-    private bool userHasLogin = false;
+    private bool _userHasLogin = false;
 
-    private bool uploadOnce = false;
-    private bool uploadSuccess = false;
-    private bool iconUploading = false;
-    private bool creatingGame = false;
+    private bool _uploadOnce = false;
+    private bool _uploadSuccess = false;
+    private bool _iconUploading = false;
+    private bool _creatingGame = false;
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        newGame = new GameModel(GameName);
+        _newGame = new GameModel(GameName);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+        _userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
 
         StateHasChanged();
     }
 
     private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
     {
-        iconUploading = true;
-        if (!uploadOnce) uploadOnce = true;
+        _iconUploading = true;
+        if (!_uploadOnce) _uploadOnce = true;
 
-        (uploadSuccess, string message) = await IconUpload.IconUploadToJpg(e, Environment, GameService.DefaultGameIconFolder, GameName);
+        (_uploadSuccess, string message) = await IconUpload.IconUploadToJpg(e, Environment, GameService.DefaultGameIconFolder, GameName);
 
-        iconUploading = false;
+        _iconUploading = false;
 
-        newGame.IconURI = uploadSuccess ? message : GameService.DefaultGameIconUri;
+        _newGame.IconURI = _uploadSuccess ? message : GameService.DefaultGameIconUri;
     }
 
     private async void OnNewGameCreateAsync()
     {
-        creatingGame = true;
+        _creatingGame = true;
 
         var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
         bool userLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
 
         if (!userLogin)
         {
-            creatingGame = false;
+            _creatingGame = false;
             await JS.InvokeVoidAsync("createGameAlert");
 
-            userHasLogin = userLogin;
+            _userHasLogin = userLogin;
             return;
         }
         int userId = userLoginResult.Value;
 
-        if (!uploadOnce || !uploadSuccess)
+        if (!_uploadOnce || !_uploadSuccess)
         {
-            newGame.IconURI = GameService.DefaultGameIconUri;
+            _newGame.IconURI = GameService.DefaultGameIconUri;
         }
-        (bool createSuccess, int gameID) = await GameService.CreateNewGameAsync(newGame);
+        (bool createSuccess, int gameID) = await GameService.CreateNewGameAsync(_newGame);
 
         if (!createSuccess)
         {
-            creatingGame = false;
+            _creatingGame = false;
             await JS.InvokeVoidAsync("createGameAlert");
             return;
         }
 
         await Task.Delay(1000);
 
-        if (newGame.Follow)
+        if (_newGame.Follow)
         {
             await UserService.AddNewLikedGame(userId, gameID);
         }
@@ -141,6 +141,6 @@
         await Task.Delay(1000);
 
         await ExistedGameChanged.InvokeAsync(true);
-        creatingGame = false;
+        _creatingGame = false;
     }
 }

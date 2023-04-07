@@ -2,46 +2,34 @@
 
 public class UserStatusService : IUserStatusService
 {
-	private readonly IUserService userService;
-	private HashSet<int> loginUsers = new();
+	private readonly IUserService _userService;
+	private HashSet<int> _loginUsers = new();
 
 	public string SessionStorageKey { get; } = "userid";
 
 	public UserStatusService(IUserService service)
 	{
-		userService = service;
+		_userService = service;
 	}
 
 	public bool UserHasLogin(int userId)
 	{
-        return loginUsers.Contains(userId);
+        return _loginUsers.Contains(userId);
 	}
 
-	public (bool, int) UserLogin(string userName, string password)
+	public async Task<(bool, int)> UserLoginAsync(string userName, string password)
 	{
-		var resultUser =
-			from user in userService.Users
-			where userName.Equals(user.UserName)
-			select user;
+		(bool correct, int userId) = await _userService.CheckUserPassword(userName, password);
 
-		if (!resultUser.Any())
+		if (!correct)
 		{
 			return (false, -1);
 		}
 
-		if (string.IsNullOrWhiteSpace(password))
+		if (!_loginUsers.Add(userId))
 		{
-			return (false, -1);
-		}
-		else
-		{
-            // FIXME: Check the password
-        }
-
-		int userId = resultUser.First().UserID;
-		if (!loginUsers.Add(userId))
-		{
-			return (false, -1);
+			// duplicate user login
+			return (true, userId);
 		}
 
 		return (true, userId);
@@ -49,6 +37,6 @@ public class UserStatusService : IUserStatusService
 
 	public bool UserLogout(int userId)
 	{
-        return loginUsers.Remove(userId);
+        return _loginUsers.Remove(userId);
 	}
 }

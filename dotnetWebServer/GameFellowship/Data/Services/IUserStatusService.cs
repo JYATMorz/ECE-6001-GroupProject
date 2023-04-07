@@ -5,6 +5,7 @@ public interface IUserStatusService
     string SessionStorageKey { get; }
 
     bool UserHasLogin(int userId);
-    (bool, int) UserLogin(string userName, string password);
+
+    Task<(bool, int)> UserLoginAsync(string userName, string password);
 	bool UserLogout(int userId);
 }

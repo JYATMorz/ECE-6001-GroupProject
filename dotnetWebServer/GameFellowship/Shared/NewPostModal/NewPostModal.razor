@@ -17,7 +17,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <EditForm id="newPostForm" EditContext="@editContext" OnValidSubmit="@HandleValidSubmit">
+                <EditForm id="newPostForm" EditContext="@_editContext" OnValidSubmit="@HandleValidSubmit">
                 <DataAnnotationsValidator />
                 <!-- Game Name -->
                 <div>
@@ -25,17 +25,17 @@
                         游戏名<i class="bi bi-joystick mx-2"></i>
                     </label>
 					<GameNameInput id="postGameName" class="form-control w-50" list="gameNameOptions"
-                        placeholder="输入或搜索 ..." @bind-Value="newPost.GameName" @onfocusout="OnGameNameFocusAsync"/>
-                    <ValidationMessage For="() => newPost.GameName" />
+                        placeholder="输入或搜索 ..." @bind-Value="_newPost.GameName" @onfocusout="OnGameNameFocusAsync"/>
+                    <ValidationMessage For="() => _newPost.GameName" />
                     <datalist id="gameNameOptions">
-                        @if (newPost.GameNameList is not null)
+                        @if (_newPost.GameNameList is not null)
                         {
-                            <DataListOptions DataList="@newPost.GameNameList" />
+                            <DataListOptions DataList="@_newPost.GameNameList" />
                         }
                     </datalist>
-                    @if (!existedGame && !editContext!.GetValidationMessages(()=>newPost.GameName).Any())
+                    @if (!_existedGame && !_editContext!.GetValidationMessages(()=>_newPost.GameName).Any())
                     {
-                        <NewGameCreate GameName="@newPost.GameName" @bind-ExistedGame="existedGame" />
+                        <NewGameCreate GameName="@_newPost.GameName" @bind-ExistedGame="_existedGame" />
                     }
                 </div>
                 <!-- Match Type -->
@@ -44,12 +44,12 @@
                         游戏类型<i class="bi bi-boxes mx-2"></i>
                     </label>
 					<InputText id="postMatchType" class="form-control w-50" list="matchTypeOptions"
-		                placeholder="输入或搜索 ..." @bind-Value="newPost.MatchType" />
-                    <ValidationMessage For="() => newPost.MatchType" />
+		                placeholder="输入或搜索 ..." @bind-Value="_newPost.MatchType" />
+                    <ValidationMessage For="() => _newPost.MatchType" />
                     <datalist id="matchTypeOptions">
-                        @if (newPost.MatchTypeList is not null)
+                        @if (_newPost.MatchTypeList is not null)
                         {
-                            <DataListOptions DataList="@newPost.MatchTypeList" />
+                            <DataListOptions DataList="@_newPost.MatchTypeList" />
                         }
                     </datalist>
                 </div>
@@ -60,7 +60,7 @@
                             for="postTotalPeople">需要人数: <i class="bi bi-person-fill mx-2"></i></label>
                         <div class="col-sm-auto align-self-center">
 							<InputNumber id="postTotalPeople" class="form-control form-control-sm" min="0"
-                                @bind-Value="newPost.TotalPeople" />
+                                @bind-Value="_newPost.TotalPeople" />
                         </div>
                     </div>
                     <div class="vr"></div>
@@ -69,14 +69,14 @@
                             for="postCurrentPeople">当前人数: <i class="bi bi-person-check-fill mx-2"></i></label>
                         <div class="col-sm-auto align-self-center">
 							<InputNumber id="postCurrentPeople" class="form-control form-control-sm" min="0"
-                                @bind-Value="newPost.CurrentPeople" />
+                                @bind-Value="_newPost.CurrentPeople" />
                         </div>
                     </div>
                 </div>
                 <div>
-                    <ValidationMessage For="() => newPost.TotalPeople" />
-                    <ValidationMessage For="() => newPost.CurrentPeople" />
-                    @if (!newPost.ValidPeople)
+                    <ValidationMessage For="() => _newPost.TotalPeople" />
+                    <ValidationMessage For="() => _newPost.CurrentPeople" />
+                    @if (!_newPost.ValidPeople)
                     {
                         <div class="validation-message">当前人数请不要大于需求人，已经塞不下了❤</div>
                     }
@@ -86,13 +86,13 @@
                     <label class="fs-4 fw-bold mb-1" for="createRequirementAdd">条件<i
                             class="bi bi-card-checklist mx-2"></i></label>
                     <div class="d-flex gap-2">
-                        <PillRequirements @bind-Requirements="newPost.Requirements"/>
+                        <PillRequirements @bind-Requirements="_newPost.Requirements"/>
                     </div>
-                    @if (newPost.Requirements.Length > 5)
+                    @if (_newPost.Requirements.Length > 5)
                     {
                         <div class="validation-message">队伍要求请少于等于5个捏</div>
                     }
-                    @if (newPost.Requirements.Length < 1)
+                    @if (_newPost.Requirements.Length < 1)
                     {
                         <div class="validation-message">至少提1个队伍要求</div>
                     }
@@ -101,25 +101,25 @@
                 <div class="mt-2">
                     <div class="fs-4 fw-bold mb-1">日期<i class="bi bi-calendar-check mx-2"></i></div>
                     <div class="m-2">
-                        <InputRadioGroup class="form-check form-check-inline" @bind-Value="newPost.PlayNow" >
+                        <InputRadioGroup class="form-check form-check-inline" @bind-Value="_newPost.PlayNow" >
                             <InputRadio id="postPlaNow" class="form-check-input" Value="@true" />
                             <label class="form-check-label" for="postPlaNow">立刻马上</label>
                             <InputRadio id="postPlaLate" class="form-check-input" Value="@false" />
                             <label class="form-check-label" for="postPlaLate">下次一定</label>
                         </InputRadioGroup>
                     </div>
-                    <div class="collapse @(newPost.PlayNow ? "" : "show")">
+                    <div class="collapse @(_newPost.PlayNow ? "" : "show")">
                         <div class="d-inline-flex gap-2 p-2 border border-dark-subtle rounded-3 align-items-center">
                             <div class="row">
                                 <label class="col-form-label col-form-label-sm col-sm-auto" for="postDateStart">从:</label>
                                 <div class="col-sm-auto">
                                     <InputDate class="form-control form-control-sm" id="postDateStart" 
-                                        @bind-Value="newPost.StartDate"/>
+                                        @bind-Value="_newPost.StartDate"/>
                                 </div>
                                 <label class="col-form-label col-form-label-sm col-sm-auto" for="postTimeStart">的:</label>
                                 <div class="col-sm-auto">
                                     <InputDate class="form-control form-control-sm" id="postTimeStart"
-                                        Type="InputDateType.Time" @bind-Value="newPost.StartTime" />
+                                        Type="InputDateType.Time" @bind-Value="_newPost.StartTime" />
                                 </div>
                             </div>
                             <div class="vr"></div>
@@ -127,18 +127,18 @@
                                 <label class="col-form-label col-form-label-sm col-sm-auto" for="postDateEnd">到:</label>
                                 <div class="col-sm-auto">
                                     <InputDate class="form-control form-control-sm" id="postDateEnd"
-                                        @bind-Value="newPost.EndDate" />
+                                        @bind-Value="_newPost.EndDate" />
                                 </div>
                                 <label class="col-form-label col-form-label-sm col-sm-auto" for="postTimeEnd">的:</label>
                                 <div class="col-sm-auto">
 									<InputDate class="form-control form-control-sm" id="postTimeEnd"
-                                        Type="InputDateType.Time" @bind-Value="newPost.EndTime" />
+                                        Type="InputDateType.Time" @bind-Value="_newPost.EndTime" />
                                 </div>
                             </div>
                         </div>
-                        <ValidationMessage For="() => newPost.StartDate" />
-                        <ValidationMessage For="() => newPost.EndDate" />
-                        @if (!newPost.ValidDate)
+                        <ValidationMessage For="() => _newPost.StartDate" />
+                        <ValidationMessage For="() => _newPost.EndDate" />
+                        @if (!_newPost.ValidDate)
                         {
                             <div class="validation-message">起始日期请晚于结束日期</div>
                         }
@@ -148,24 +148,24 @@
                 <div class="mt-2">
                     <div class="fs-4 fw-bold mb-1">语音<i class="bi bi-mic-fill mx-2"></i></div>
                     <div class="form-check form-switch m-2">
-                        <InputCheckbox class="form-check-input" id="postAudioChat" @bind-Value="newPost.AudioChat" />
+                        <InputCheckbox class="form-check-input" id="postAudioChat" @bind-Value="_newPost.AudioChat" />
                         <label class="form-check-label" for="postAudioChat">需要语音</label>
                     </div>
-                    <div class="collapse @(newPost.AudioChat ? "show" : "")" id="audioChatCollapse">
+                    <div class="collapse @(_newPost.AudioChat ? "show" : "")" id="audioChatCollapse">
                         <div class="p-2 border border-dark-subtle rounded-3">
                             <div class="row ps-2">
                                 <label class="col-form-label col-auto" for="postAudioName">语音平台: </label>
                                 <InputText class="form-control col-auto w-25" id="postAudioName" list="audioChatNames"
-                                    placeholder="输入或搜索 ..." @bind-Value="newPost.AudioPlatform" />
+                                    placeholder="输入或搜索 ..." @bind-Value="_newPost.AudioPlatform" />
                                 <datalist id="audioChatNames">
-                                    @if (newPost.AudioPlatformList is not null)
+                                    @if (_newPost.AudioPlatformList is not null)
                                     {
-                                        <DataListOptions DataList="@newPost.AudioPlatformList" />
+                                        <DataListOptions DataList="@_newPost.AudioPlatformList" />
                                     }
                                 </datalist>
                             </div>
-                            <ValidationMessage For="() => newPost.AudioPlatform" />
-                            @if (!newPost.ValidAudioPlatform)
+                            <ValidationMessage For="() => _newPost.AudioPlatform" />
+                            @if (!_newPost.ValidAudioPlatform)
                             {
                                 <div class="validation-message ps-1">请填写语音平台名称</div>
                             }
@@ -173,10 +173,10 @@
                             <div class="row ps-2">
                                 <label class="col-form-label col-auto" for="postAudioLink">语音链接 : </label>
                                 <InputText class="form-control col-auto w-75" id="postAudioLink"
-                                    placeholder="语音链接或神秘代码 ..." @bind-Value="newPost.AudioLink" />
+                                    placeholder="语音链接或神秘代码 ..." @bind-Value="_newPost.AudioLink" />
                             </div>
-                            <ValidationMessage For="() => newPost.AudioLink" />
-                            @if (!newPost.ValidAudioLink)
+                            <ValidationMessage For="() => _newPost.AudioLink" />
+                            @if (!_newPost.ValidAudioLink)
                             {
                                 <div class="validation-message ps-1">请填写语音地址</div>
                             }
@@ -189,14 +189,14 @@
                             class="bi bi-card-text mx-2"></i></label>
                     <div class="form-floating">
                         <InputTextArea class="form-control w-100 rounded-3" id="postOtherText"
-                            placeholder="请简短描述 ..." @bind-Value="newPost.Description" />
+                            placeholder="请简短描述 ..." @bind-Value="_newPost.Description" />
                         <label for="createOtherText">请简短描述 ...</label>
                     </div>
                 </div>
             </EditForm>
             </div>
             <div class="modal-footer justify-content-end">
-                @if(createOnce && !createSucceed)
+                @if(_createOnce && !_createSucceed)
                 {
                     <div class="validation-message ms-2 me-auto">创建失败，请重试，谢谢茄子</div>                    
                 }
@@ -213,59 +213,59 @@
     [Parameter]
     public string? GameName { get; set; }
 
-    private PostModel newPost = default!;
-    private EditContext? editContext;
+    private PostModel _newPost = default!;
+    private EditContext? _editContext;
 
-    private const int searchResult = 5;
-    private bool existedGame = true;
+    private const int _searchResult = 5;
+    private bool _existedGame = true;
 
-    private bool createOnce = false;
-    private bool createSucceed = false;
+    private bool _createOnce = false;
+    private bool _createSucceed = false;
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        newPost = new(searchResult, GameService);
+        _newPost = new(_searchResult, GameService);
 
-        editContext = new(newPost);
-        editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
+        _editContext = new(_newPost);
+        _editContext.SetFieldCssClassProvider(new BootstrapValidationClassProvider());
     }
 
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        newPost.GameName = GameName ?? string.Empty;
+        _newPost.GameName = GameName ?? string.Empty;
 
-        createOnce = false;
-        createSucceed = false;
+        _createOnce = false;
+        _createSucceed = false;
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(searchResult, newPost.GameName)).ToArray();
-        newPost.AudioPlatformList = (await PostService.GetAudioPlatformsAsync(searchResult)).ToArray();
+        _newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(_searchResult, _newPost.GameName)).ToArray();
+        _newPost.AudioPlatformList = (await PostService.GetAudioPlatformsAsync(_searchResult)).ToArray();
     }
 
     private async void OnGameNameFocusAsync()
     {
-        newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(searchResult, newPost.GameName)).ToArray();
+        _newPost.MatchTypeList = (await PostService.GetMatchTypesAsync(_searchResult, _newPost.GameName)).ToArray();
 
-        if (!string.IsNullOrWhiteSpace(newPost.GameName))
+        if (!string.IsNullOrWhiteSpace(_newPost.GameName))
         {
-            existedGame = await GameService.HasGameNameAsync(newPost.GameName);
+            _existedGame = await GameService.HasGameNameAsync(_newPost.GameName);
         }
     }
 
     private async void HandleValidSubmit()
     {
-        if (!existedGame)
+        if (!_existedGame)
         {
-            existedGame = await GameService.HasGameNameAsync(newPost.GameName);
-            if (!existedGame)
+            _existedGame = await GameService.HasGameNameAsync(_newPost.GameName);
+            if (!_existedGame)
             {
-                await JS.InvokeVoidAsync("createGameAlert", newPost.GameName);
+                await JS.InvokeVoidAsync("createGameAlert", _newPost.GameName);
                 return;                
             }
         }
@@ -279,19 +279,19 @@
             return;
         }
 
-        if (!createOnce) createOnce = true;
+        if (!_createOnce) _createOnce = true;
 
-        createSucceed = await PostService.CreateNewPostAsync(newPost, userLoginResult.Value);
-        if (!createSucceed)
+        _createSucceed = await PostService.CreateNewPostAsync(_newPost, userLoginResult.Value);
+        if (!_createSucceed)
         {
             await JS.InvokeVoidAsync("createPostAlert");
             return;
         }
 
-        createSucceed = await GameService.UpdateNewLatestPostDate(newPost.GameName);
-        if (!createSucceed)
+        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName);
+        if (!_createSucceed)
         {
-            await JS.InvokeVoidAsync("createGameAlert", newPost.GameName);
+            await JS.InvokeVoidAsync("createGameAlert", _newPost.GameName);
             return;
         }
 

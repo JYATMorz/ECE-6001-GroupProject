@@ -4,17 +4,17 @@
     <div class="card h-100" style="min-width: 18rem;">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                @if (!userExist)
+                @if (!_userExist)
                 {
                     <LoadingSpinner />
                     <div class="validation-message">用户已注销</div>
                 }
                 else
                 {
-                    <div class="fs-6">@(string.IsNullOrWhiteSpace(userName) ? "加载中 ..." : userName)</div>
+                    <div class="fs-6">@(string.IsNullOrWhiteSpace(_userName) ? "加载中 ..." : _userName)</div>
                     <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <img class="rounded-circle" src="@(string.IsNullOrWhiteSpace(userIconURI) ? defaultIconURI : userIconURI)"
+                        <img class="rounded-circle" src="@(string.IsNullOrWhiteSpace(_userIconURI) ? UserService.DefaultUserIconUri : _userIconURI)"
                             alt="User" width="30" height="30">
                     </button>
                     <ul class="dropdown-menu text-small shadow">
@@ -76,19 +76,18 @@
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
 
-    private bool userExist = false;
-    private string? userName;
-    private string? userIconURI;
-    private string defaultIconURI = "images/GameIcons/gametitle.jpg";
+    private bool _userExist = false;
+    private string? _userName;
+    private string? _userIconURI;
 
     protected override async Task OnParametersSetAsync()
     {
-        userExist = await UserService.HasUserAsync(Post.CreatorID);
-        if (userExist)
+        _userExist = await UserService.HasUserAsync(Post.CreatorID);
+        if (_userExist)
         {
             var (name, icon) = await UserService.GetUserNameIconPairAsync(Post.CreatorID);
-            userName = name;
-            userIconURI = icon;
+            _userName = name;
+            _userIconURI = icon;
         }
     }
 }

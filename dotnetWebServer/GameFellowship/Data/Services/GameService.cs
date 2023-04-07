@@ -4,7 +4,7 @@ namespace GameFellowship.Data.Services;
 
 public class GameService : IGameService
 {
-	private List<Game> games = new() {
+	private List<Game> _games = new() {
 		new Game ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
 		new Game ("Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
 		new Game ("Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
@@ -21,7 +21,7 @@ public class GameService : IGameService
 	public Task<(bool, int)> CreateNewGameAsync(GameModel model)
 	{
 		Game newGame = new(model);
-		games.Add(newGame);
+		_games.Add(newGame);
 
 		// TODO: IF everything goes well
 		return Task.FromResult((true, newGame.GameID));
@@ -30,7 +30,7 @@ public class GameService : IGameService
 	public Task<bool> UpdateNewLatestPostDate(string name)
 	{
 		var selectedGame =
-			from game in games
+			from game in _games
 			where game.GameName.ToLower() == name.ToLower()
 			select game;
 
@@ -47,13 +47,13 @@ public class GameService : IGameService
 
 	public Task<Game[]> GetAllGameAsync()
 	{
-		return Task.FromResult(games.ToArray());
+		return Task.FromResult(_games.ToArray());
 	}
 
 	public Task<Game> GetGameAsync(int id)
 	{
 		var resultGame =
-			from game in games
+			from game in _games
 			where game.GameID == id
 			select game;
 
@@ -66,7 +66,7 @@ public class GameService : IGameService
 	public Task<Game> GetGameAsync(string name)
 	{
 		var resultGame =
-			from game in games
+			from game in _games
 			where game.GameName.ToLower() == name.ToLower()
 			select game;
 
@@ -79,7 +79,7 @@ public class GameService : IGameService
 	public Task<string> GetGameIconAsync(string name)
 	{
 		var resultGameIcon =
-			from game in games
+			from game in _games
 			where game.GameName.ToLower() == name.ToLower()
 			select game.IconURI;
 
@@ -92,7 +92,7 @@ public class GameService : IGameService
 	public Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs)
 	{
 		var resultGames =
-			from game in games
+			from game in _games
 			where gameIDs.Contains(game.GameID)
 			select game.GameName;
 
@@ -111,7 +111,7 @@ public class GameService : IGameService
 		if (string.IsNullOrWhiteSpace(prefix))
 		{
 			resultGames = (
-				from game in games
+				from game in _games
 				orderby game.Followers descending
 				select game.GameName
 			).Take(count);
@@ -119,7 +119,7 @@ public class GameService : IGameService
 		else
 		{
 			resultGames = (
-				from game in games
+				from game in _games
 				where game.GameName.Contains(prefix)
 				orderby game.Followers descending
 				select game.GameName
@@ -137,7 +137,7 @@ public class GameService : IGameService
 	public Task<bool> HasGameNameAsync(string name)
 	{
 		var anyGameName =
-			from game in games
+			from game in _games
 			where game.GameName.ToLower() == name.ToLower()
 			select game.GameName
 		;

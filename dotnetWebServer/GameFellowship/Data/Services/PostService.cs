@@ -4,7 +4,7 @@ namespace GameFellowship.Data.Services;
 
 public class PostService : IPostService
 {
-	private List<Post> posts = new() {
+	private List<Post> _posts = new() {
 		new Post(
 			new DateTime(2023, 2, 2, 2, 2, 2),
 			"Minecraft", "种地",
@@ -44,7 +44,7 @@ public class PostService : IPostService
 		if (userID <= 0) return Task.FromResult(false);
 
 		Post newPost = new(model, userID, DateTime.Now);
-		posts.Add(newPost);
+		_posts.Add(newPost);
 
 		return Task.FromResult(true);
 	}
@@ -52,7 +52,7 @@ public class PostService : IPostService
 	public Task<bool> AddNewCurrentUserAsync(int postID, int userID)
 	{
 		var resultPost =
-			from post in posts
+			from post in _posts
 			where post.PostID == postID
 			select post;
 
@@ -68,7 +68,7 @@ public class PostService : IPostService
 	public Task<bool> AddNewConversationAsync(int postID, Conversation conversation)
 	{
 		var resultPost =
-			from post in posts
+			from post in _posts
 			where post.PostID == postID
 			select post;
 
@@ -83,7 +83,7 @@ public class PostService : IPostService
 	public Task<bool> DeleteCurrentUserAsync(int postID, int userID)
 	{
 		var resultPost =
-			from post in posts
+			from post in _posts
 			where post.PostID == postID
 			select post;
 
@@ -99,7 +99,7 @@ public class PostService : IPostService
 	public Task<Post> GetPostAsync(int postID)
 	{
 		var resultPost =
-			from post in posts
+			from post in _posts
 			where post.PostID == postID
 			select post;
 
@@ -112,7 +112,7 @@ public class PostService : IPostService
 	public Task<Post[]> GetPostsAsync(string gameName)
 	{
 		var resultPosts =
-			from post in posts
+			from post in _posts
 			where post.GameName == gameName
 			select post;
 
@@ -132,7 +132,7 @@ public class PostService : IPostService
 		}
 
 		var resultPosts =
-			from post in posts
+			from post in _posts
 			where postIDs.Contains(post.PostID)
 			select post;
 
@@ -152,14 +152,14 @@ public class PostService : IPostService
 		if (string.IsNullOrWhiteSpace(gameName))
 		{
 			resultMatchTypes = (
-				from post in posts
+				from post in _posts
 				select post.MatchType
 				).Take(count);
 		}
 		else
 		{
 			resultMatchTypes = (
-				from post in posts
+				from post in _posts
 				where post.GameName.ToLower() == gameName.ToLower()
 				select post.MatchType
 			).Take(count);
@@ -176,7 +176,7 @@ public class PostService : IPostService
 	public Task<string[]> GetAudioPlatformsAsync(int count)
 	{
 		var resultPlatforms = (
-			from post in posts
+			from post in _posts
 			where post.AudioChat
 			select post.AudioPlatform
 			).Take(count);

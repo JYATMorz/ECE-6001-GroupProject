@@ -9,7 +9,7 @@
 
 <div class="d-flex flex-column h-100">
     <div class="dropdown dropend text-center my-2">
-        @if (!userHasLogin)
+        @if (!_userHasLogin)
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
@@ -27,7 +27,7 @@
         {
             <button class="dropdown-toggle link-secondary border-0 bg-transparent" type="button"
 				data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="rounded-circle" src="@(userIconURI ?? UserService.DefaultUserIconUri)"
+                <img class="rounded-circle" src="@(_userIconURI ?? UserService.DefaultUserIconUri)"
                     alt="UserIcon" width="50" height="50">
             </button>
             <!--TODO: change button to a-->
@@ -47,9 +47,9 @@
         <li class="nav-item">
             <NavLink class="nav-link" href="games">游戏</NavLink>
         </li>
-        @if (gameNames is not null)
+        @if (_gameNames is not null)
         {
-            @foreach (var name in gameNames)
+            @foreach (var name in _gameNames)
             {
                 <li class="nav-item">
                     <NavLink class="nav-link" href=@("teams/" + name)>@name</NavLink>
@@ -57,7 +57,7 @@
             }
         }
         <li class="nav-item mt-auto">
-            @if (userHasLogin)
+            @if (_userHasLogin)
             {
                 <NavLink class="nav-link" href="messages">消息</NavLink>
             }
@@ -73,23 +73,23 @@
 </div>
 
 @code {
-    private bool userHasLogin = false;
-    private string? userIconURI;
-    private IEnumerable<string>? gameNames;
+    private bool _userHasLogin = false;
+    private string? _userIconURI;
+    private IEnumerable<string>? _gameNames;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+        _userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
 
-        if (userHasLogin)
+        if (_userHasLogin)
         {
-            userIconURI = await UserService.GetUserIconURIAsync(userLoginResult.Value);
+            _userIconURI = await UserService.GetUserIconURIAsync(userLoginResult.Value);
 
             IEnumerable<int> likedGames = await UserService.GetUserLikedGameIDsAsync(userLoginResult.Value);
             if (likedGames.Any())
             {
-                gameNames = await GameService.GetGameNamesAsync(likedGames);
+                _gameNames = await GameService.GetGameNamesAsync(likedGames);
             }
 
             StateHasChanged();

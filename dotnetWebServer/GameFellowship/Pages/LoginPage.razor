@@ -18,25 +18,25 @@
 	</div>
 	<div class="mx-auto my-5">
 		<form>
-			<fieldset class="text-center" disabled="@userLoggingIn">
+			<fieldset class="text-center" disabled="@_userLoggingIn">
 				<div class="d-inline-flex align-items-baseline gap-2">
 					<label class="form-label text-nowrap text-end loginFormLabel" for="userLoginName">用户名 / 邮箱：</label>
-					<input class="form-control loginFormInput @((!userLoginNameModified || UserLoginNameValid) ? validDivClass : invalidDivClass) @(userLoginNameModified ? modifiedDivClass : string.Empty)"
+					<input class="form-control loginFormInput @((!_userLoginNameModified || UserLoginNameValid) ? _validDivClass : _invalidDivClass) @(_userLoginNameModified ? _modifiedDivClass : string.Empty)"
 						id="userLoginName" type="text" @bind="UserLoginName" required>
 				</div>
 				<div class="loginFormError mb-3">
-					@if (userLoginNameModified && !UserLoginNameValid)
+					@if (_userLoginNameModified && !UserLoginNameValid)
 					{
 						<small class="form-text validation-message">用户名不存在</small>
 					}
 				</div>
 				<div class="d-inline-flex align-items-baseline gap-2">
 					<label class="form-label text-nowrap text-end loginFormLabel" for="userLoginPassword">密码：</label>
-					<input class="form-control loginFormInput @((!userPasswordModified || UserPasswordValid) ? validDivClass : invalidDivClass) @(userPasswordModified ? modifiedDivClass : string.Empty)"
+					<input class="form-control loginFormInput @((!_userPasswordModified || UserPasswordValid) ? _validDivClass : _invalidDivClass) @(_userPasswordModified ? _modifiedDivClass : string.Empty)"
 						id="userLoginPassword" type="password" @bind="UserPassword" required>
 				</div>
 				<div class="loginFormError mb-3">
-					@if (userPasswordModified && !UserPasswordValid)
+					@if (_userPasswordModified && !UserPasswordValid)
 					{
 						<small class="form-text validation-message">你这密码为什么是空的啊</small>
 					}
@@ -63,9 +63,9 @@
 			OnUserNameChange();
 		}
 	}
-	private bool userExisted = false;
-	private bool UserLoginNameValid => !string.IsNullOrWhiteSpace(UserLoginName) && userExisted;
-	private bool userLoginNameModified = false;
+	private bool _userExisted = false;
+	private bool UserLoginNameValid => !string.IsNullOrWhiteSpace(UserLoginName) && _userExisted;
+	private bool _userLoginNameModified = false;
 
 	private string _userPassword = string.Empty;
 	private string UserPassword
@@ -74,55 +74,55 @@
 		set
 		{
 			_userPassword = value;
-			if (!userPasswordModified) userPasswordModified = true;
+			if (!_userPasswordModified) _userPasswordModified = true;
 		}
 	}
 	private bool UserPasswordValid => !string.IsNullOrWhiteSpace(_userPassword);
-	private bool userPasswordModified = false;
+	private bool _userPasswordModified = false;
 
-	private bool userLoggingIn = false;
-	private string validDivClass = "valid";
-	private string invalidDivClass = "invalid";
-	private string modifiedDivClass = "modified";
+	private bool _userLoggingIn = false;
+	private string _validDivClass = "valid";
+	private string _invalidDivClass = "invalid";
+	private string _modifiedDivClass = "modified";
 
 	protected override void OnParametersSet()
 	{
 		base.OnParametersSet();
 
-		userLoginNameModified = false;
-		userPasswordModified = false;
-		userLoggingIn = false;
+		_userLoginNameModified = false;
+		_userPasswordModified = false;
+		_userLoggingIn = false;
 	}
 
 	private async void OnUserNameChange()
 	{
-		if (!userLoginNameModified) userLoginNameModified = true;
+		if (!_userLoginNameModified) _userLoginNameModified = true;
 
-		userExisted = await UserService.HasUserAsync(UserLoginName)
+		_userExisted = await UserService.HasUserAsync(UserLoginName)
 			|| await UserService.HasEmailAsync(UserLoginName);
 	}
 
 	private async Task OnUserLogin()
 	{
-		userLoggingIn = true;
+		_userLoggingIn = true;
 
-		(bool loginSucceed, int userId) = UserStatus.UserLogin(UserLoginName, UserPassword);
+		(bool loginSucceed, int userId) = await UserStatus.UserLoginAsync(UserLoginName, UserPassword);
 
 		if (!loginSucceed)
 		{
 			await JS.InvokeVoidAsync("userLoginFailAlert");
-			userLoggingIn = false;
+			_userLoggingIn = false;
 			return;
 		}
 		await SessionStorage.SetAsync(UserStatus.SessionStorageKey, userId);
 
-		userLoggingIn = false;
+		_userLoggingIn = false;
 		Navigation.NavigateTo("games", true);
 	}
 
 	private void OnUserRegister()
 	{
-		if (!string.IsNullOrWhiteSpace(UserLoginName) && !userExisted)
+		if (!string.IsNullOrWhiteSpace(UserLoginName) && !_userExisted)
 		{
 			Navigation.NavigateTo("register?name=" + UserLoginName);
 		}
