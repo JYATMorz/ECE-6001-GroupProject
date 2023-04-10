@@ -1,13 +1,13 @@
 ﻿namespace GameFellowship.Data.Services;
 
-public class UserStatusService : IUserStatusService
+public class LoginService : ILoginService
 {
 	private readonly IUserService _userService;
 	private HashSet<int> _loginUsers = new();
 
 	public string SessionStorageKey { get; } = "userid";
 
-	public UserStatusService(IUserService service)
+	public LoginService(IUserService service)
 	{
 		_userService = service;
 	}

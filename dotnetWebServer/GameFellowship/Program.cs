@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddSingleton<IUserStatusService, UserStatusService>();
+builder.Services.AddSingleton<ILoginService, LoginService>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<IPostService, PostService>();

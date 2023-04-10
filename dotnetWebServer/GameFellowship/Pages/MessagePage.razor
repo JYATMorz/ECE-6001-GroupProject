@@ -5,7 +5,7 @@
 
 @inject IUserService UserService
 @inject IPostService PostService
-@inject IUserStatusService UserStatus
+@inject ILoginService LoginService
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
 
@@ -57,8 +57,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
 
         if (!userHasLogin)
         {

@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage SessionStorage
 
-@inject IUserStatusService UserStatus
+@inject ILoginService LoginService
 @inject IUserService UserService
 @inject IGameService GameService
 @inject IPostService PostService
@@ -271,8 +271,8 @@
             }
         }
 
-        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        bool userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
+        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
 
         if (!userHasLogin)
         {

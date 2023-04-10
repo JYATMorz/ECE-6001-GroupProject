@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage SessionStorage
 
-@inject IUserStatusService UserStatus
+@inject ILoginService LoginService
 @inject IGameService GameService
 
 <PageTitle>找找你的游戏</PageTitle>
@@ -54,8 +54,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userIdResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        _userHasLogin = userIdResult.Success && UserStatus.UserHasLogin(userIdResult.Value);
+        var userIdResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
+        _userHasLogin = userIdResult.Success && LoginService.UserHasLogin(userIdResult.Value);
 
         StateHasChanged();
     }

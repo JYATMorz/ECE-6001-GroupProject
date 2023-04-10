@@ -3,7 +3,7 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage SessionStorage
 
-@inject IUserStatusService UserStatus
+@inject ILoginService LoginService
 @inject IUserService UserService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -106,7 +106,7 @@
 	{
 		_userLoggingIn = true;
 
-		(bool loginSucceed, int userId) = await UserStatus.UserLoginAsync(UserLoginName, UserPassword);
+		(bool loginSucceed, int userId) = await LoginService.UserLoginAsync(UserLoginName, UserPassword);
 
 		if (!loginSucceed)
 		{
@@ -114,7 +114,7 @@
 			_userLoggingIn = false;
 			return;
 		}
-		await SessionStorage.SetAsync(UserStatus.SessionStorageKey, userId);
+		await SessionStorage.SetAsync(LoginService.SessionStorageKey, userId);
 
 		_userLoggingIn = false;
 		Navigation.NavigateTo("games", true);

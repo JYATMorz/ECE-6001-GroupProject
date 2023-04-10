@@ -1,6 +1,6 @@
 ﻿namespace GameFellowship.Data.Services;
 
-public interface IUserStatusService
+public interface ILoginService
 {
     string SessionStorageKey { get; }
 

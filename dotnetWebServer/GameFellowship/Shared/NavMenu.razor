@@ -1,7 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @inject ProtectedSessionStorage SessionStorage
 
-@inject IUserStatusService UserStatus
+@inject ILoginService LoginService
 @inject IUserService UserService
 @inject IGameService GameService
 @inject NavigationManager Navigation
@@ -79,8 +79,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
-        _userHasLogin = userLoginResult.Success && UserStatus.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
+        _userHasLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
 
         if (_userHasLogin)
         {
@@ -98,16 +98,16 @@
 
     private async Task OnUserLogout()
     {
-        var userLoginResult = await SessionStorage.GetAsync<int>(UserStatus.SessionStorageKey);
+        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
 
-        bool logoutSucceed = userLoginResult.Success && UserStatus.UserLogout(userLoginResult.Value);
+        bool logoutSucceed = userLoginResult.Success && LoginService.UserLogout(userLoginResult.Value);
 
         if (!logoutSucceed)
         {
             await JS.InvokeVoidAsync("userLogoutFailAlert");
             return;
         }
-        await SessionStorage.DeleteAsync(UserStatus.SessionStorageKey);
+        await SessionStorage.DeleteAsync(LoginService.SessionStorageKey);
 
         Navigation.NavigateTo(Navigation.Uri, true);
     }
