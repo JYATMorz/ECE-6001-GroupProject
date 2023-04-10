@@ -1,6 +1,8 @@
+using GameFellowship.Data.Database;
 using GameFellowship.Data.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,11 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IGameService, GameService>();
 builder.Services.AddSingleton<IPostService, PostService>();
 builder.Services.AddTransient<IIconUploadService, IconUploadService>();
+
+// Database
+// builder.Services.AddDbContext<GameFellowshipDb>(options => {
+// 	options.UseSqlite(builder.Configuration.GetConnectionString("GameFellowship"));
+// });
 
 var app = builder.Build();
 
