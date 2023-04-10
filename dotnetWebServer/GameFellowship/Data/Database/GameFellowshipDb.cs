@@ -10,6 +10,9 @@ public class GameFellowshipDb : DbContext
 
 	public GameFellowshipDb(DbContextOptions<GameFellowshipDb> options) : base(options)
 	{
-		// TODO: Maybe ...
 	}
+
+    // https://learn.microsoft.com/zh-cn/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
+
+
 }
