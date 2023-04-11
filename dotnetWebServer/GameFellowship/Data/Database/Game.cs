@@ -12,5 +12,8 @@ public class Game
     public string IconURI { get; set; } = null!;
 	public DateTime LastPostDate { get; set; }
 
+    // 1 to many foreign key to child Posts
     public ICollection<Post> Posts { get; set; } = new List<Post>();
+    // many to many foreign key to following Users
+    public ICollection<User> FollowingUsers { get; set; } = new List<User>();
 }

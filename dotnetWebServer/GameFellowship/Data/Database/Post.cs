@@ -24,16 +24,12 @@ public class Post
     public string? AudioPlatform { get; set; }
     public string? AudioLink { get; set; }
 
-    // shadow foreign key property to corresponding Game
+    // 1 to many foreign key to parent Game
     public Game Game { get; set; } = null!;
-    // shadow foreign key property to creator
-    public User Creator { get; set; } = null!;
-
-    // currently joined users
-    // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many
-    public ICollection<int> CurrentUserIDs { get; set; } = new List<int>();
-    // conversations of the post
-    // TODO: Use OwnsMany ?
-    // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/one-to-many
+	// 1 to many foreign key to creator User
+	public User Creator { get; set; } = null!;
+    // Many to many foreign key to joined Users
+    public ICollection<User> JoinedUsers { get; set; } = new List<User>();
+    // 1 to many foreign key to child Conversations
     public ICollection<Conversation> Conversations { get; set; } = new List<Conversation>();
 }

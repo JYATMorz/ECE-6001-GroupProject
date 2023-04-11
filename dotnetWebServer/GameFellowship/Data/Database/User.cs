@@ -14,17 +14,16 @@ public class User
     public string? Email { get; set; }
     public string IconURI { get; set; } = null!;
 
-    // https://learn.microsoft.com/zh-cn/ef/core/modeling/owned-entities
-    [Required]
-    public UserRelations UserRelations { get; set; } = null!;
-}
+	// many to many foreign key to followed Games
+	public ICollection<Game> FollowedGames { get; set; } = new List<Game>();
+	// 1 to many foreign key to child created Post
+	public ICollection<Post> CreatedPosts { get; set; } = new List<Post>();
+	// many to many foreign key to joined Posts
+	public ICollection<Post> JoinedPosts { get; set; } = new List<Post>();
+	// 1 to many foreign key to created Conversations
+	public ICollection<Conversation> MyConversations { get; set; } = new List<Conversation>();
 
-[Owned]
-public class UserRelations
-{
-    // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many
-    public ICollection<Game> LikedGames { get; set; } = new List<Game>();
-    public ICollection<Post> CreatedPosts { get; set; } = new List<Post>();
-    public ICollection<Post> JoinedPosts { get; set; } = new List<Post>();
-    public ICollection<User> FriendUsers { get; set; } = new List<User>();
+	// self many to many foreign key to friend Users
+	// https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many#symmetrical-self-referencing-many-to-many
+	public ICollection<User> FriendUsers { get; set; } = new List<User>();
 }
