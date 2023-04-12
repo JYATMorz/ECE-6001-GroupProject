@@ -1,4 +1,6 @@
+using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameFellowship.Data.Services;
 
@@ -17,6 +19,13 @@ public class UserService : IUserService
 	public string DefaultUserIconFolder { get; } = "UserIcons";
 	public string DefaultUserName { get; } = "匿名";
 
+	private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
+
+	public UserService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
+	{
+		_dbContextFactory = dbContextFactory;
+	}
+
 	public async Task<bool> CreateNewUserAsync(UserModel model)
 	{
 		if (await HasUserAsync(model.UserName))
@@ -28,7 +37,23 @@ public class UserService : IUserService
 			return false;
 		}
 
-		UserTemp newUser = new(model);
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var user = new User
+		{
+			Password = model.UserPassword,
+			Email = model.UserEmail,
+			IconURI = model.UserIconURI
+		};
+
+		if (dbContext is null)
+		{
+			return false;
+		}
+        dbContext.Users.Add(user);
+		await dbContext.SaveChangesAsync();
+
+		// TODO: Old Model in memory
+        UserTemp newUser = new(model);
 		_users.Add(newUser);
 
 		return true;
@@ -246,33 +271,37 @@ public class UserService : IUserService
 		return Task.FromResult((true, resultUser.First().UserID));
     }
 
-    public Task<bool> HasUserAsync(int userID)
+    public Task<bool> HasUserAsync(int userId)
 	{
-		return Task.FromResult(_users.Any(user => user.UserID == userID));
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		bool result = dbContext.Users.Where(user => user.Id ==  userId).Any()
+				   && _users.Any(user => user.UserID == userId);
+
+        return Task.FromResult(result);
 	}
 
 	public Task<bool> HasUserAsync(string userName)
 	{
-		return Task.FromResult(_users.Any(user => userName.Equals(user.UserName)));
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        bool result = dbContext.Users.Where(user => userName.Equals(user.Name)).Any()
+                   && _users.Any(user => userName.Equals(user.UserName));
+
+        return Task.FromResult(result);
 	}
 
-	public Task<bool> HasEmailAsync(string email)
+	public async Task<bool> HasEmailAsync(string email)
 	{
-		return Task.FromResult(_users.Any(user => email.Equals(user.UserEmail)));
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        bool result = await dbContext.Users.AnyAsync(user => email.Equals(user.Email))
+                   && _users.Any(user => email.Equals(user.UserEmail));
+
+        return result;
 	}
 
-	private UserTemp? GetUserById(int userID)
+	private async Task<User?> GetUserByIdAsync(int userId)
 	{
-        var resultUser =
-            from user in _users
-            where user.UserID == userID
-            select user;
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-        if (resultUser is null || !resultUser.Any())
-        {
-            return null;
-        }
-
-		return resultUser.First();
+		return await dbContext.Users.SingleOrDefaultAsync(user => user.Id == userId);
     }
 }
