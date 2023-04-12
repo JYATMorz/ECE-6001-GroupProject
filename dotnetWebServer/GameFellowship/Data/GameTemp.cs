@@ -2,7 +2,7 @@ using GameFellowship.Data.FormModels;
 
 namespace GameFellowship.Data;
 
-public class Game
+public class GameTemp
 {
     private static int _gameID;
 
@@ -12,12 +12,12 @@ public class Game
     public string IconURI { get; set; } = "images/GameIcons/gametitle.jpg";
     public DateTime LastPostDate { get; set; } = DateTime.MinValue;
 
-    public Game()
+    public GameTemp()
     {
         GameID = ++_gameID;
     }
 
-    public Game(GameModel model)
+    public GameTemp(GameModel model)
     {
         GameID = ++_gameID;
 
@@ -26,7 +26,7 @@ public class Game
         IconURI = model.IconURI;
     }
 
-    public Game(string name, int followers, DateTime? lastPost = null, string? icon = null)
+    public GameTemp(string name, int followers, DateTime? lastPost = null, string? icon = null)
     {
         GameID = ++_gameID;
         GameName = name;

@@ -7,13 +7,13 @@ public interface IPostService
 	Task<(bool, int)> CreateNewPostAsync(PostModel model, int userID);
 
 	Task<bool> AddNewCurrentUserAsync(int postID, int userID);
-	Task<bool> AddNewConversationAsync(int postID, Conversation conversation);
+	Task<bool> AddNewConversationAsync(int postID, ConversationTemp conversation);
 
     Task<bool> DeleteCurrentUserAsync(int postID, int userID);
 
     Task<string[]> GetAudioPlatformsAsync(int count);
 	Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
-	Task<Post> GetPostAsync(int postID);
-	Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs);
-	Task<Post[]> GetPostsAsync(string gameName);
+	Task<PostTemp> GetPostAsync(int postID);
+	Task<PostTemp[]> GetPostsAsync(IEnumerable<int> postIDs);
+	Task<PostTemp[]> GetPostsAsync(string gameName);
 }

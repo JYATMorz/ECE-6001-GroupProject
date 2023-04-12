@@ -2,7 +2,7 @@ using GameFellowship.Data.FormModels;
 
 namespace GameFellowship.Data;
 
-public class Post
+public class PostTemp
 {
     private static int _postID;
 
@@ -29,16 +29,16 @@ public class Post
     public string AudioPlatform { get; set; } = string.Empty;
     public string AudioLink { get; set; } = string.Empty;
 
-    public List<Conversation> Conversations { get; set; } = new List<Conversation>();
+    public List<ConversationTemp> Conversations { get; set; } = new List<ConversationTemp>();
 
-    public Post()
+    public PostTemp()
     {
         PostID = ++_postID;
     }
 
-    public Post(DateTime update, string game, string match, string[] requirements,
+    public PostTemp(DateTime update, string game, string match, string[] requirements,
         string? description, int total, int creator, int[] userIDs, DateTime? start = null, DateTime? end = null,
-        string? platform = null, string? link = null, Conversation[]? conversations = null)
+        string? platform = null, string? link = null, ConversationTemp[]? conversations = null)
     {
         PostID = ++_postID;
 
@@ -81,7 +81,7 @@ public class Post
         }
     }
 
-    public Post(PostModel model, int userID, DateTime update)
+    public PostTemp(PostModel model, int userID, DateTime update)
     {
         PostID = ++_postID;
         CreatorID = userID;

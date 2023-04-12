@@ -6,8 +6,8 @@ public class PostService : IPostService
 {
 	private readonly IUserService _userService;
 
-	private List<Post> _posts = new() {
-		new Post(
+	private List<PostTemp> _posts = new() {
+		new PostTemp(
 			new DateTime(2023, 2, 2, 2, 2, 2),
 			"Minecraft", "种地",
 			new string[] {"铁盔甲", "钻石剑", "自带干粮"},
@@ -15,26 +15,26 @@ public class PostService : IPostService
 			5, 1, new int[] {1,2,3,5,6},
 			new DateTime(2023,3,21), new DateTime(2023,12,29),
 			"Kook", "https://www.baidu.com",
-			new Conversation[] {
+			new ConversationTemp[] {
 				new(1, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 1, 11, 11, 11, 11)),
 				new(2, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 2, 22, 22, 22, 22))
 			}
 		),
-		new Post(
+		new PostTemp(
 			new DateTime(2023, 1, 1, 1, 1, 1),
 			"Minecraft", "守村庄",
 			new string[] {"钻石甲", "钻石剑", "弩"},
 			"救救救救救救救救救救救",
 			5, 1, new int[] {1,2,3,5}
 		),
-		new Post(
+		new PostTemp(
 			new DateTime(2023, 2, 2, 2, 2, 2),
 			"Destiny 2", "Raid",
 			new string[] {"1810", "星火术", "速刷"},
 			"来打过的谢谢",
 			6, 4, new int[] {4,5},
 			null, null, null, null,
-			new Conversation[] {
+			new ConversationTemp[] {
 				new(4, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 1, 11, 11, 11, 11)),
 				new(5, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 2, 22, 22, 22, 22))
 			}
@@ -50,7 +50,7 @@ public class PostService : IPostService
 	{
 		if (userID <= 0) return Task.FromResult((false, -1));
 
-		Post newPost = new(model, userID, DateTime.Now);
+		PostTemp newPost = new(model, userID, DateTime.Now);
 		_posts.Add(newPost);
 
 		return Task.FromResult((true, newPost.PostID));
@@ -76,7 +76,7 @@ public class PostService : IPostService
 		return Task.FromResult(true);
 	}
 
-	public Task<bool> AddNewConversationAsync(int postID, Conversation conversation)
+	public Task<bool> AddNewConversationAsync(int postID, ConversationTemp conversation)
 	{
 		var resultPost =
 			from post in _posts
@@ -114,7 +114,7 @@ public class PostService : IPostService
         return Task.FromResult(true);
 	}
 
-	public Task<Post> GetPostAsync(int postID)
+	public Task<PostTemp> GetPostAsync(int postID)
 	{
 		var resultPost =
 			from post in _posts
@@ -122,12 +122,12 @@ public class PostService : IPostService
 			select post;
 
 		if (!resultPost.Any())
-			return Task.FromResult(new Post());
+			return Task.FromResult(new PostTemp());
 
 		return Task.FromResult(resultPost.First());
 	}
 
-	public Task<Post[]> GetPostsAsync(string gameName)
+	public Task<PostTemp[]> GetPostsAsync(string gameName)
 	{
 		var resultPosts =
 			from post in _posts
@@ -136,17 +136,17 @@ public class PostService : IPostService
 
 		if (!resultPosts.Any())
 		{
-			return Task.FromResult(Array.Empty<Post>());
+			return Task.FromResult(Array.Empty<PostTemp>());
 		}
 
 		return Task.FromResult(resultPosts.ToArray());
 	}
 
-	public Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs)
+	public Task<PostTemp[]> GetPostsAsync(IEnumerable<int> postIDs)
 	{
 		if (!postIDs.Any())
 		{
-			return Task.FromResult(Array.Empty<Post>());
+			return Task.FromResult(Array.Empty<PostTemp>());
 		}
 
 		var resultPosts =
@@ -156,7 +156,7 @@ public class PostService : IPostService
 
 		if (!resultPosts.Any())
 		{
-			return Task.FromResult(Array.Empty<Post>());
+			return Task.FromResult(Array.Empty<PostTemp>());
 		}
 
 		return Task.FromResult(resultPosts.ToArray());

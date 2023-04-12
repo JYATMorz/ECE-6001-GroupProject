@@ -97,7 +97,7 @@
 
 @code {
     [Parameter]
-    public Post Post { get; set; } = new();
+    public PostTemp Post { get; set; } = new();
 
     private string _conversationText = string.Empty;
 
@@ -142,7 +142,7 @@
         }
         int userId = userLoginResult.Value;
 
-        Conversation newConversation = new(userId, _conversationText);
+        ConversationTemp newConversation = new(userId, _conversationText);
         if (!(await PostService.AddNewConversationAsync(Post.PostID, newConversation)))
         {
             await JS.InvokeVoidAsync("updatePostAlert");

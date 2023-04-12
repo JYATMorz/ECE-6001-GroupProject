@@ -2,7 +2,7 @@ using GameFellowship.Data.FormModels;
 
 namespace GameFellowship.Data;
 
-public class User
+public class UserTemp
 {
     private static int _userID;
 
@@ -19,12 +19,12 @@ public class User
     public string UserEmail { get; private set; } = string.Empty;
     public string UserIconURI { get; private set; } = "images/UserIcons/50913860_p9.jpg";
 
-    public User()
+    public UserTemp()
     {
         UserID = ++_userID;
     }
 
-    public User(UserModel model)
+    public UserTemp(UserModel model)
     {
         UserID = ++_userID;
 
@@ -34,7 +34,7 @@ public class User
         UserIconURI = model.UserIconURI;
     }
 
-    public User(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
+    public UserTemp(string name, string? email = null, string? icon = null, int[]? games = null, int[]? createdPosts = null, int[]? joinedPosts = null, int[]? friends = null)
     {
         UserID = ++_userID;
         UserName = name;

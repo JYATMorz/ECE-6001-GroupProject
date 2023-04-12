@@ -4,13 +4,13 @@ namespace GameFellowship.Data.Services;
 
 public class UserService : IUserService
 {
-	private List<User> _users = new() {
-		new User("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),
-		new User("User 2 with long", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1,2}, null),
-		new User("User 3", null, null, null, null, new int[]{1,2}, null),
-		new User("User 4", null, null, null, new int[]{3}, new int[]{3}, null),
-		new User("User 55555555555", null, null, null, null, new int[]{1,2,3}, null),
-		new User("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
+	private List<UserTemp> _users = new() {
+		new UserTemp("User 1", null, null, new int[]{1,2,3}, new int[]{1,2}, new int[]{1,2}, null),
+		new UserTemp("User 2 with long", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1,2}, null),
+		new UserTemp("User 3", null, null, null, null, new int[]{1,2}, null),
+		new UserTemp("User 4", null, null, null, new int[]{3}, new int[]{3}, null),
+		new UserTemp("User 55555555555", null, null, null, null, new int[]{1,2,3}, null),
+		new UserTemp("User 6", null, "images/GameIcons/75750856_p0.jpg", null, null, new int[]{1}, null),
 	};
 
 	public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
@@ -28,7 +28,7 @@ public class UserService : IUserService
 			return false;
 		}
 
-		User newUser = new(model);
+		UserTemp newUser = new(model);
 		_users.Add(newUser);
 
 		return true;
@@ -261,7 +261,7 @@ public class UserService : IUserService
 		return Task.FromResult(_users.Any(user => email.Equals(user.UserEmail)));
 	}
 
-	private User? GetUserById(int userID)
+	private UserTemp? GetUserById(int userID)
 	{
         var resultUser =
             from user in _users

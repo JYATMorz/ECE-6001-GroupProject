@@ -51,9 +51,9 @@
 @code {
     private bool _hasPost = true;
 
-    private IEnumerable<Post>? _myPosts;
+    private IEnumerable<PostTemp>? _myPosts;
     private int _selectedPostId = -1;
-    private Post? _selectedPost;
+    private PostTemp? _selectedPost;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
