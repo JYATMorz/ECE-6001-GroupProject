@@ -106,7 +106,7 @@
 	{
 		_userLoggingIn = true;
 
-		(bool loginSucceed, int userId) = await LoginService.UserLoginAsync(UserLoginName, UserPassword);
+		(bool loginSucceed, string userLoginInfo) = await LoginService.UserLoginAsync(UserLoginName, UserPassword);
 
 		if (!loginSucceed)
 		{
@@ -114,7 +114,7 @@
 			_userLoggingIn = false;
 			return;
 		}
-		await LocalStorage.SetAsync(LoginService.LocalStorageKey, userId);
+		await LocalStorage.SetAsync(LoginService.LocalStorageKey, userLoginInfo);
 
 		_userLoggingIn = false;
 		Navigation.NavigateTo("games", true);

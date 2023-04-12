@@ -6,6 +6,6 @@ public interface ILoginService
 
     Task<bool> UserHasLoginAsync(int userId);
 
-    Task<(bool, int)> UserLoginAsync(string userName, string password);
-	Task<bool> UserLogout(int userId);
+    Task<(bool, string)> UserLoginAsync(string userName, string password);
+	Task<bool> UserLogout(string? userLoginInfo);
 }

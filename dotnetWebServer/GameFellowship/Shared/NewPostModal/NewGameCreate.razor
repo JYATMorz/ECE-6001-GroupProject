@@ -83,7 +83,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        _userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
+        _userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         StateHasChanged();
     }
@@ -105,7 +105,7 @@
         _creatingGame = true;
 
         var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
+        bool userLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         if (!userLogin)
         {

@@ -59,14 +59,16 @@ public class UserService : IUserService
 		return true;
 	}
 
-	public Task<bool> AddNewLikedGameAsync(int userID, int gameID)
+	public Task<bool> AddNewLikedGameAsync(int userId, int gameID)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
 
-        if (resultUser is null || !resultUser.Any())
+		// FIXME: How to add ?
+
+		if (resultUser is null || !resultUser.Any())
         {
 			return Task.FromResult(false);
         }
@@ -75,201 +77,258 @@ public class UserService : IUserService
         return Task.FromResult(true);
     }
 
-    public Task<bool> AddNewJoinedPostAsync(int userID, int postID)
+    public Task<bool> AddNewJoinedPostAsync(int userId, int postId)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
+
+		// FIXME: How to add ?
 
         if (resultUser is null || !resultUser.Any())
         {
             return Task.FromResult(false);
         }
 
-        resultUser.First().JoinedPostIDs.Add(postID);
+        resultUser.First().JoinedPostIDs.Add(postId);
         return Task.FromResult(true);
     }
 
-    public Task<bool> AddNewCreatePostAsync(int userID, int postID)
+    public Task<bool> AddNewCreatePostAsync(int userId, int postId)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
+
+		// FIXME: Is it necessary ?
 
         if (resultUser is null || !resultUser.Any())
         {
             return Task.FromResult(false);
         }
 
-		resultUser.First().CreatedPostIDs.Add(postID);
-        resultUser.First().JoinedPostIDs.Add(postID);
+		resultUser.First().CreatedPostIDs.Add(postId);
+        resultUser.First().JoinedPostIDs.Add(postId);
         return Task.FromResult(true);
     }
 
-    public Task<bool> DeleteLikedGameAsync(int userID, int gameID)
+    public async Task<bool> DeleteLikedGameAsync(int userId, int gameId)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
 
-        if (resultUser is null || !resultUser.Any())
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.Include(user => user.FollowedGames.Where(game => game.Id == gameId))
+									.FirstOrDefaultAsync();
+
+		if (result is not null)
+		{
+			// FIXME: Check if the filter works
+			Console.WriteLine(result.FollowedGames.Count);
+		}
+
+		if (resultUser is null || !resultUser.Any())
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-        return Task.FromResult(resultUser.First().LikedGameIDs.Remove(gameID));
+        return resultUser.First().LikedGameIDs.Remove(gameId);
     }
 
-    public Task<bool> DeleteJoinedPostAsync(int userID, int postID)
+    public async Task<bool> DeleteJoinedPostAsync(int userId, int postId)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
 
-        if (resultUser is null || !resultUser.Any())
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.Include(user => user.JoinedPosts.Where(post => post.Id == postId))
+									.FirstOrDefaultAsync();
+		if (result is not null)
+		{
+			// FIXME: Check if the filter works
+			Console.WriteLine(result.JoinedPosts.Count);
+		}
+
+		if (resultUser is null || !resultUser.Any())
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-        return Task.FromResult(resultUser.First().JoinedPostIDs.Remove(postID));
+        return resultUser.First().JoinedPostIDs.Remove(postId);
     }
 
-    public Task<bool> DeleteCreatePostAsync(int userID, int postID)
+    public async Task<bool> DeleteCreatePostAsync(int userId, int postId)
 	{
         var resultUser =
             from user in _users
-            where user.UserID == userID
+            where user.UserID == userId
             select user;
 
-        if (resultUser is null || !resultUser.Any())
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.Include(user => user.CreatedPosts.Where(post => post.Id == postId))
+									.FirstOrDefaultAsync();
+		if (result is not null)
+		{
+			// FIXME: Check if the filter works
+			Console.WriteLine(result.CreatedPosts.Count);
+		}
+
+		if (resultUser is null || !resultUser.Any())
         {
-            return Task.FromResult(false);
+            return false;
         }
 
-		resultUser.First().JoinedPostIDs.Remove(postID);
+		resultUser.First().JoinedPostIDs.Remove(postId);
 
-        return Task.FromResult(resultUser.First().CreatedPostIDs.Remove(postID));
+        return resultUser.First().CreatedPostIDs.Remove(postId);
     }
 
-    public Task<string> GetUserNameAsync(int userID)
+    public async Task<string> GetUserNameAsync(int userId)
 	{
 		var resultUser =
 			from user in _users
-			where user.UserID == userID
+			where user.UserID == userId
 			select user;
+
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.FirstOrDefaultAsync();
+
+		// return result?.Name ?? DefaultUserName;
 
 		if (resultUser is not null && resultUser.Any())
 		{
-			return Task.FromResult(resultUser.First().UserName);
+			return resultUser.First().UserName;
 		}
 		else
 		{
-			return Task.FromResult(DefaultUserName);
+			return DefaultUserName;
 		}
 	}
 
-	public Task<string> GetUserIconURIAsync(int userID)
+	public async Task<string> GetUserIconUriAsync(int userId)
 	{
 		var resultUser =
 			from user in _users
-			where user.UserID == userID
+			where user.UserID == userId
 			select user;
+
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.FirstOrDefaultAsync();
+
+		// return result?.IconURI ?? DefaultUserIconUri;
 
 		if (resultUser is not null && resultUser.Any())
 		{
-			return Task.FromResult(resultUser.First().UserIconURI);
+			return resultUser.First().UserIconURI;
 		}
 		else
 		{
-			return Task.FromResult(DefaultUserIconUri);
+			return DefaultUserIconUri;
 		}
 	}
 
-	public Task<int[]> GetUserLikedGameIDsAsync(int userID)
+	public async Task<int[]> GetUserLikedGameIdsAsync(int userId)
 	{
 		var resultUser =
 			from user in _users
-			where user.UserID == userID
+			where user.UserID == userId
 			select user;
+
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.Include(user => user.FollowedGames)
+									.FirstOrDefaultAsync();
+
+		// TODO: No need for PostService.GetPostsAsync(int[] PostIds)
+		// FIXME: return result?.FollowedGames?.ToArray() ?? Array.Empty<Post>();
 
 		if (!resultUser.Any())
 		{
-			return Task.FromResult(Array.Empty<int>());
+			return Array.Empty<int>();
 		}
 
-		return Task.FromResult(resultUser.First().LikedGameIDs.ToArray());
+		return resultUser.First().LikedGameIDs.ToArray();
 	}
 
-	public Task<int[]> GetUserJoinedPostIDsAsync(int userID)
+	public async Task<int[]> GetUserJoinedPostIdsAsync(int userId)
 	{
 		var resultUser =
 			from user in _users
-			where user.UserID == userID
+			where user.UserID == userId
 			select user;
+
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.Include(user => user.JoinedPosts)
+									.FirstOrDefaultAsync();
+
+		// TODO: No need for PostService.GetPostsAsync(int[] PostIds)
+		// FIXME: return result?.JoinedPosts?.ToArray() ?? Array.Empty<Post>();
 
 		if (!resultUser.Any())
 		{
-			return Task.FromResult(Array.Empty<int>());
+			return Array.Empty<int>();
 		}
 
-		return Task.FromResult(resultUser.First().JoinedPostIDs.ToArray());
+		return resultUser.First().JoinedPostIDs.ToArray();
 	}
 
-	public Task<(string, string)> GetUserNameIconPairAsync(int userID)
+	public async Task<(string, string)> GetUserNameIconPairAsync(int userId)
 	{
 		var resultUser =
 			from user in _users
-			where user.UserID == userID
+			where user.UserID == userId
 			select user;
+
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+									.Where(user => userId == user.Id)
+									.FirstOrDefaultAsync();
+
+		// FIXME: return (result?.Name ?? string.Empty, result?.IconURI ?? string.Empty);
 
 		if (!resultUser.Any())
 		{
-			return Task.FromResult((string.Empty, string.Empty));
+			return (string.Empty, string.Empty);
 		}
 		else
 		{
-			return Task.FromResult(
-				(resultUser.First().UserName, resultUser.First().UserIconURI));
+			return (resultUser.First().UserName, resultUser.First().UserIconURI);
 		}
 	}
 
-	public Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userIDs)
+	public async Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userIds)
 	{
 		var resultUsers =
 			from user in _users
-			where userIDs.Contains(user.UserID)
+			where userIds.Contains(user.UserID)
 			select user;
 
-		return Task.FromResult(resultUsers.ToDictionary(user => user.UserName, user => user.UserIconURI));
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var result = await dbContext.Users
+							  .Where(user => userIds.Contains(user.Id))
+							  .ToDictionaryAsync(user => user.Name, user => user.IconURI);
+
+		return resultUsers.ToDictionary(user => user.UserName, user => user.UserIconURI);
 	}
-
-	public Task<(bool, int)> CheckUserPasswordAsync(string userName, string password)
-	{
-        var resultUser =
-            from user in _users
-            where userName.Equals(user.UserName)
-            select user;
-
-        if (!resultUser.Any())
-		{
-			return Task.FromResult((false, -1));
-		}
-
-        if (string.IsNullOrWhiteSpace(password))
-        {
-            return Task.FromResult((false, -1));
-        }
-        else
-        {
-            // FIXME: Check the password
-        }
-
-		return Task.FromResult((true, resultUser.First().UserID));
-    }
 
     public Task<bool> HasUserAsync(int userId)
 	{
@@ -297,11 +356,4 @@ public class UserService : IUserService
 
         return result;
 	}
-
-	private async Task<User?> GetUserByIdAsync(int userId)
-	{
-        using var dbContext = _dbContextFactory.CreateDbContext();
-
-		return await dbContext.Users.SingleOrDefaultAsync(user => user.Id == userId);
-    }
 }

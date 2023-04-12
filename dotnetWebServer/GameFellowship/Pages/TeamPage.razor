@@ -105,7 +105,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        _userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
+        _userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         StateHasChanged();
     }

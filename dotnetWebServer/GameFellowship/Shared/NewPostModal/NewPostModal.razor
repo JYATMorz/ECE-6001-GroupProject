@@ -272,7 +272,7 @@
         }
 
         var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
+        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         if (!userHasLogin)
         {

@@ -58,7 +58,7 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
+        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         if (!userHasLogin)
         {
@@ -67,7 +67,7 @@
         }
         int userId = userLoginResult.Value;
 
-        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIDsAsync(userId);
+        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIdsAsync(userId);
         if (myPostIDs is null || !myPostIDs.Any())
         {
             _hasPost = false;
