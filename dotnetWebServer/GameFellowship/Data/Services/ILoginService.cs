@@ -2,10 +2,10 @@
 
 public interface ILoginService
 {
-    string SessionStorageKey { get; }
+    string LocalStorageKey { get; }
 
-    bool UserHasLogin(int userId);
+    Task<bool> UserHasLoginAsync(int userId);
 
     Task<(bool, int)> UserLoginAsync(string userName, string password);
-	bool UserLogout(int userId);
+	Task<bool> UserLogout(int userId);
 }

@@ -14,6 +14,8 @@ public class User
     public string? Email { get; set; }
     public string IconURI { get; set; } = null!;
 
+	public DateTime? LastLogin { get; set; }
+
 	// many to many foreign key to followed Games
 	public ICollection<Game> FollowedGames { get; set; } = new List<Game>();
 	// 1 to many foreign key to child created Post

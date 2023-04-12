@@ -1,7 +1,7 @@
 @page "/games"
 
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedSessionStorage SessionStorage
+@inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
 @inject IGameService GameService
@@ -54,8 +54,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userIdResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
-        _userHasLogin = userIdResult.Success && LoginService.UserHasLogin(userIdResult.Value);
+        var userIdResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
+        _userHasLogin = userIdResult.Success && LoginService.UserHasLoginAsync(userIdResult.Value);
 
         StateHasChanged();
     }

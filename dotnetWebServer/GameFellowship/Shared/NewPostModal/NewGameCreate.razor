@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedSessionStorage SessionStorage
+@inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
 @inject IUserService UserService
@@ -82,8 +82,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
-        _userHasLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
+        _userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         StateHasChanged();
     }
@@ -104,8 +104,8 @@
     {
         _creatingGame = true;
 
-        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
-        bool userLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
+        bool userLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         if (!userLogin)
         {

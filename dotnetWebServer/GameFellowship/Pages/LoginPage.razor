@@ -1,7 +1,7 @@
 ﻿@page "/login"
 
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedSessionStorage SessionStorage
+@inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
 @inject IUserService UserService
@@ -114,7 +114,7 @@
 			_userLoggingIn = false;
 			return;
 		}
-		await SessionStorage.SetAsync(LoginService.SessionStorageKey, userId);
+		await LocalStorage.SetAsync(LoginService.LocalStorageKey, userId);
 
 		_userLoggingIn = false;
 		Navigation.NavigateTo("games", true);

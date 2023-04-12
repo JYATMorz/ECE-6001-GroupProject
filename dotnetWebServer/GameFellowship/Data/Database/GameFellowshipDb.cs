@@ -14,8 +14,6 @@ public class GameFellowshipDb : DbContext
 	{
 	}
 
-	// https://learn.microsoft.com/zh-cn/ef/core/dbcontext-configuration/#using-a-dbcontext-factory-eg-for-blazor
-
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<User>()

@@ -1,5 +1,5 @@
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
-@inject ProtectedSessionStorage SessionStorage
+@inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
 @inject IUserService UserService
@@ -89,8 +89,8 @@
     {
         if (Post.PostID <= 0) return;
 
-        var userLoginResult = await SessionStorage.GetAsync<int>(LoginService.SessionStorageKey);
-        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLogin(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
+        bool userHasLogin = userLoginResult.Success && LoginService.UserHasLoginAsync(userLoginResult.Value);
 
         if (!userHasLogin)
         {
