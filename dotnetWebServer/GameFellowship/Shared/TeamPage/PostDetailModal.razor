@@ -2,7 +2,7 @@
 @inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
-@inject IUserService UserService
+@inject IPostService PostService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
@@ -13,7 +13,7 @@
         <div class="modal-content">
 
             <div class="modal-header align-items-baseline">
-                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.GameName</h1>
+                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.Game.Name</h1>
                 <small class="text-muted pt-1">@Post.MatchType</small>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -21,7 +21,7 @@
             <div class="modal-body">
 
                 <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
-                    @foreach (var requirement in Post.Requirements)
+                    @foreach (var requirement in _requirements)
                     {
                         <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
                     }
@@ -42,8 +42,8 @@
                 }
                 else
                 {
-                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> : 
-                        @Post.StartDate.ToShortDateString() ~ @Post.EndDate.ToShortDateString()
+                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> :
+                        @(((DateTime)Post.StartDate!).ToShortDateString()) ~ @(((DateTime)Post.EndDate!).ToShortDateString())
                     </p>
                 }
 
@@ -82,11 +82,20 @@
 
 @code {
     [Parameter]
-    public PostTemp Post { get; set; } = new();
+    public Post Post { get; set; } = new();
+
+    private string[] _requirements = Array.Empty<string>();
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _requirements = Post.Requirements.Split(PostService.DefaultConnectionSigns);
+    }
 
     private async void OnUserJoinPostAsync()
     {
-        if (Post.PostID <= 0) return;
+        if (Post.Id <= 0) return;
 
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
         if (!userLoginResult.Success)
@@ -102,7 +111,7 @@
             return;
         }
 
-        bool joinSucceed = await UserService.AddJoinedPostAsync(userId, Post.PostID)
+        bool joinSucceed = await PostService.AddCurrentUserAsync(Post.Id, userId);
         if (!joinSucceed)
         {
             await JS.InvokeVoidAsync("updatePostAlert");

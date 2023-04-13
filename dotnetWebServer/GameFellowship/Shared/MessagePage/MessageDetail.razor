@@ -105,7 +105,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _requirements = Post.Requirements.Split(PostService.ConnectionSigns);
+        _requirements = Post.Requirements.Split(PostService.DefaultConnectionSigns);
         _joinedUserIds = await PostService.GetJoinedUserIds(Post.Id);
         _conversations = await PostService.GetConversations(Post.Id);
     }
@@ -144,8 +144,8 @@
             return;
         }
 
-        ConversationTemp newConversation = new(userId, _conversationText);
-        if (!(await PostService.AddNewConversationAsync(Post.Id, newConversation)))
+        ConversationModel newConversation = new(DateTime.Now, _conversationText, Post.Id, userId);
+        if (!(await PostService.AddConversationAsync(newConversation)))
         {
             await JS.InvokeVoidAsync("updatePostAlert");
             return;

@@ -17,7 +17,7 @@ public class UserService : IUserService
 		_dbContextFactory = dbContextFactory;
 	}
 
-	public async Task<bool> CreateNewUserAsync(UserModel model)
+	public async Task<bool> CreateUserAsync(UserModel model)
 	{
 		if (await HasUserAsync(model.UserName))
 		{
@@ -97,7 +97,28 @@ public class UserService : IUserService
         return true;
     }
 
-	// public Task<bool> AddCreatedPostAsync(int userId, int postId) { }
+	public async Task<bool> AddCreatedPostAsync(int userId, int postId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultUser = await dbContext.Users
+                                        .Where(user => user.Id == userId)
+                                        .Include(user => user.CreatedPosts)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        var resultPost = resultUser.JoinedPosts
+                             .Where(post => post.Id == postId)
+                             .FirstOrDefault();
+		if (resultPost is null || resultUser.CreatedPosts.Contains(resultPost))
+		{
+			return false;
+		}
+
+		resultUser.CreatedPosts.Add(resultPost);
+		await dbContext.SaveChangesAsync();
+
+		return true;
+    }
 
     public async Task<bool> DeleteFollowedGameAsync(int userId, int gameId)
 	{

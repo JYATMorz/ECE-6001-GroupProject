@@ -165,7 +165,7 @@
 			_newUser.UserIconURI = UserService.DefaultUserIconUri;
 		}
 
-		_registerSucceed = await UserService.CreateNewUserAsync(_newUser);
+		_registerSucceed = await UserService.CreateUserAsync(_newUser);
 		if (!_registerSucceed)
 		{
 			await JS.InvokeVoidAsync("userRegisterFailAlert");

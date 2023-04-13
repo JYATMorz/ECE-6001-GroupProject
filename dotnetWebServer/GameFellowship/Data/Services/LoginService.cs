@@ -5,7 +5,8 @@ namespace GameFellowship.Data.Services;
 
 public class LoginService : ILoginService
 {
-	public string LocalStorageKey { get; } = "user";
+	public static string LocalStorageKey => "user";
+    public static string DefaultConnectionSign => "++";
 
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 

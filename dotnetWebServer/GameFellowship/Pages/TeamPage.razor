@@ -92,8 +92,8 @@
 
     private bool _userHasLogin = false;
 
-    private PostTemp _selectedPost = new();
-    private IEnumerable<PostTemp>? _posts;
+    private Post _selectedPost = new();
+    private IEnumerable<Post>? _posts;
     private GameTemp? _game;
 
     protected override async Task OnParametersSetAsync()
@@ -116,7 +116,7 @@
         StateHasChanged();
     }
 
-    private void ShowTeamDetail(PostTemp post)
+    private void ShowTeamDetail(Post post)
     {
         _selectedPost = post;
     }

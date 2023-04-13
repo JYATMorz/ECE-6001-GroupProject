@@ -1,15 +1,13 @@
 using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModels;
+using GameFellowship.Pages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameFellowship.Data.Services;
 
 public class PostService : IPostService
 {
-	public string ConnectionSigns => "++";
-
-	// BUG: Not functional at all
-    private List<PostTemp> _posts = new();
+    public static string DefaultConnectionSigns => "++";
 
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 
@@ -18,25 +16,27 @@ public class PostService : IPostService
         _dbContextFactory = dbContextFactory;
     }
 
-    public async Task<(bool, int)> CreateNewPostAsync(PostModel model, int userId)
+    public async Task<bool> CreatePostAsync(PostModel model, int userId)
 	{
-		if (userId <= 0) return (false, -1);
+		if (userId <= 0) return false;
 
         using var dbContext = _dbContextFactory.CreateDbContext();
+
 		var resultUser = await dbContext.Users
 										.Where(user => userId == user.Id)
 										.FirstOrDefaultAsync();
-		if (resultUser is null) return (false, -1);
+		if (resultUser is null) return false;
+
 		var resultGame = await dbContext.Games
 										.Where(game => game.Name == model.GameName)
 										.FirstOrDefaultAsync();
-		if (resultGame is null) return (false, -1);
+		if (resultGame is null) return false;
 
 		Post post = new()
         {
 			LastUpdate = DateTime.Now.ToUniversalTime(),
 			MatchType = model.MatchType,
-			Requirements = string.Join("++", model.Requirements),
+			Requirements = string.Join(DefaultConnectionSigns, model.Requirements),
 			Description = model.Description,
 			TotalPeople = model.TotalPeople,
 			CurrentPeople = model.CurrentPeople,
@@ -54,142 +54,166 @@ public class PostService : IPostService
 		await dbContext.Posts.AddAsync(post);
 		await dbContext.SaveChangesAsync();
 
-		return (true, post.Id);
+		return true;
 	}
 
-	public Task<bool> AddNewCurrentUserAsync(int postID, int userID)
+	public async Task<bool> DeletePostAsync(int postId)
 	{
-		var resultPost =
-			from post in _posts
-			where post.PostID == postID
-			select post;
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+                                        .Where(post => post.Id == postId)
+                                        .FirstOrDefaultAsync();
+        if (resultPost is null) return false;
 
-		if (!resultPost.Any())
+		dbContext.Posts.Remove(resultPost);
+		await dbContext.SaveChangesAsync();
+
+		return true;
+    }
+
+	public async Task<bool> AddCurrentUserAsync(int postId, int userId)
+	{
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultPost = await dbContext.Posts
+										.Where(post => post.Id == postId)
+										.Include(post => post.JoinedUsers)
+										.FirstOrDefaultAsync();
+		if (resultPost is null) return false;
+
+		var resultUser = await dbContext.Users
+										.Where(user => user.Id == userId)
+										.FirstOrDefaultAsync();
+		if (resultUser is null || resultPost.JoinedUsers.Contains(resultUser))
 		{
-            return Task.FromResult(false);
+			return false;
+		}
+
+		resultPost.JoinedUsers.Add(resultUser);
+		resultPost.CurrentPeople++;
+
+		await dbContext.SaveChangesAsync();
+
+		return true;
+	}
+
+	public async Task<bool> AddConversationAsync(ConversationModel model)
+	{
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultPost = await dbContext.Posts
+										.Where(post => post.Id == model.PostId)
+										.FirstOrDefaultAsync();
+		if (resultPost is null) return false;
+
+		var resultUser = await dbContext.Users
+										.Where(user => user.Id == model.CreatorId)
+										.FirstOrDefaultAsync();
+		if (resultUser is null) return false;
+
+		Conversation newConversation = new()
+		{
+			SendTime = model.SendTime,
+			Context = model.Context,
+			Post = resultPost,
+			Creator = resultUser
+		};
+		await dbContext.Conversations.AddAsync(newConversation);
+		await dbContext.SaveChangesAsync();
+
+		return true;
+	}
+
+	public async Task<bool> DeleteCurrentUserAsync(int postId, int userId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+                                        .Where(post => post.Id == postId)
+                                        .Include(post => post.JoinedUsers)
+                                        .FirstOrDefaultAsync();
+        if (resultPost is null) return false;
+
+        var resultUser = await dbContext.Users
+                                        .Where(user => user.Id == userId)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null || !resultPost.JoinedUsers.Contains(resultUser))
+        {
+            return false;
         }
 
-		if (resultPost.First().CurrentUserIDs.Add(userID))
+        if (!resultPost.JoinedUsers.Remove(resultUser))
 		{
-			++resultPost.First().CurrentPeople;
+			return false;
 		}
+		resultPost.CurrentPeople--;
 
-		return Task.FromResult(true);
+		await dbContext.SaveChangesAsync();
+
+        return true;
 	}
 
-	public Task<bool> AddNewConversationAsync(int postID, ConversationTemp conversation)
+	public async Task<Post?> GetPostAsync(int postId)
 	{
-		var resultPost =
-			from post in _posts
-			where post.PostID == postID
-			select post;
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+                                        .Where(post => post.Id == postId)
+                                        .FirstOrDefaultAsync();
 
-		if (!resultPost.Any())
-			return Task.FromResult(false);
-
-		resultPost.First().Conversations.Add(conversation);
-        resultPost.First().LastUpdate = conversation.SendTime;
-
-		return Task.FromResult(true);
+        return resultPost;
 	}
 
-	public Task<bool> DeleteCurrentUserAsync(int postID, int userID)
+	public async Task<Post[]> GetPostsAsync(string gameName)
 	{
-		var resultPost =
-			from post in _posts
-			where post.PostID == postID
-			select post;
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+										.Include(post => post.Game)
+                                        .Where(post => post.Game.Name == gameName)
+										.Include(post => post.Creator)
+                                        .ToArrayAsync();
 
-		if (!resultPost.Any())
-			return Task.FromResult(false);
+		return resultPost;
+    }
 
-		if (!resultPost.First().CurrentUserIDs.Remove(userID))
-			return Task.FromResult(false);
-
-		if (--resultPost.First().CurrentPeople <= 0)
-		{
-			_posts.Remove(resultPost.First());
-		}
-
-        return Task.FromResult(true);
-	}
-
-	public Task<PostTemp> GetPostAsync(int postID)
+	public async Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs)
 	{
-		var resultPost =
-			from post in _posts
-			where post.PostID == postID
-			select post;
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+                                        .Where(post => postIDs.Contains(post.Id))
+                                        .ToArrayAsync();
 
-		if (!resultPost.Any())
-			return Task.FromResult(new PostTemp());
-
-		return Task.FromResult(resultPost.First());
-	}
-
-	public Task<PostTemp[]> GetPostsAsync(string gameName)
-	{
-		var resultPosts =
-			from post in _posts
-			where post.GameName == gameName
-			select post;
-
-		if (!resultPosts.Any())
-		{
-			return Task.FromResult(Array.Empty<PostTemp>());
-		}
-
-		return Task.FromResult(resultPosts.ToArray());
-	}
-
-	public Task<PostTemp[]> GetPostsAsync(IEnumerable<int> postIDs)
-	{
-		if (!postIDs.Any())
-		{
-			return Task.FromResult(Array.Empty<PostTemp>());
-		}
-
-		var resultPosts =
-			from post in _posts
-			where postIDs.Contains(post.PostID)
-			select post;
-
-		if (!resultPosts.Any())
-		{
-			return Task.FromResult(Array.Empty<PostTemp>());
-		}
-
-		return Task.FromResult(resultPosts.ToArray());
-	}
+        return resultPost;
+    }
 
 	// TODO: Try add group by count
-	public Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)
+	public async Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)
 	{
-		IEnumerable<string> resultMatchTypes;
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-		if (string.IsNullOrWhiteSpace(gameName))
+		string[]? resultPost;
+
+        if (string.IsNullOrWhiteSpace(gameName))
 		{
-			resultMatchTypes = (
-				from post in _posts
-				select post.MatchType
-				).Take(count);
+			resultPost = await dbContext.Posts
+										.GroupBy(post => post.MatchType)
+										.Select(group => new { Type = group.Key, Count = group.Count() })
+										.OrderBy(group => group.Count)
+										.Select(group => group.Type)
+										.TakeLast(count)
+										.ToArrayAsync();
 		}
 		else
 		{
-			resultMatchTypes = (
-				from post in _posts
-				where post.GameName.ToLower() == gameName.ToLower()
-				select post.MatchType
-			).Take(count);
-		}
+            resultPost = await dbContext.Posts
+										// FIXME: .Include(post => post.Game)
+										.Where(post => post.Game.Name == gameName)
+                                        .GroupBy(post => post.MatchType)
+                                        .Select(group => new { Type = group.Key, Count = group.Count() })
+                                        .OrderBy(group => group.Count)
+                                        .Select(group => group.Type)
+                                        .TakeLast(count)
+                                        .ToArrayAsync();
+        }
 
-		if (!resultMatchTypes.Any())
-		{
-			return Task.FromResult(Array.Empty<string>());
-		}
-
-		return Task.FromResult(resultMatchTypes.ToArray());
-	}
+		return resultPost;
+    }
 
     public async Task<int[]> GetJoinedUserIds(int postId)
 	{
@@ -213,19 +237,18 @@ public class PostService : IPostService
         return resultPost?.Conversations?.ToArray() ?? Array.Empty<Conversation>();
     }
 
-    public Task<string[]> GetAudioPlatformsAsync(int count)
+    public async Task<string[]> GetAudioPlatformsAsync(int count)
 	{
-		var resultPlatforms = (
-			from post in _posts
-			where post.AudioChat
-			select post.AudioPlatform
-			).Take(count);
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+										.Where(post => !string.IsNullOrWhiteSpace(post.AudioPlatform))
+                                        .GroupBy(post => post.AudioPlatform)
+                                        .Select(group => new { Type = group.Key, Count = group.Count() })
+                                        .OrderBy(group => group.Count)
+                                        .Select(group => group.Type)
+                                        .TakeLast(count)
+                                        .ToArrayAsync();
 
-		if (!resultPlatforms.Any())
-		{
-			return Task.FromResult(Array.Empty<string>());
-		}
-
-		return Task.FromResult(resultPlatforms.ToArray());
+		return resultPost!;
 	}
 }

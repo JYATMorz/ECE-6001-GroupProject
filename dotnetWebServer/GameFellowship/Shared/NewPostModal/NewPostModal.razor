@@ -287,7 +287,7 @@
 
         if (!_createOnce) _createOnce = true;
 
-        (_createSucceed, int postId) = await PostService.CreateNewPostAsync(_newPost, userId);
+        _createSucceed = await PostService.CreatePostAsync(_newPost, userId);
         if (!_createSucceed)
         {
             await JS.InvokeVoidAsync("createPostAlert");

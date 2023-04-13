@@ -9,11 +9,11 @@ public interface IUserService
 	string DefaultUserIconFolder { get; }
 	string DefaultUserName { get; }
 
-	Task<bool> CreateNewUserAsync(UserModel model);
+	Task<bool> CreateUserAsync(UserModel model);
 
 	Task<bool> AddFollowedGameAsync(int userId, int gameId);
 	Task<bool> AddJoinedPostAsync(int userId, int postId);
-	// Task<bool> AddCreatedPostAsync(int userId, int postId);
+	Task<bool> AddCreatedPostAsync(int userId, int postId);
 
 	Task<bool> DeleteFollowedGameAsync(int userId, int gameId);
 	Task<bool> DeleteJoinedPostAsync(int userId, int postId);

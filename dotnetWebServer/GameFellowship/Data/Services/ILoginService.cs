@@ -2,7 +2,8 @@
 
 public interface ILoginService
 {
-    string LocalStorageKey { get; }
+    string LocalStorageKey => "user";
+    string DefaultConnectionSign => "++";
 
     Task<(bool, int)> UserHasLoginAsync(string? userLoginInfo);
 

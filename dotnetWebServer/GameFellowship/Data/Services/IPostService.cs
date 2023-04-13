@@ -5,12 +5,13 @@ namespace GameFellowship.Data.Services;
 
 public interface IPostService
 {
-	string ConnectionSigns { get; }
+    string DefaultConnectionSigns => "++";
 
-    Task<(bool, int)> CreateNewPostAsync(PostModel model, int userID);
+    Task<bool> CreatePostAsync(PostModel model, int userID);
+    Task<bool> DeletePostAsync(int postId);
 
-	Task<bool> AddNewCurrentUserAsync(int postID, int userID);
-	Task<bool> AddNewConversationAsync(int postID, ConversationTemp conversation);
+    Task<bool> AddCurrentUserAsync(int postID, int userID);
+	Task<bool> AddConversationAsync(ConversationModel model);
 
     Task<bool> DeleteCurrentUserAsync(int postID, int userID);
 
@@ -18,7 +19,7 @@ public interface IPostService
 	Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
 	Task<int[]> GetJoinedUserIds(int postId);
     Task<Conversation[]> GetConversations(int postId);
-    Task<PostTemp> GetPostAsync(int postID);
-	Task<PostTemp[]> GetPostsAsync(IEnumerable<int> postIDs);
-	Task<PostTemp[]> GetPostsAsync(string gameName);
+    Task<Post?> GetPostAsync(int postID);
+	Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs);
+	Task<Post[]> GetPostsAsync(string gameName);
 }
