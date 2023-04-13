@@ -67,7 +67,7 @@
 
 @code {
     [Parameter, EditorRequired]
-    public HashSet<int> JoinedUserIDs { get; set; } = new();
+    public int[] JoinedUserIDs { get; set; } = Array.Empty<int>();
     [Parameter, EditorRequired]
     public int Total { get; set; }
     [Parameter, EditorRequired]

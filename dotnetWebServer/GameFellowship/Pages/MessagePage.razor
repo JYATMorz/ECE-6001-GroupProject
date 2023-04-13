@@ -51,30 +51,32 @@
 @code {
     private bool _hasPost = true;
 
-    private IEnumerable<PostTemp>? _myPosts;
+    private IEnumerable<Post>? _myPosts;
     private int _selectedPostId = -1;
-    private PostTemp? _selectedPost;
+    private Post? _selectedPost;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if(!userLoginResult.Success)
+        {
+            _hasPost = false;
+            return;
+        }
 
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
         if (!userHasLogin)
         {
             _hasPost = false;
             return;
         }
-        int userId = userLoginResult.Value;
 
-        IEnumerable<int>? myPostIDs = await UserService.GetUserJoinedPostIdsAsync(userId);
-        if (myPostIDs is null || !myPostIDs.Any())
+        _myPosts = await UserService.GetUserJoinedPostsAsync(userId);
+        if (_myPosts is null || !_myPosts.Any())
         {
             _hasPost = false;
             return;
         }
-
-        _myPosts = await PostService.GetPostsAsync(myPostIDs);
 
         StateHasChanged();
     }
@@ -91,7 +93,7 @@
 
         var resultPost =
             from post in _myPosts
-            where post.PostID == _selectedPostId
+            where post.Id == _selectedPostId
             select post;
 
         if(resultPost.Any())

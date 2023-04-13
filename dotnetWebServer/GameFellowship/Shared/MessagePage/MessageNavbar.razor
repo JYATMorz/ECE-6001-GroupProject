@@ -1,11 +1,11 @@
 @inject IGameService GameService
 
-<button class="list-group-item list-group-item-action @(SelectedPostId == Post.PostID ? _active : string.Empty)"
+<button class="list-group-item list-group-item-action @ActiveItem"
     type="button" @onclick="OnSelectedPostChange">
     <div class="d-inline-flex gap-2 align-items-end">
         <img class="rounded-3" alt="GameIcon" width="40" height="40"
              src="@(_gameIcon ?? GameService.DefaultGameIconUri)">
-        <div class="fs-4">@Post.GameName</div>
+        <div class="fs-4">@_gameName</div>
     </div>
     <div class="border-top border-bottom border-dark-subtle py-1">
         <div>@Post.MatchType</div>
@@ -16,24 +16,28 @@
 
 @code {
     [Parameter, EditorRequired]
-    public PostTemp Post { get; set; } = new PostTemp();
+    public Post Post { get; set; } = new();
     [Parameter]
     public int SelectedPostId { get; set; } = -1;
     [Parameter]
     public EventCallback<int> SelectedPostIdChange { get; set; }
 
-    private string _active = "active";
+    private string ActiveItem => SelectedPostId == Post.Id ? "active" : string.Empty;
 
     private string? _gameIcon;
+    private string? _gameName;
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        _gameIcon = await GameService.GetGameIconAsync(Post.GameName);
+        base.OnParametersSet();
+
+        _gameIcon = Post.Game.IconURI;
+        _gameName = Post.Game.Name;
     }
 
     private async Task OnSelectedPostChange()
     {
-        int nextPostId = SelectedPostId == Post.PostID ? -1 : Post.PostID;
+        int nextPostId = SelectedPostId == Post.Id ? -1 : Post.Id;
         await SelectedPostIdChange.InvokeAsync(nextPostId);
     }
 }

@@ -1,59 +1,60 @@
+using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameFellowship.Data.Services;
 
 public class PostService : IPostService
 {
-	private readonly IUserService _userService;
+	public string ConnectionSigns => "++";
 
-	private List<PostTemp> _posts = new() {
-		new PostTemp(
-			new DateTime(2023, 2, 2, 2, 2, 2),
-			"Minecraft", "种地",
-			new string[] {"铁盔甲", "钻石剑", "自带干粮"},
-			"种土豆谢谢茄子",
-			5, 1, new int[] {1,2,3,5,6},
-			new DateTime(2023,3,21), new DateTime(2023,12,29),
-			"Kook", "https://www.baidu.com",
-			new ConversationTemp[] {
-				new(1, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 1, 11, 11, 11, 11)),
-				new(2, "Test, Test, \r\n, Long Context Test1", new DateTime(2023, 2, 22, 22, 22, 22))
-			}
-		),
-		new PostTemp(
-			new DateTime(2023, 1, 1, 1, 1, 1),
-			"Minecraft", "守村庄",
-			new string[] {"钻石甲", "钻石剑", "弩"},
-			"救救救救救救救救救救救",
-			5, 1, new int[] {1,2,3,5}
-		),
-		new PostTemp(
-			new DateTime(2023, 2, 2, 2, 2, 2),
-			"Destiny 2", "Raid",
-			new string[] {"1810", "星火术", "速刷"},
-			"来打过的谢谢",
-			6, 4, new int[] {4,5},
-			null, null, null, null,
-			new ConversationTemp[] {
-				new(4, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 1, 11, 11, 11, 11)),
-				new(5, "Test, Test, \r\n, Long Context Test1", new DateTime(2022, 2, 22, 22, 22, 22))
-			}
-		),
-	};
+	// BUG: Not functional at all
+    private List<PostTemp> _posts = new();
 
-	public PostService(IUserService userService)
+    private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
+
+    public PostService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
+    {
+        _dbContextFactory = dbContextFactory;
+    }
+
+    public async Task<(bool, int)> CreateNewPostAsync(PostModel model, int userId)
 	{
-		_userService = userService;
-	}
+		if (userId <= 0) return (false, -1);
 
-	public Task<(bool, int)> CreateNewPostAsync(PostModel model, int userID)
-	{
-		if (userID <= 0) return Task.FromResult((false, -1));
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultUser = await dbContext.Users
+										.Where(user => userId == user.Id)
+										.FirstOrDefaultAsync();
+		if (resultUser is null) return (false, -1);
+		var resultGame = await dbContext.Games
+										.Where(game => game.Name == model.GameName)
+										.FirstOrDefaultAsync();
+		if (resultGame is null) return (false, -1);
 
-		PostTemp newPost = new(model, userID, DateTime.Now);
-		_posts.Add(newPost);
+		Post post = new()
+        {
+			LastUpdate = DateTime.Now.ToUniversalTime(),
+			MatchType = model.MatchType,
+			Requirements = string.Join("++", model.Requirements),
+			Description = model.Description,
+			TotalPeople = model.TotalPeople,
+			CurrentPeople = model.CurrentPeople,
+			PlayNow = model.PlayNow,
+			StartDate = model.PlayNow ? null : model.StartDate.ToUniversalTime(),
+			EndDate = model.PlayNow ? null : model.EndDate.ToUniversalTime(),
+			AudioChat = model.AudioChat,
+			AudioPlatform = model.AudioChat ? null : model.AudioPlatform,
+			AudioLink = model.AudioChat ? null : model.AudioLink,
+			Game = resultGame,
+			Creator = resultUser,
+            JoinedUsers = new List<User> { resultUser }
+			// FIXME: Empty Conversations ? Will it work ?
+		};
+		await dbContext.Posts.AddAsync(post);
+		await dbContext.SaveChangesAsync();
 
-		return Task.FromResult((true, newPost.PostID));
+		return (true, post.Id);
 	}
 
 	public Task<bool> AddNewCurrentUserAsync(int postID, int userID)
@@ -107,7 +108,6 @@ public class PostService : IPostService
 
 		if (--resultPost.First().CurrentPeople <= 0)
 		{
-			_userService.DeleteCreatePostAsync(resultPost.First().CreatorID, postID);
 			_posts.Remove(resultPost.First());
 		}
 
@@ -191,7 +191,29 @@ public class PostService : IPostService
 		return Task.FromResult(resultMatchTypes.ToArray());
 	}
 
-	public Task<string[]> GetAudioPlatformsAsync(int count)
+    public async Task<int[]> GetJoinedUserIds(int postId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultPost = await dbContext.Posts
+										.Where(post => post.Id == postId)
+										.Include(post => post.JoinedUsers)
+										.FirstOrDefaultAsync();
+		return resultPost?.JoinedUsers?.Select(user => user.Id).ToArray()
+			?? Array.Empty<int>();
+    }
+
+	public async Task<Conversation[]> GetConversations(int postId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultPost = await dbContext.Posts
+                                        .Where(post => post.Id == postId)
+                                        .Include(post => post.Conversations)
+                                        .FirstOrDefaultAsync();
+
+        return resultPost?.Conversations?.ToArray() ?? Array.Empty<Conversation>();
+    }
+
+    public Task<string[]> GetAudioPlatformsAsync(int count)
 	{
 		var resultPlatforms = (
 			from post in _posts

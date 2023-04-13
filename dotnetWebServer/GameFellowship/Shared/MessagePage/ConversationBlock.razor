@@ -14,7 +14,7 @@
 
 @code {
     [Parameter]
-    public ConversationTemp Content { get; set; } = new();
+    public Conversation Content { get; set; } = new();
 
     private string? _userName;
     private string? _userIconURI;
@@ -22,12 +22,15 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (await UserService.HasUserAsync(Content.UserID))
+        if (await UserService.HasUserAsync(Content.Creator.Id))
         {
-            var (name, icon) = await UserService.GetUserNameIconPairAsync(Content.UserID);
-            _userName = name;
-            _userIconURI = icon;
+            _userName = Content.Creator.Name;
+            _userIconURI = Content.Creator.IconURI;
         }
-        
+        else
+        {
+            _userName = UserService.DefaultUserName;
+            _userIconURI = UserService.DefaultUserIconUri;
+        }
     }
 }

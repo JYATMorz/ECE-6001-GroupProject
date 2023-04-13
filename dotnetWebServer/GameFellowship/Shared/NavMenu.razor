@@ -79,28 +79,30 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        _userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
-
-        if (_userHasLogin)
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
         {
-            _userIconURI = await UserService.GetUserIconUriAsync(userLoginResult.Value);
-
-            IEnumerable<int> likedGames = await UserService.GetUserLikedGameIdsAsync(userLoginResult.Value);
-            if (likedGames.Any())
-            {
-                _gameNames = await GameService.GetGameNamesAsync(likedGames);
-            }
-
-            StateHasChanged();
+            return;
         }
+
+        (_userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!_userHasLogin)
+        {
+            return;
+        }
+
+        _userIconURI = await UserService.GetUserIconUriAsync(userId);
+
+        _gameNames = await UserService.GetUserFollowedGameNamesAsync(userId);
+
+        StateHasChanged();
     }
 
     private async Task OnUserLogout()
     {
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
 
-        bool logoutSucceed = userLoginResult.Success && await LoginService.UserLogout(userLoginResult.Value);
+        bool logoutSucceed = userLoginResult.Success && await LoginService.UserLogoutAsync(userLoginResult.Value);
 
         if (!logoutSucceed)
         {

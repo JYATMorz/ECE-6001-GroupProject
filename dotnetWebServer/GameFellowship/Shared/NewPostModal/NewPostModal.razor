@@ -271,15 +271,19 @@
             }
         }
 
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
 
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
         if (!userHasLogin)
         {
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
-        int userId = userLoginResult.Value;
 
         if (!_createOnce) _createOnce = true;
 
@@ -290,8 +294,7 @@
             return;
         }
 
-        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName)
-                      && await UserService.AddNewCreatePostAsync(userId, postId);
+        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName);
         if (!_createSucceed)
         {
             await JS.InvokeVoidAsync("updatePostAlert", _newPost.GameName);

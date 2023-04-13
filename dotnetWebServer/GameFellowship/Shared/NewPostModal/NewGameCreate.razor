@@ -82,10 +82,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        _userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        (_userHasLogin, int _) = await CheckUserLoginAsync();
 
-        StateHasChanged();
+        if (_userHasLogin) StateHasChanged();
     }
 
     private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
@@ -104,9 +103,7 @@
     {
         _creatingGame = true;
 
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
-
+        (bool userLogin, int userId) = await CheckUserLoginAsync();
         if (!userLogin)
         {
             _creatingGame = false;
@@ -115,7 +112,6 @@
             _userHasLogin = userLogin;
             return;
         }
-        int userId = userLoginResult.Value;
 
         if (!_uploadOnce || !_uploadSuccess)
         {
@@ -134,7 +130,7 @@
 
         if (_newGame.Follow)
         {
-            await UserService.AddNewLikedGameAsync(userId, gameID);
+            await UserService.AddFollowedGameAsync(userId, gameID);
         }
 
         // TODO: Use css to gradually close the div
@@ -142,5 +138,22 @@
 
         await ExistedGameChanged.InvokeAsync(true);
         _creatingGame = false;
+    }
+
+    private async Task<(bool, int)> CheckUserLoginAsync()
+    {
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            return (false, -1);
+        }
+
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!userHasLogin)
+        {
+            return (false, -1);
+        }
+
+        return (true, userId);
     }
 }

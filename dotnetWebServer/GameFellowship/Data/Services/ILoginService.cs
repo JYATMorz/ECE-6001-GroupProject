@@ -4,8 +4,8 @@ public interface ILoginService
 {
     string LocalStorageKey { get; }
 
-    Task<bool> UserHasLoginAsync(int userId);
+    Task<(bool, int)> UserHasLoginAsync(string? userLoginInfo);
 
     Task<(bool, string)> UserLoginAsync(string userName, string password);
-	Task<bool> UserLogout(string? userLoginInfo);
+	Task<bool> UserLogoutAsync(string? userLoginInfo);
 }

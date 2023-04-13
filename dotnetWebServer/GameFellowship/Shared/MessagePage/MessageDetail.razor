@@ -2,7 +2,6 @@
 @inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
-@inject IUserService UserService
 @inject IPostService PostService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
@@ -10,7 +9,7 @@
 <div class="d-flex flex-column h-100">
     <!-- Title -->
     <div class="d-flex align-items-baseline gap-3 p-2 border-bottom border-dark-subtle">
-        <div class="fs-4 fw-bold">@Post.GameName</div>
+        <div class="fs-4 fw-bold">@Post.Game.Name</div>
         <small class="text-muted">@Post.MatchType</small>
         <div class="border-start border-end border-dark-subtle px-2">
             <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)" />
@@ -23,7 +22,7 @@
             }
             else
             {
-                <span>@Post.StartDate.ToShortDateString() ~ @Post.EndDate.ToShortDateString()</span>
+                <span>@(((DateTime)Post.StartDate!).ToShortDateString()) ~ @(((DateTime)Post.EndDate!).ToShortDateString())</span>
             }
         </div>
         <button class="btn btn-success rounded-3 ms-auto" type="button" data-bs-toggle="offcanvas"
@@ -36,7 +35,7 @@
         <!-- Requirements -->
         <div>
             <div id="teamRequirementsMessage0" class="d-inline-flex flex-wrap gap-2 my-3">
-                @foreach (var requirement in Post.Requirements)
+                @foreach (var requirement in _requirements)
                 {
                     <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
                 }
@@ -51,9 +50,9 @@
         <div class="d-flex flex-column flex-grow-1 flex-nowrap p-2 border border-dark-subtle rounded-2"
             style="min-height: 0;">
             <div class="flex-grow-1 overflow-y-scroll pe-1">
-                @if (Post.Conversations is not null && Post.Conversations.Any())
+                @if (_conversations is not null && _conversations.Any())
                 {
-                    @foreach (var conversation in Post.Conversations)
+                    @foreach (var conversation in _conversations)
                     {
                         <ConversationBlock Content="@conversation" />
                     }
@@ -93,28 +92,34 @@
     </div>
 </div>
 
-<TeamMemberOffcanvas JoinedUserIDs="@Post.CurrentUserIDs" Total="@Post.TotalPeople" Current="@Post.CurrentPeople" />
+<TeamMemberOffcanvas JoinedUserIDs="@_joinedUserIds" Total="@Post.TotalPeople" Current="@Post.CurrentPeople" />
 
 @code {
     [Parameter]
-    public PostTemp Post { get; set; } = new();
+    public Post Post { get; set; } = new();
 
     private string _conversationText = string.Empty;
+    private int[] _joinedUserIds = Array.Empty<int>();
+    private Conversation[] _conversations = Array.Empty<Conversation>();
+    private string[] _requirements = Array.Empty<string>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _requirements = Post.Requirements.Split(PostService.ConnectionSigns);
+        _joinedUserIds = await PostService.GetJoinedUserIds(Post.Id);
+        _conversations = await PostService.GetConversations(Post.Id);
+    }
 
     private async void OnUserQuitAsync()
     {
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
-
-        if (!userHasLogin)
+        (bool userIsLogin, int userId) = await CheckUserLoginAsync();
+        if (!userIsLogin)
         {
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
-        int userId = userLoginResult.Value;
 
-        bool deleteSucceed = await PostService.DeleteCurrentUserAsync(Post.PostID, userId)
-                          && await UserService.DeleteJoinedPostAsync(userId, Post.PostID);
+        bool deleteSucceed = await PostService.DeleteCurrentUserAsync(Post.Id, userId);
         if (!deleteSucceed)
         {
             await JS.InvokeVoidAsync("updatePostAlert");
@@ -132,22 +137,36 @@
             return;
         }
 
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
-
-        if (!userHasLogin)
+        (bool userIsLogin, int userId) = await CheckUserLoginAsync();
+        if (!userIsLogin)
         {
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
-        int userId = userLoginResult.Value;
 
         ConversationTemp newConversation = new(userId, _conversationText);
-        if (!(await PostService.AddNewConversationAsync(Post.PostID, newConversation)))
+        if (!(await PostService.AddNewConversationAsync(Post.Id, newConversation)))
         {
             await JS.InvokeVoidAsync("updatePostAlert");
             return;
         }
         _conversationText = string.Empty;
+    }
+
+    private async Task<(bool, int)> CheckUserLoginAsync()
+    {
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            return (false, -1);
+        }
+
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!userHasLogin)
+        {
+            return (false, -1);
+        }
+
+        return (true, userId);
     }
 }

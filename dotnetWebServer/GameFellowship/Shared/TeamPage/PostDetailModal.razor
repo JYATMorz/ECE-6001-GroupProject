@@ -3,7 +3,6 @@
 
 @inject ILoginService LoginService
 @inject IUserService UserService
-@inject IPostService PostService
 @inject NavigationManager Navigation
 @inject IJSRuntime JS
 
@@ -89,18 +88,21 @@
     {
         if (Post.PostID <= 0) return;
 
-        var userLoginResult = await LocalStorage.GetAsync<int>(LoginService.LocalStorageKey);
-        bool userHasLogin = userLoginResult.Success && await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            return;
+        }
 
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
         if (!userHasLogin)
         {
             await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
             return;
         }
-        int userId = userLoginResult.Value;
 
-        bool joinSucceed = await UserService.AddNewJoinedPostAsync(userId, Post.PostID)
-                        && await PostService.AddNewCurrentUserAsync(Post.PostID, userId);
+        bool joinSucceed = await UserService.AddJoinedPostAsync(userId, Post.PostID)
         if (!joinSucceed)
         {
             await JS.InvokeVoidAsync("updatePostAlert");
