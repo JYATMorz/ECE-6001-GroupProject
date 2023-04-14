@@ -261,29 +261,21 @@ public class UserService : IUserService
     public async Task<bool> HasUserAsync(int userId)
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
-		bool result = await dbContext.Users
-									 .Where(user => user.Id == userId)
-									 .AnyAsync();
 
-        return result;
+        return await dbContext.Users.AnyAsync(user => user.Id == userId);
 	}
 
 	public async Task<bool> HasUserAsync(string userName)
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
-		bool result = await dbContext.Users
-									 .Where(user => userName.Equals(user.Name))
-									 .AnyAsync();
 
-        return result;
+        return await dbContext.Users.AnyAsync(user => user.Name == userName);
 	}
 
 	public async Task<bool> HasEmailAsync(string email)
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
-		bool result = await dbContext.Users
-									 .AnyAsync(user => email.Equals(user.Email));
 
-        return result;
-	}
+        return await dbContext.Users.AnyAsync(user => email.Equals(user.Email));
+    }
 }

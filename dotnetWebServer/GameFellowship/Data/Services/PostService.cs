@@ -1,6 +1,5 @@
 using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModels;
-using GameFellowship.Pages;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameFellowship.Data.Services;
@@ -51,7 +50,9 @@ public class PostService : IPostService
             JoinedUsers = new List<User> { resultUser }
 			// FIXME: Empty Conversations ? Will it work ?
 		};
-		await dbContext.Posts.AddAsync(post);
+		dbContext.Posts.Add(post);
+		resultGame.LastPostDate = DateTime.Now.ToUniversalTime();
+
 		await dbContext.SaveChangesAsync();
 
 		return true;
@@ -116,7 +117,7 @@ public class PostService : IPostService
 			Post = resultPost,
 			Creator = resultUser
 		};
-		await dbContext.Conversations.AddAsync(newConversation);
+		dbContext.Conversations.Add(newConversation);
 		await dbContext.SaveChangesAsync();
 
 		return true;

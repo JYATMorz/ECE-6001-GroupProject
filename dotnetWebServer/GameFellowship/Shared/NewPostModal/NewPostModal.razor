@@ -294,13 +294,6 @@
             return;
         }
 
-        _createSucceed = await GameService.UpdateNewLatestPostDate(_newPost.GameName);
-        if (!_createSucceed)
-        {
-            await JS.InvokeVoidAsync("updatePostAlert", _newPost.GameName);
-            return;
-        }
-
         // Reload the page
         Navigation.NavigateTo(Navigation.Uri, true);
     }

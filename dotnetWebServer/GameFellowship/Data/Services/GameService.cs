@@ -1,147 +1,167 @@
+using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModels;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 
 namespace GameFellowship.Data.Services;
 
 public class GameService : IGameService
 {
-	private List<GameTemp> _games = new() {
-		new GameTemp ("Destiny 2", 114, new DateTime(2023,3,11,11,11,11)),
-		new GameTemp ("Touhou Project", 514, new DateTime(2023,3,20,20,20,20), "images/GameIcons/75750856_p0.jpg"),
-		new GameTemp ("Minecraft", 1919, new DateTime(2023,3,22,22,22,22), "images/GameIcons/75750856_p0.jpg"),
-		new GameTemp ("APEX", 8100),
-		new GameTemp ("Destiny 1", 11, new DateTime(2023,3,11,11,11,11), "images/GameIcons/75750856_p0.jpg"),
-		new GameTemp ("MineCity", 2020, new DateTime(2023,3,22,22,22,22)),
-		new GameTemp ("CS:GO", 77777),
-		new GameTemp ("CS 2", 888, new DateTime(2023,3,23,23,23,23), "images/UserIcons/50913860_p9.jpg")
-	};
-
 	public string DefaultGameIconUri { get; } = "images/GameIcons/gametitle.jpg";
 	public string DefaultGameIconFolder { get; } = "GameIcons";
 
-	public Task<(bool, int)> CreateNewGameAsync(GameModel model)
+    private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
+
+    public GameService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
+    {
+        _dbContextFactory = dbContextFactory;
+    }
+
+    public async Task<bool> CreateNewGameAsync(GameModel model, int userId)
 	{
-		GameTemp newGame = new(model);
-		_games.Add(newGame);
+		if (await HasGameNameAsync(model.GameName)) return false;
 
-		// TODO: IF everything goes well
-		return Task.FromResult((true, newGame.GameID));
-	}
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-	public Task<bool> UpdateNewLatestPostDate(string name)
-	{
-		var selectedGame =
-			from game in _games
-			where game.GameName.ToLower() == name.ToLower()
-			select game;
-
-		if (!selectedGame.Any())
+		Game newGame;
+        if (model.Follow)
 		{
-			return Task.FromResult(false);
-		}
+			var resultUser = await dbContext.Users
+											.Where(user => user.Id == userId)
+											.FirstOrDefaultAsync();
+			if (resultUser is null) return false;
 
-		selectedGame.First().LastPostDate = DateTime.Now;
-		// TODO: Save it back to database
-
-		return Task.FromResult(true);
-	}
-
-	public Task<GameTemp[]> GetAllGameAsync()
-	{
-		return Task.FromResult(_games.ToArray());
-	}
-
-	public Task<GameTemp> GetGameAsync(int id)
-	{
-		var resultGame =
-			from game in _games
-			where game.GameID == id
-			select game;
-
-		if (!resultGame.Any())
-			return Task.FromResult(new GameTemp());
-
-		return Task.FromResult(resultGame.First());
-	}
-
-	public Task<GameTemp> GetGameAsync(string name)
-	{
-		var resultGame =
-			from game in _games
-			where game.GameName.ToLower() == name.ToLower()
-			select game;
-
-		if (!resultGame.Any())
-			return Task.FromResult(new GameTemp());
-
-		return Task.FromResult(resultGame.First());
-	}
-
-	public Task<string> GetGameIconAsync(string name)
-	{
-		var resultGameIcon =
-			from game in _games
-			where game.GameName.ToLower() == name.ToLower()
-			select game.IconURI;
-
-		if (!resultGameIcon.Any())
-			return Task.FromResult(DefaultGameIconUri);
-
-		return Task.FromResult(resultGameIcon.First());
-	}
-
-	public Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs)
-	{
-		var resultGames =
-			from game in _games
-			where gameIDs.Contains(game.GameID)
-			select game.GameName;
-
-		if (!resultGames.Any())
+            newGame = new()
+            {
+                Name = model.GameName,
+                IconURI = model.IconURI,
+                LastPostDate = DateTime.Now,
+                Followers = 1,
+                FollowingUsers = new List<User> { resultUser }
+            };
+        }
+		else
 		{
-			return Task.FromResult(Array.Empty<string>());
-		}
+            newGame = new()
+            {
+                Name = model.GameName,
+                IconURI = model.IconURI,
+                LastPostDate = DateTime.Now,
+                Followers = 0
+            };
+        }
 
-		return Task.FromResult(resultGames.ToArray());
+		dbContext.Games.Add(newGame);
+		await dbContext.SaveChangesAsync();
+
+        return true;
 	}
 
-	public Task<string[]> GetGameNamesAsync(int count, string? prefix = null)
+	public async Task<bool> UpdateLatestPostDate(string name)
 	{
-		IEnumerable<string> resultGames;
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultGame = await dbContext.Games
+                                        .Where(game => game.Name == name)
+                                        .FirstOrDefaultAsync();
+		if (resultGame is null) return false;
+
+		resultGame.LastPostDate = DateTime.Now.ToUniversalTime();
+		await dbContext.SaveChangesAsync();
+
+		return true;
+    }
+
+	public async Task<Game[]> GetAllGameAsync()
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+		return await dbContext.Games.ToArrayAsync();
+    }
+
+	public async Task<Game?> GetGameAsync(int gameId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultGame = await dbContext.Games
+                                        .Where(game => game.Id == gameId)
+                                        .Include(game => game.FollowingUsers)
+                                        .FirstOrDefaultAsync();
+
+        if (resultGame is not null && resultGame.FollowingUsers.Count != resultGame.Followers)
+        {
+            resultGame.Followers = resultGame.FollowingUsers.Count;
+            await dbContext.SaveChangesAsync();
+        }
+
+        return resultGame;
+    }
+
+	public async Task<Game?> GetGameAsync(string name)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultGame = await dbContext.Games
+										.Where(game => game.Name == name)
+										.Include(game => game.FollowingUsers)
+										.FirstOrDefaultAsync();
+
+		if (resultGame is not null && resultGame.FollowingUsers.Count != resultGame.Followers)
+		{
+			resultGame.Followers = resultGame.FollowingUsers.Count;
+			await dbContext.SaveChangesAsync();
+        }
+
+		return resultGame;
+    }
+
+	public async Task<string> GetGameIconAsync(string name)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultGame = await dbContext.Games
+										.Where(game => game.Name == name)
+										.Select(game => game.IconURI)
+										.FirstOrDefaultAsync();
+
+		return string.IsNullOrWhiteSpace(resultGame) ? DefaultGameIconUri : resultGame;
+    }
+
+	public async Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+		var resultGame = await dbContext.Games
+										.Where(game => gameIDs.Contains(game.Id))
+										.Select(game => game.Name)
+										.ToArrayAsync();
+
+		return resultGame;
+    }
+
+	public async Task<string[]> GetGameNamesAsync(int count, string? prefix = null)
+	{
+		using var dbContext = _dbContextFactory.CreateDbContext();
+		string[] resultGame;
 
 		if (string.IsNullOrWhiteSpace(prefix))
 		{
-			resultGames = (
-				from game in _games
-				orderby game.Followers descending
-				select game.GameName
-			).Take(count);
-		}
+            resultGame = await dbContext.Games
+                                        .Select(game => game.Name)
+										.Take(count)
+                                        .ToArrayAsync();
+        }
 		else
 		{
-			resultGames = (
-				from game in _games
-				where game.GameName.Contains(prefix)
-				orderby game.Followers descending
-				select game.GameName
-			).Take(count);
-		}
+            resultGame = await dbContext.Games
+                                        .Where(game => game.Name.Contains(prefix))
+                                        .Select(game => game.Name)
+                                        .Take(count)
+                                        .ToArrayAsync();
+        }
 
-		if (!resultGames.Any())
-		{
-			return Task.FromResult(Array.Empty<string>());
-		}
+		return resultGame;
+    }
 
-		return Task.FromResult(resultGames.ToArray());
-	}
-
-	public Task<bool> HasGameNameAsync(string name)
+    public async Task<bool> HasGameNameAsync(string name)
 	{
-		var anyGameName =
-			from game in _games
-			where game.GameName.ToLower() == name.ToLower()
-			select game.GameName
-		;
+        using var dbContext = _dbContextFactory.CreateDbContext();
 
-		return Task.FromResult(anyGameName.Any());
-	}
+		return await dbContext.Games.AnyAsync(game => game.Name == name);
+    }
 }

@@ -117,20 +117,13 @@
         {
             _newGame.IconURI = GameService.DefaultGameIconUri;
         }
-        (bool createSuccess, int gameID) = await GameService.CreateNewGameAsync(_newGame);
+        bool createSuccess = await GameService.CreateNewGameAsync(_newGame, userId);
 
         if (!createSuccess)
         {
             _creatingGame = false;
             await JS.InvokeVoidAsync("createGameAlert");
             return;
-        }
-
-        await Task.Delay(1000);
-
-        if (_newGame.Follow)
-        {
-            await UserService.AddFollowedGameAsync(userId, gameID);
         }
 
         // TODO: Use css to gradually close the div
