@@ -192,25 +192,27 @@ public class PostService : IPostService
 
         if (string.IsNullOrWhiteSpace(gameName))
 		{
-			resultPost = await dbContext.Posts
-										.GroupBy(post => post.MatchType)
-										.Select(group => new { Type = group.Key, Count = group.Count() })
-										.OrderBy(group => group.Count)
-										.Select(group => group.Type)
-										.TakeLast(count)
-										.ToArrayAsync();
-		}
+			var tempPost = await dbContext.Posts
+										  .GroupBy(post => post.MatchType)
+										  .Select(group => new { Type = group.Key, Count = group.Count() })
+										  .ToListAsync();
+			resultPost = tempPost.OrderBy(group => group.Count)
+								 .Select(group => group.Type)
+								 .TakeLast(count)
+								 .ToArray();
+        }
 		else
 		{
-            resultPost = await dbContext.Posts
-										// FIXME: .Include(post => post.Game)
-										.Where(post => post.Game.Name == gameName)
-                                        .GroupBy(post => post.MatchType)
-                                        .Select(group => new { Type = group.Key, Count = group.Count() })
-                                        .OrderBy(group => group.Count)
-                                        .Select(group => group.Type)
-                                        .TakeLast(count)
-                                        .ToArrayAsync();
+            var tempPost = await dbContext.Posts
+										  .Include(post => post.Game)
+										  .Where(post => post.Game.Name == gameName)
+										  .GroupBy(post => post.MatchType)
+										  .Select(group => new { Type = group.Key, Count = group.Count() })
+										  .ToListAsync();
+            resultPost = tempPost.OrderBy(group => group.Count)
+                                 .Select(group => group.Type)
+                                 .TakeLast(count)
+                                 .ToArray();
         }
 
 		return resultPost;
@@ -241,15 +243,16 @@ public class PostService : IPostService
     public async Task<string[]> GetAudioPlatformsAsync(int count)
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var resultPost = await dbContext.Posts
+		var tempPost = await dbContext.Posts
 										.Where(post => !string.IsNullOrWhiteSpace(post.AudioPlatform))
-                                        .GroupBy(post => post.AudioPlatform)
-                                        .Select(group => new { Type = group.Key, Count = group.Count() })
-                                        .OrderBy(group => group.Count)
-                                        .Select(group => group.Type)
-                                        .TakeLast(count)
-                                        .ToArrayAsync();
+										.GroupBy(post => post.AudioPlatform)
+										.Select(group => new { Type = group.Key, Count = group.Count() })
+										.ToListAsync();
+		var resultPost = tempPost.OrderBy(group => group.Count)
+                                 .Select(group => group.Type)
+                                 .TakeLast(count)
+                                 .ToArray();
 
-		return resultPost!;
+        return resultPost!;
 	}
 }

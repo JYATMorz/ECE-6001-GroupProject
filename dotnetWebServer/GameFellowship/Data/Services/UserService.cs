@@ -31,6 +31,7 @@ public class UserService : IUserService
 		using var dbContext = _dbContextFactory.CreateDbContext();
 		User newUser = new()
 		{
+			Name = model.UserName,
 			Password = model.UserPassword,
 			Email = model.UserEmail,
 			IconURI = model.UserIconURI
@@ -218,9 +219,9 @@ public class UserService : IUserService
 	{
 		using var dbContext = _dbContextFactory.CreateDbContext();
 		var resultUser = await dbContext.Users
-										 .Where(user => userId == user.Id)
-										 .Include(user => user.FollowedGames)
-										 .FirstOrDefaultAsync();
+                                        .Where(user => userId == user.Id)
+                                        .Include(user => user.FollowedGames)
+                                        .FirstOrDefaultAsync();
 
 		return resultUser?.FollowedGames?.Select(game => game.Name).ToArray()
 			?? Array.Empty<string>();

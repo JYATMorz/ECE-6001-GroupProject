@@ -17,7 +17,7 @@ builder.Services.AddSingleton<IPostService, PostService>();
 builder.Services.AddTransient<IIconUploadService, IconUploadService>();
 
 // Database
-builder.Services.AddDbContextPool<GameFellowshipDb>(options =>
+builder.Services.AddDbContextFactory<GameFellowshipDb>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("GameFellowship")));
 
 var app = builder.Build();
