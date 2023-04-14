@@ -82,6 +82,8 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender) return;
+
         (_userHasLogin, int _) = await CheckUserLoginAsync();
 
         if (_userHasLogin) StateHasChanged();

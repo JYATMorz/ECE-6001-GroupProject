@@ -34,6 +34,8 @@
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		if (!firstRender) return;
+
 		var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
 		if (!userLoginResult.Success)
 		{

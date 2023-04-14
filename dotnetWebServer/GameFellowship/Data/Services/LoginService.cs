@@ -27,7 +27,7 @@ public class LoginService : ILoginService
                                         .Where(user => user.Id == userId)
                                         .FirstOrDefaultAsync();
         // Never Login || Logged out before || Logged in elsewhere
-		if (resultUser is null || resultUser.LastLogin != userLogin)
+        if (resultUser is null || resultUser.LastLogin != userLogin)
 		{
 			return (false, -1);
 		}
