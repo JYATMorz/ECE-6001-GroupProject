@@ -173,18 +173,18 @@ public class UserService : IUserService
     public async Task<bool> DeleteCreatedPostAsync(int userId, int postId)
 	{
 		using var dbContext = _dbContextFactory.CreateDbContext();
-		var result = await dbContext.Users
+		var resultUser = await dbContext.Users
 									.Where(user => userId == user.Id)
 									.Include(user => user.CreatedPosts)
 									.FirstOrDefaultAsync();
-        if (result is null) return false;
+        if (resultUser is null) return false;
 
-        var resultPost = result.CreatedPosts
+        var resultPost = resultUser.CreatedPosts
 							   .Where(post => post.Id == postId)
 							   .FirstOrDefault();
         if (resultPost is null) return false;
 
-		if (!result.CreatedPosts.Remove(resultPost))
+		if (!resultUser.CreatedPosts.Remove(resultPost))
 		{
 			return false;
 		}
@@ -217,25 +217,25 @@ public class UserService : IUserService
 	public async Task<string[]> GetUserFollowedGameNamesAsync(int userId)
 	{
 		using var dbContext = _dbContextFactory.CreateDbContext();
-		var resultGames = await dbContext.Users
+		var resultUser = await dbContext.Users
 										 .Where(user => userId == user.Id)
 										 .Include(user => user.FollowedGames)
 										 .FirstOrDefaultAsync();
 
-		return resultGames?.FollowedGames?.Select(game => game.Name).ToArray()
+		return resultUser?.FollowedGames?.Select(game => game.Name).ToArray()
 			?? Array.Empty<string>();
 	}
 
 	public async Task<Post[]> GetUserJoinedPostsAsync(int userId)
 	{
 		using var dbContext = _dbContextFactory.CreateDbContext();
-		var result = await dbContext.Users
+		var resultUser = await dbContext.Users
 									.Where(user => userId == user.Id)
 									.Include(user => user.JoinedPosts)
 									.ThenInclude(post => post.Game)
 									.FirstOrDefaultAsync();
 
-		return result?.JoinedPosts?.ToArray() ?? Array.Empty<Post>();
+		return resultUser?.JoinedPosts?.ToArray() ?? Array.Empty<Post>();
 	}
 
 	public async Task<(string, string)> GetUserNameIconPairAsync(int userId)
