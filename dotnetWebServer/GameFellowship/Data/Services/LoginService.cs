@@ -1,12 +1,14 @@
 ﻿using GameFellowship.Data.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace GameFellowship.Data.Services;
 
 public class LoginService : ILoginService
 {
 	public static string LocalStorageKey => "user";
-    public static string DefaultConnectionSign => "++";
+
+    private readonly string _defaultConnectionSign = "++";
 
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 
@@ -22,17 +24,18 @@ public class LoginService : ILoginService
             return (false, -1);
         }
 
+        // Not login longer than 3 days
+        if (userLogin.AddDays(3) < DateTime.Now)
+        {
+            return (false, -1);
+        }
+
         using var dbContext = _dbContextFactory.CreateDbContext();
 		var resultUser = await dbContext.Users
                                         .Where(user => user.Id == userId)
-                                        .FirstOrDefaultAsync();
-        // Never Login || Logged out before || Logged in elsewhere
-        if (resultUser is null || resultUser.LastLogin != userLogin)
-		{
-			return (false, -1);
-		}
+                                        .AnyAsync(user => user.LastLogin == userLogin);
 
-		return (true, userId);
+        return resultUser ? (true, userId) : (false, -1);
 	}
 
 	public async Task<(bool, string)> UserLoginAsync(string userName, string password)
@@ -78,34 +81,29 @@ public class LoginService : ILoginService
             await dbContext.SaveChangesAsync();
         }
 
-        // TODO: If logins table exists
-
         return true;
     }
 
-    private static bool TryGetUserInfo(string? userLoginInfo, out int userId, out DateTime userLogin)
+    private bool TryGetUserInfo(string? userLoginInfo, out int userId, out DateTime userLogin)
     {
         userId = -1;
         userLogin = DateTime.MinValue;
+
         if (string.IsNullOrWhiteSpace(userLoginInfo))
         {
-            // TODO: Pay Attention
-            Console.WriteLine(userLoginInfo);
             return false;
         }
 
-        string[] userInfo = userLoginInfo.Trim().Split("++");
+        string[] userInfo = userLoginInfo.Trim().Split(_defaultConnectionSign);
         if (userInfo.Length != 2)
         {
-            // TODO: Pay Attention
-            Console.WriteLine(userLoginInfo);
             return false;
         }
+
         if (!int.TryParse(userInfo[0], out userId) ||
-            !DateTime.TryParse(userInfo[1], out userLogin))
+            !DateTime.TryParse(userInfo[1], DateTimeFormatInfo.InvariantInfo, DateTimeStyles.AdjustToUniversal,
+                               out userLogin))
         {
-            // TODO: Pay Attention
-            Console.WriteLine(userLoginInfo);
             return false;
         }
 
