@@ -6,7 +6,7 @@ namespace GameFellowship.Data.Services;
 
 public class UserService : IUserService
 {
-	public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
+    public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
 	public string DefaultUserIconFolder { get; } = "UserIcons";
 	public string DefaultUserName { get; } = "匿名";
 
@@ -258,6 +258,25 @@ public class UserService : IUserService
 
 		return resultUsers;
 	}
+
+	public async Task<UserDto> GetUserFullInfoAsync(int userId)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .Include(user => user.CreatedPosts)
+                                        .Include(user => user.JoinedPosts)
+                                        .Include(user => user.FollowedGames)
+                                        .Include(user => user.FriendUsers)
+                                        .FirstOrDefaultAsync();
+
+		if (resultUser is null)
+		{
+			return default;
+		}
+
+		return new UserDto(resultUser);
+    }
 
     public async Task<bool> HasUserAsync(int userId)
 	{

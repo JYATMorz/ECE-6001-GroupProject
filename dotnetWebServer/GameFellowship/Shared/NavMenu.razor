@@ -32,9 +32,8 @@
             </button>
             <!--TODO: change button to a-->
             <ul class="dropdown-menu text-small shadow">
-                <li><button class="dropdown-item" type="button">新帖子</button></li>
-                <li><button class="dropdown-item" type="button">我的帖子</button></li>
-                <li><button class="dropdown-item" type="button">个人信息</button></li>
+                <li><button class="dropdown-item" type="button" disabled>我的帖子</button></li>
+                <li><button class="dropdown-item" type="button" @onclick="NavigateToProfile">个人信息</button></li>
                 <li>
                     <hr class="dropdown-divider">
                 </li>
@@ -63,7 +62,7 @@
             }
         </li>
         <li class="nav-item">
-            <NavLink class="nav-link" href="login">设置</NavLink>
+            <NavLink class="nav-link" href="profile">设置</NavLink>
         </li>
     </ul>
     <hr>
@@ -101,10 +100,11 @@
 
     private async Task OnUserLogout()
     {
+        if (!_userHasLogin) return;
+
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
 
         bool logoutSucceed = userLoginResult.Success && await LoginService.UserLogoutAsync(userLoginResult.Value);
-
         if (!logoutSucceed)
         {
             await JS.InvokeVoidAsync("userLogoutFailAlert");
@@ -113,5 +113,12 @@
         await LocalStorage.DeleteAsync(LoginService.LocalStorageKey);
 
         Navigation.NavigateTo(Navigation.Uri, true);
+    }
+
+    private void NavigateToProfile()
+    {
+        if (!_userHasLogin) return;
+
+        Navigation.NavigateTo("profile");
     }
 }

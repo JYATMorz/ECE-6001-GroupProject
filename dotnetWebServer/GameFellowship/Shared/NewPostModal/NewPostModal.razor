@@ -274,14 +274,14 @@
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
         if (!userLoginResult.Success)
         {
-            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
 
         (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
         if (!userHasLogin)
         {
-            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
 

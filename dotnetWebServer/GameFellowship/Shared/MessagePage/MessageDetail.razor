@@ -115,7 +115,7 @@
         (bool userIsLogin, int userId) = await CheckUserLoginAsync();
         if (!userIsLogin)
         {
-            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
 
@@ -140,7 +140,7 @@
         (bool userIsLogin, int userId) = await CheckUserLoginAsync();
         if (!userIsLogin)
         {
-            await JS.InvokeVoidAsync("userLoginPostConfirm", Navigation.BaseUri + "login");
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
 

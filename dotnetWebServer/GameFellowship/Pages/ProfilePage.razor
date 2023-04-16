@@ -1,0 +1,133 @@
+﻿@page "/profile"
+
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedLocalStorage LocalStorage
+
+@inject ILoginService LoginService
+@inject IUserService UserService
+@inject IIconUploadService IconUpload
+@inject IWebHostEnvironment Environment
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>个人信息</PageTitle>
+
+@if(!_userHasLogin)
+{
+    <a href="login">请先登录</a>
+}
+else if(_userInfo != default)
+{
+    <div class="h-100 overflow-y-auto overflow-x-hidden">
+        test start
+        <div class="d-flex flex-column" style="height:2000px">
+            <div>
+                img for user icon
+                file input for re-upload
+            </div>
+            <div>
+                input text for user name
+            </div>
+            <div>
+                input text for user email
+            </div>
+            <div>
+                list for followed games
+            </div>
+            <div>
+                number for created posts
+                link to created posts
+            </div>
+            <div>
+                number for joined posts
+                link to 'message'
+            </div>
+            <div>
+                icon and name pair for friend user
+            </div>
+        </div>
+        test end
+    </div>
+}
+else
+{
+    <LoadingSpinner />
+    <p>加载中 ...</p>
+}
+
+@code {
+    private bool _userHasLogin = false;
+    private UserDto _userInfo;
+
+    private bool _uploadSucceed = true;
+    private bool _uploadComplete = false;
+
+    private string _userNameInput = string.Empty;
+    private string _userEmailInput = string.Empty;
+    private string _userIconUri = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        _uploadSucceed = true;
+        _uploadComplete = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        (_userHasLogin, int userId) = await CheckUserLoginAsync();
+        // Ask user login => Ask user wait
+        if (!_userHasLogin) return;
+        StateHasChanged();
+
+        // Get User Status
+        _userInfo = await UserService.GetUserFullInfoAsync(userId);
+        if (_userInfo == default)
+        {
+            _userHasLogin = false;
+        }
+        else
+        {
+            _userNameInput = _userInfo.Name;
+            _userEmailInput = _userInfo.Email;
+            _userIconUri = _userInfo.IconUri;
+        }
+        StateHasChanged();
+    }
+
+    private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
+    {
+        (bool userHasLogin, int userId) = await CheckUserLoginAsync();
+        if (!userHasLogin)
+        {
+            _uploadSucceed = false;
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+
+        (_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, userId.ToString());
+
+        _userIconUri = _uploadSucceed ? message : UserService.DefaultUserIconUri;
+        _uploadComplete = true;
+    }
+
+    private async Task<(bool, int)> CheckUserLoginAsync()
+    {
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            return (false, -1);
+        }
+
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!userHasLogin)
+        {
+            return (false, -1);
+        }
+
+        return (true, userId);
+    }
+}
