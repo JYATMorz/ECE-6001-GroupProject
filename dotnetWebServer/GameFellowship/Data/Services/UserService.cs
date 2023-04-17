@@ -175,9 +175,9 @@ public class UserService : IUserService
 	{
 		using var dbContext = _dbContextFactory.CreateDbContext();
 		var resultUser = await dbContext.Users
-									.Where(user => userId == user.Id)
-									.Include(user => user.CreatedPosts)
-									.FirstOrDefaultAsync();
+										.Where(user => userId == user.Id)
+										.Include(user => user.CreatedPosts)
+										.FirstOrDefaultAsync();
         if (resultUser is null) return false;
 
         var resultPost = resultUser.CreatedPosts
@@ -190,6 +190,36 @@ public class UserService : IUserService
 			return false;
 		}
 
+        await dbContext.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> UpdateIconUri(int userId, string iconUri)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .FirstOrDefaultAsync();
+		if (resultUser is null) return false;
+
+		resultUser.IconURI = iconUri;
+		await dbContext.SaveChangesAsync();
+
+		return true;
+    }
+
+    public async Task<bool> UpdateEmail(int userId, string email)
+	{
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        resultUser.Email = email;
         await dbContext.SaveChangesAsync();
 
         return true;
@@ -269,8 +299,8 @@ public class UserService : IUserService
                                         .Include(user => user.FollowedGames)
                                         .Include(user => user.FriendUsers)
                                         .FirstOrDefaultAsync();
-
-		if (resultUser is null)
+        // FIXME: https://learn.microsoft.com/zh-cn/ef/core/querying/single-split-queries
+        if (resultUser is null)
 		{
 			return default;
 		}

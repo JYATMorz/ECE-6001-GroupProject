@@ -19,6 +19,9 @@ public interface IUserService
 	Task<bool> DeleteJoinedPostAsync(int userId, int postId);
 	Task<bool> DeleteCreatedPostAsync(int userId, int postId);
 
+	Task<bool> UpdateIconUri(int userId, string iconUri);
+	Task<bool> UpdateEmail(int userId, string email);
+
 	Task<string> GetUserNameAsync(int userId);
 	Task<string> GetUserIconUriAsync(int userId);
 	Task<string[]> GetUserFollowedGameNamesAsync(int userId);

@@ -1,6 +1,8 @@
 ﻿@page "/profile"
 
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using System.Text.RegularExpressions;
+@using System.Globalization;
 @inject ProtectedLocalStorage LocalStorage
 
 @inject ILoginService LoginService
@@ -19,34 +21,114 @@
 else if(_userInfo != default)
 {
     <div class="h-100 overflow-y-auto overflow-x-hidden">
-        test start
-        <div class="d-flex flex-column" style="height:2000px">
-            <div>
-                img for user icon
-                file input for re-upload
+        <div class="d-flex gap-2 mt-5">
+			<div class="col-sm-1">
+                <!-- Only for empty white space -->
             </div>
-            <div>
-                input text for user name
-            </div>
-            <div>
-                input text for user email
-            </div>
-            <div>
-                list for followed games
-            </div>
-            <div>
-                number for created posts
-                link to created posts
-            </div>
-            <div>
-                number for joined posts
-                link to 'message'
-            </div>
-            <div>
-                icon and name pair for friend user
+			<div class="d-flex flex-column flex-grow-1 gap-3">
+                <!--User Icon-->
+				<div>
+                    <div class="fs-4 fw-bold">我的头像</div>
+                    <div class="d-flex gap-2 justify-content-start align-items-end border border-dark-subtle rounded-3 p-2">
+						<img class="rounded-2" src="@_userIconUri" width="100" height="100" alt="User Icon" />
+						<div class="d-inline-flex flex-column">
+                            <label class="form-label text-body-secondary" for="IconReUpload">如果想换头像的话</label>
+                            <div class="d-inline-flex">
+								<InputFile class="form-control" id="IconReUpload" accept="image/png, image/jpeg"
+									   OnChange="@OnIconFileUploaded" disabled="@(!_userHasLogin)" />
+                                @if (_uploadComplete && _uploadSucceed && !_newIconSave)
+                                {
+                                    <button class="btn btn-primary text-nowrap" type="button" disabled="@(!_uploadComplete)"
+                                            @onclick="OnIconChangeSave">保存</button>
+                                }
+                            </div>
+							@if (_uploadComplete && !_uploadSucceed)
+							{
+								<div class="validation-message">上传失败了捏😓</div>
+							}
+						</div>
+                    </div>
+				</div>
+                <!--User Name-->
+                <div class="d-inline-flex">
+                    <label class="form-label fs-4 fw-bold text-nowrap">我的昵称:</label>
+                    <input class="form-control-plaintext ms-3" type="text" id="myUserName"
+                           value="@_userInfo.Name" readonly/>
+				</div>
+                <!--User Email-->
+                <div class="d-inline-flex">
+                    <label class="form-label fs-4 fw-bold text-nowrap">我的邮箱:</label>
+                    <div class="d-flex align-items-center flex-grow-1 gap-3 ms-3">
+                        <input class="form-control form-control-sm" type="text" id="myUserEmail"
+                               @bind="UserEmail" readonly="@(!_addNewEmail)" />
+                        @if(_addNewEmail)
+                        {
+                            <button class="btn btn-sm btn-primary text-nowrap" type="button" 
+                                    disabled="@(!_addNewEmail || !_validEmailFormat)" @onclick="OnEmailChangeSave">添加邮箱</button>
+                        }
+                    </div>
+                    @if(!_validEmailFormat)
+                    {
+                        <div class="validation-message">邮箱格式不正确</div>
+                    }
+                </div>
+                <!--User Followed Games-->
+				<div>
+					<div class="fs-4 fw-bold">
+                        我关注的游戏
+                        <span class="ms-3 fs-5 fw-light text-body-secondary">@_userInfo.FollowedGameNameIconPairs.Count</span>
+                    </div>
+                    <div class="d-flex flex-wrap p-2 border border-dark-subtle rounded-3">
+                        @foreach ((string name, string icon) in _userInfo.FollowedGameNameIconPairs.Take(10))
+                        {
+                            <div class="d-inline-flex align-items-center px-2 py-1 gap-1 border border-info rounded-5 overflow-hidden">
+                                <img class="rounded-3" src="@icon" width="50" height="50" alt="Game" />
+                                <a class="link-warning link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                                   href="teams/@name">@name</a>
+                            </div>
+                        }
+                        @if (_userInfo.FollowedGameNameIconPairs.Count > 10)
+                        {
+                            <div class="d-inline-flex px-2 py-1 gap-1 border border-info rounded-5">以及更多 ...</div>
+                        }
+                    </div>
+				</div>
+                <!--User Created Posts-->
+				<div>
+                    <div class="fs-4 fw-bold">
+                        我发布的帖子:
+                        <span class="ms-3 fs-5 fw-light text-body-secondary">@_userInfo.CreatedPostIds.Length</span>
+                    </div>
+				</div>
+                <!--User Joined Games-->
+				<div>
+                    <div class="fs-4 fw-bold">
+                        我参加的帖子:
+                        <span class="ms-3 fs-5 fw-light text-body-secondary">@_userInfo.JoinedPostIds.Length</span>
+                    </div>
+                    <!--Links to Joined Posts-->
+				</div>
+                <!--User's Friends-->
+				<div>
+                    <div class="fs-4 fw-bold">
+                        我的好友:
+                        <span class="ms-3 fs-5 fw-light text-body-secondary">@(_userInfo.FriendUserNameIconPairs.Count == 0 ? "无" : _userInfo.FriendUserNameIconPairs.Count)</span>
+                    </div>
+					<div class="d-flex flex-wrap p-2 border border-dark-subtle rounded-3">
+                        @foreach((string name, string icon) in _userInfo.FriendUserNameIconPairs)
+                        {
+							<div class="d-inline-flex align-items-center px-2 py-1 gap-1 border border-info rounded-5 overflow-hidden">
+                                <img class="rounded-3" src="@icon" width="50" height="50" alt="User"/>
+                                <div>@name</div>
+                            </div>
+                        }
+                    </div>
+				</div>
+			</div>
+            <div class="col-sm-2">
+                <!-- Only for empty white space -->
             </div>
         </div>
-        test end
     </div>
 }
 else
@@ -61,10 +143,30 @@ else
 
     private bool _uploadSucceed = true;
     private bool _uploadComplete = false;
-
-    private string _userNameInput = string.Empty;
-    private string _userEmailInput = string.Empty;
+    private bool _newIconSave = false;
     private string _userIconUri = string.Empty;
+
+    private bool _addNewEmail = false;
+    private bool _validEmailFormat = true;
+    private string _userEmail = string.Empty;
+    private string UserEmail
+    {
+        get => _userEmail;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value)) _userEmail = string.Empty;
+
+            if (ValidEmailFormat(value))
+            {
+                _userEmail = value;
+                _validEmailFormat = true;
+            }
+            else
+            {
+                _validEmailFormat = false;
+            }
+        }
+    }
 
     protected override void OnParametersSet()
     {
@@ -72,6 +174,9 @@ else
 
         _uploadSucceed = true;
         _uploadComplete = false;
+        _newIconSave = false;
+
+        _addNewEmail = false;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -91,9 +196,10 @@ else
         }
         else
         {
-            _userNameInput = _userInfo.Name;
-            _userEmailInput = _userInfo.Email;
             _userIconUri = _userInfo.IconUri;
+            UserEmail = _userInfo.Email;
+
+            _addNewEmail = string.IsNullOrWhiteSpace(_userInfo.Email);
         }
         StateHasChanged();
     }
@@ -110,8 +216,48 @@ else
 
         (_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, userId.ToString());
 
-        _userIconUri = _uploadSucceed ? message : UserService.DefaultUserIconUri;
+        if (_uploadSucceed)
+        {
+            _userIconUri = message;
+            _newIconSave = false;
+        }
         _uploadComplete = true;
+    }
+
+    private async Task OnIconChangeSave()
+    {
+        (bool userHasLogin, int userId) = await CheckUserLoginAsync();
+        if (!userHasLogin)
+        {
+            _uploadSucceed = false;
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+
+        // Save new icon uri to database
+        _newIconSave = await UserService.UpdateIconUri(userId, _userIconUri);
+    }
+
+    private async Task OnEmailChangeSave()
+    {
+        if (!_addNewEmail) return;
+
+        if (!ValidEmailFormat())
+        {
+            UserEmail = string.Empty;
+            _validEmailFormat = false;
+            return;
+        }
+
+        (bool userHasLogin, int userId) = await CheckUserLoginAsync();
+        if (!userHasLogin)
+        {
+            await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
+            return;
+        }
+
+        // Save new email to database
+        _addNewEmail = !(await UserService.UpdateEmail(userId, UserEmail));
     }
 
     private async Task<(bool, int)> CheckUserLoginAsync()
@@ -129,5 +275,56 @@ else
         }
 
         return (true, userId);
+    }
+
+    // UserEmailValidatorAttribute
+    private bool ValidEmailFormat(string? email = null)
+    {
+        string _emailDomainPattern = @"(@)(.+)$";
+        string _emailValidPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+
+        string testEmail = email ?? UserEmail;
+
+        if (string.IsNullOrWhiteSpace(testEmail))
+        {
+            return true;
+        }
+
+        // https://learn.microsoft.com/en-us/dotnet/standard/base-types/how-to-verify-that-strings-are-in-valid-email-format
+        try
+        {
+            // Normalize the domain
+            testEmail = Regex.Replace(testEmail, _emailDomainPattern, DomainMapper,
+                                       RegexOptions.None, TimeSpan.FromMilliseconds(200));
+
+            // Examines the domain part of the email and normalizes it.
+            string DomainMapper(Match match)
+            {
+                // Use IdnMapping class to convert Unicode domain names.
+                var idn = new IdnMapping();
+                // Pull out and process domain name (throws ArgumentException on invalid)
+                string domainName = idn.GetAscii(match.Groups[2].Value);
+
+                return match.Groups[1].Value + domainName;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+
+        try
+        {
+            if (!Regex.IsMatch(testEmail, _emailValidPattern, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)))
+            {
+                return false;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+
+        return true;
     }
 }
