@@ -61,7 +61,7 @@ public class GameService : IGameService
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultGame = await dbContext.Games
-                                        .Where(game => game.Name == name)
+                                        .Where(game => game.Name.ToLower() == name.ToLower())
                                         .FirstOrDefaultAsync();
 		if (resultGame is null) return false;
 
@@ -99,7 +99,7 @@ public class GameService : IGameService
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
 		var resultGame = await dbContext.Games
-										.Where(game => game.Name == name)
+										.Where(game => game.Name.ToLower() == name.ToLower())
 										.Include(game => game.FollowingUsers)
 										.FirstOrDefaultAsync();
 
@@ -116,7 +116,7 @@ public class GameService : IGameService
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
 		var resultGame = await dbContext.Games
-										.Where(game => game.Name == name)
+										.Where(game => game.Name.ToLower() == name.ToLower())
 										.Select(game => game.IconURI)
 										.FirstOrDefaultAsync();
 
@@ -162,6 +162,6 @@ public class GameService : IGameService
 	{
         using var dbContext = _dbContextFactory.CreateDbContext();
 
-		return await dbContext.Games.AnyAsync(game => game.Name == name);
+		return await dbContext.Games.AnyAsync(game => game.Name.ToLower() == name.ToLower());
     }
 }
