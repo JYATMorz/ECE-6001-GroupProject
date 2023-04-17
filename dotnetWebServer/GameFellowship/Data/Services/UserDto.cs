@@ -24,14 +24,18 @@ public readonly record struct UserDto
         FriendUserNameIconPairs = friendUsers;
     }
 
-    public UserDto(User dbUser)
+    public UserDto(User dbUser,
+                   Dictionary<string, string>? followedGames = null,
+                   int[]? createdPostIds = null,
+                   int[]? joinedPostIds = null,
+                   Dictionary<string, string>? friendUsers = null)
     {
         Name = dbUser.Name;
         Email = dbUser.Email ?? string.Empty;
         IconUri = dbUser.IconURI;
-        FollowedGameNameIconPairs = dbUser.FollowedGames.ToDictionary(game => game.Name, game => game.IconURI);
-        CreatedPostIds = dbUser.CreatedPosts.Select(post => post.Id).ToArray();
-        JoinedPostIds = dbUser.JoinedPosts.Select(post => post.Id).ToArray();
-        FriendUserNameIconPairs = dbUser.FriendUsers.ToDictionary(user => user.Name, user => user.IconURI);
+        FollowedGameNameIconPairs = followedGames ?? dbUser.FollowedGames.ToDictionary(game => game.Name, game => game.IconURI);
+        CreatedPostIds = createdPostIds ?? dbUser.CreatedPosts.Select(post => post.Id).ToArray();
+        JoinedPostIds = joinedPostIds ?? dbUser.JoinedPosts.Select(post => post.Id).ToArray();
+        FriendUserNameIconPairs = friendUsers ?? dbUser.FriendUsers.ToDictionary(user => user.Name, user => user.IconURI);
     }
 }
