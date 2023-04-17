@@ -294,10 +294,10 @@ public class UserService : IUserService
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultUser = await dbContext.Users
                                         .Where(user => userId == user.Id)
-                                        .Include(user => user.CreatedPosts)
-                                        .Include(user => user.JoinedPosts)
-                                        .Include(user => user.FollowedGames)
-                                        .Include(user => user.FriendUsers)
+                                        .Include(user => user.CreatedPosts).AsSplitQuery()
+                                        .Include(user => user.JoinedPosts).AsSplitQuery()
+                                        .Include(user => user.FollowedGames).AsSplitQuery()
+                                        .Include(user => user.FriendUsers).AsSplitQuery()
                                         .FirstOrDefaultAsync();
         // FIXME: https://learn.microsoft.com/zh-cn/ef/core/querying/single-split-queries
         if (resultUser is null)
