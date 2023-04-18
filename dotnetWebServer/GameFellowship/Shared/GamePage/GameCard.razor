@@ -13,7 +13,7 @@
                 }
                 else
                 {
-                    <small class="text-muted">最后更新 @((DateTime.Now.ToUniversalTime() - Game.LastPost).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                    <small class="text-muted">最后更新 @((DateTime.Now - Game.LastPost).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 }
                 <button class="btn btn-outline-primary p-1" type="button" @onclick="NavigateToGame">搜索队伍</button>
             </div>

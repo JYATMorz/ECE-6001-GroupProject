@@ -2,11 +2,10 @@
 
 <div class="d-flex flex-column bg-info-subtle rounded-2 p-1 mb-2">
     <div class="d-flex p-1 gap-1">
-        <img class="rounded-2" src="@(string.IsNullOrWhiteSpace(_userIconURI) ? _defaultIconURI : _userIconURI)"
-            alt="User Icon" width="50" height="50">
+        <img class="rounded-2" src="@Content.CreatorIconUri" alt="User Icon" width="50" height="50">
         <div>
-            <div class="fs-6 fw-bold">@(string.IsNullOrWhiteSpace(_userName) ? "Мгдижа ..." : _userName)</div>
-            <small class="text-muted">@Content.SendTime.ToLocalTime()</small>
+            <div class="fs-6 fw-bold">@Content.CreatorName</div>
+            <small class="text-muted">@Content.SendTime</small>
         </div>
     </div>
     <p class="m-1 border-top border-dark-subtle fs-6 text-break">@Content.Context</p>
@@ -14,23 +13,5 @@
 
 @code {
     [Parameter]
-    public Conversation Content { get; set; } = new();
-
-    private string? _userName;
-    private string? _userIconURI;
-    private string _defaultIconURI = "images/GameIcons/gametitle.jpg";
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (await UserService.HasUserAsync(Content.Creator.Id))
-        {
-            _userName = Content.Creator.Name;
-            _userIconURI = Content.Creator.IconURI;
-        }
-        else
-        {
-            _userName = UserService.DefaultUserName;
-            _userIconURI = UserService.DefaultUserIconUri;
-        }
-    }
+    public ConversationDto Content { get; set; } = new();
 }

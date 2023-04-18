@@ -258,16 +258,20 @@ public class UserService : IUserService
             ?? Array.Empty<string>();
     }
 
-    public async Task<Post[]> GetUserJoinedPostsAsync(int userId)
+    public async Task<PostDto[]> GetUserJoinedPostsAsync(int userId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultUser = await dbContext.Users
                                     .Where(user => userId == user.Id)
                                     .Include(user => user.JoinedPosts)
-                                    .ThenInclude(post => post.Game)
+                                    .ThenInclude(post => post.Game).AsSplitQuery()
+                                    .Include(user => user.JoinedPosts)
+                                    .ThenInclude(post => post.Creator).AsSplitQuery()
                                     .FirstOrDefaultAsync();
 
-        return resultUser?.JoinedPosts?.ToArray() ?? Array.Empty<Post>();
+        if (resultUser is null) return Array.Empty<PostDto>();
+
+        return Array.ConvertAll(resultUser.JoinedPosts.ToArray(), post => new PostDto(post));
     }
 
     public async Task<(string, string)> GetUserNameIconPairAsync(int userId)

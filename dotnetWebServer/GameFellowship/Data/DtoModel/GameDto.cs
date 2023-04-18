@@ -14,7 +14,7 @@ public readonly record struct GameDto
     {
         Name = game.Name;
         IconUri = game.IconURI;
-        LastPost = game.LastPostDate;
+        LastPost = game.LastPostDate.ToLocalTime();
 
         Followers = followers ?? game.FollowingUsers.Count;
         Posts = posts ?? game.Posts.Count;

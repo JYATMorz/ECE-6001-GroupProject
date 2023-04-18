@@ -42,7 +42,7 @@
         }
         else
         {
-            <MessageDetail Post="@_selectedPost" />
+            <MessageDetail Post="@_selectedPost.Value" />
         }
     </div>
 </div>
@@ -50,9 +50,9 @@
 @code {
     private bool _hasPost = true;
 
-    private IEnumerable<Post>? _myPosts;
+    private IEnumerable<PostDto>? _myPosts;
     private int _selectedPostId = -1;
-    private Post? _selectedPost;
+    private PostDto? _selectedPost;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

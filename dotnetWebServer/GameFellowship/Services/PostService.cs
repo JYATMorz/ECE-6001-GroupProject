@@ -238,15 +238,18 @@ public class PostService : IPostService
             ?? Array.Empty<int>();
     }
 
-    public async Task<Conversation[]> GetConversations(int postId)
+    public async Task<ConversationDto[]> GetConversations(int postId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultPost = await dbContext.Posts
                                         .Where(post => post.Id == postId)
                                         .Include(post => post.Conversations)
+                                        .ThenInclude(con => con.Creator)
                                         .FirstOrDefaultAsync();
 
-        return resultPost?.Conversations?.ToArray() ?? Array.Empty<Conversation>();
+        if (resultPost is null) return Array.Empty<ConversationDto>();
+
+        return Array.ConvertAll(resultPost.Conversations.ToArray(), con => new ConversationDto(con));
     }
 
     public async Task<string[]> GetAudioPlatformsAsync(int count)

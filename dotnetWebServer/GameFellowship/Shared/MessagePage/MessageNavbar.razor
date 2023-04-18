@@ -4,36 +4,25 @@
     type="button" @onclick="OnSelectedPostChange">
     <div class="d-inline-flex gap-2 align-items-end">
         <img class="rounded-3" alt="GameIcon" width="40" height="40"
-             src="@(_gameIcon ?? GameService.DefaultGameIconUri)">
-        <div class="fs-4">@_gameName</div>
+             src="@(Post.GameIconUri ?? GameService.DefaultGameIconUri)">
+        <div class="fs-4">@Post.GameName</div>
     </div>
     <div class="border-top border-bottom border-dark-subtle py-1">
         <div>@Post.MatchType</div>
         <div><i class="bi bi-file-person-fill"></i>: @Post.CurrentPeople / @Post.TotalPeople</div>
     </div>
-    <small class="text-muted">上次更新 @((DateTime.Now.ToUniversalTime() - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
+    <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
 </button>
 
 @code {
     [Parameter, EditorRequired]
-    public Post Post { get; set; } = new();
+    public PostDto Post { get; set; } = default;
     [Parameter]
     public int SelectedPostId { get; set; } = -1;
     [Parameter]
     public EventCallback<int> SelectedPostIdChange { get; set; }
 
     private string ActiveItem => SelectedPostId == Post.Id ? "active" : string.Empty;
-
-    private string? _gameIcon;
-    private string? _gameName;
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        _gameIcon = Post.Game.IconURI;
-        _gameName = Post.Game.Name;
-    }
 
     private async Task OnSelectedPostChange()
     {

@@ -26,7 +26,7 @@ public interface IUserService
     Task<string> GetUserNameAsync(int userId);
     Task<string> GetUserIconUriAsync(int userId);
     Task<string[]> GetUserFollowedGameNamesAsync(int userId);
-    Task<Post[]> GetUserJoinedPostsAsync(int userId);
+    Task<PostDto[]> GetUserJoinedPostsAsync(int userId);
     Task<(string, string)> GetUserNameIconPairAsync(int userId);
     Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userId);
     Task<UserDto?> GetUserFullInfoAsync(int userId);
