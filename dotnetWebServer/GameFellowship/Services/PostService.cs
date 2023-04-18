@@ -1,4 +1,5 @@
 using GameFellowship.Data.Database;
+using GameFellowship.Data.DtoModel;
 using GameFellowship.Data.FormModel;
 using Microsoft.EntityFrameworkCore;
 
@@ -151,36 +152,45 @@ public class PostService : IPostService
         return true;
     }
 
-    public async Task<Post?> GetPostAsync(int postId)
+    public async Task<PostDto?> GetPostAsync(int postId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultPost = await dbContext.Posts
                                         .Where(post => post.Id == postId)
+                                        .Include(post => post.Creator).AsSplitQuery()
+                                        .Include(post => post.Game).AsSplitQuery()
                                         .FirstOrDefaultAsync();
+        if (resultPost is null) return null;
 
-        return resultPost;
+        return new PostDto(resultPost);
     }
 
-    public async Task<Post[]> GetPostsAsync(string gameName)
+    public async Task<PostDto[]> GetPostsAsync(string gameName)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var resultPost = await dbContext.Posts
+        var resultPosts = await dbContext.Posts
                                         .Include(post => post.Game)
                                         .Where(post => post.Game.Name == gameName)
-                                        .Include(post => post.Creator)
+                                        .Include(post => post.Creator).AsSplitQuery()
                                         .ToArrayAsync();
 
-        return resultPost;
+        if (!resultPosts.Any()) return Array.Empty<PostDto>();
+
+        return Array.ConvertAll(resultPosts, post => new PostDto(post));
     }
 
-    public async Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs)
+    public async Task<PostDto[]> GetPostsAsync(IEnumerable<int> postIDs)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
-        var resultPost = await dbContext.Posts
+        var resultPosts = await dbContext.Posts
                                         .Where(post => postIDs.Contains(post.Id))
+                                        .Include(post => post.Creator).AsSplitQuery()
+                                        .Include(post => post.Game).AsSplitQuery()
                                         .ToArrayAsync();
 
-        return resultPost;
+        if (!resultPosts.Any()) return Array.Empty<PostDto>();
+
+        return Array.ConvertAll(resultPosts, post => new PostDto(post));
     }
 
     public async Task<string[]> GetMatchTypesAsync(int count, string? gameName = null)

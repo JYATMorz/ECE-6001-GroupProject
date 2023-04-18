@@ -1,5 +1,6 @@
-using GameFellowship.Data.Database;
 using GameFellowship.Data.FormModel;
+using GameFellowship.Data.DtoModel;
+using GameFellowship.Data.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameFellowship.Services;
@@ -70,45 +71,45 @@ public class GameService : IGameService
         return true;
     }
 
-    public async Task<Game[]> GetAllGameAsync()
+    public async Task<GameDto[]> GetAllGameAsync()
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
+        Game[] resultGames = await dbContext.Games
+                                            .Include(game => game.Posts).AsSplitQuery()
+                                            .Include(game => game.FollowingUsers).AsSplitQuery()
+                                            .ToArrayAsync();
 
-        return await dbContext.Games.ToArrayAsync();
+        if(resultGames.Length == 0) return Array.Empty<GameDto>();
+
+        return Array.ConvertAll(resultGames, game => new GameDto(game));
     }
 
-    public async Task<Game?> GetGameAsync(int gameId)
+    public async Task<GameDto?> GetGameAsync(int gameId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultGame = await dbContext.Games
                                         .Where(game => game.Id == gameId)
-                                        .Include(game => game.FollowingUsers)
+                                        .Include(game => game.FollowingUsers).AsSplitQuery()
+                                        .Include(game => game.Posts).AsSplitQuery()
                                         .FirstOrDefaultAsync();
 
-        if (resultGame is not null && resultGame.FollowingUsers.Count != resultGame.Followers)
-        {
-            resultGame.Followers = resultGame.FollowingUsers.Count;
-            await dbContext.SaveChangesAsync();
-        }
+        if (resultGame is null) return null;
 
-        return resultGame;
+        return new GameDto(resultGame);
     }
 
-    public async Task<Game?> GetGameAsync(string name)
+    public async Task<GameDto?> GetGameAsync(string name)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultGame = await dbContext.Games
                                         .Where(game => game.Name.ToLower() == name.ToLower())
-                                        .Include(game => game.FollowingUsers)
+                                        .Include(game => game.Posts).AsSplitQuery()
+                                        .Include(game => game.FollowingUsers).AsSplitQuery()
                                         .FirstOrDefaultAsync();
 
-        if (resultGame is not null && resultGame.FollowingUsers.Count != resultGame.Followers)
-        {
-            resultGame.Followers = resultGame.FollowingUsers.Count;
-            await dbContext.SaveChangesAsync();
-        }
+        if (resultGame is null) return null;
 
-        return resultGame;
+        return new GameDto(resultGame);
     }
 
     public async Task<string> GetGameIconAsync(string name)

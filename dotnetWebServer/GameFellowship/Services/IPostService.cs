@@ -1,4 +1,5 @@
 ﻿using GameFellowship.Data.Database;
+using GameFellowship.Data.DtoModel;
 using GameFellowship.Data.FormModel;
 
 namespace GameFellowship.Services;
@@ -19,7 +20,7 @@ public interface IPostService
     Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
     Task<int[]> GetJoinedUserIds(int postId);
     Task<Conversation[]> GetConversations(int postId);
-    Task<Post?> GetPostAsync(int postID);
-    Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs);
-    Task<Post[]> GetPostsAsync(string gameName);
+    Task<PostDto?> GetPostAsync(int postID);
+    Task<PostDto[]> GetPostsAsync(IEnumerable<int> postIDs);
+    Task<PostDto[]> GetPostsAsync(string gameName);
 }

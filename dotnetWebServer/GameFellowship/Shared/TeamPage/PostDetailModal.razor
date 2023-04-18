@@ -13,7 +13,7 @@
         <div class="modal-content">
 
             <div class="modal-header align-items-baseline">
-                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.Game.Name</h1>
+                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.GameName</h1>
                 <small class="text-muted pt-1">@Post.MatchType</small>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -21,7 +21,7 @@
             <div class="modal-body">
 
                 <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
-                    @foreach (var requirement in _requirements)
+                    @foreach (var requirement in Post.Requirements)
                     {
                         <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
                     }
@@ -43,13 +43,13 @@
                 else
                 {
                     <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> :
-                        @(((DateTime)Post.StartDate!).ToShortDateString()) ~ @(((DateTime)Post.EndDate!).ToShortDateString())
+                        @(Post.Start.ToShortDateString()) ~ @(Post.End.ToShortDateString())
                     </p>
                 }
 
                 <div class="my-3">
                     <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText"
-                        @bind="Post.Description" disabled readonly style="resize: none; height: 120px;"></textarea>
+                        value="@Post.Description" disabled readonly style="resize: none; height: 120px;"></textarea>
                 </div>
 
                 <div class="d-flex align-items-center">
@@ -60,7 +60,7 @@
                         <span id="audioChatName">@Post.AudioPlatform</span>
                         <i class="bi bi-arrow-bar-right ms-1"></i>
                         <input type="text" name="teamDetails" id="audioChatLink" placeholder="Audio Link From User"
-                        @bind="Post.AudioLink" readonly style="width: 60%;">
+                        value="@Post.AudioLink" readonly style="width: 60%;">
                     }
                     else
                     {
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <small class="text-muted">上次更新 @((DateTime.Now.ToUniversalTime() - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     <button type="button" class="btn btn-primary" @onclick="OnUserJoinPostAsync">加入！</button>
@@ -82,16 +82,9 @@
 
 @code {
     [Parameter]
-    public Post Post { get; set; } = new();
+    public PostDto Post { get; set; } = default;
 
     private string[] _requirements = Array.Empty<string>();
-
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        _requirements = Post.Requirements.Split(PostService.DefaultConnectionSigns);
-    }
 
     private async void OnUserJoinPostAsync()
     {

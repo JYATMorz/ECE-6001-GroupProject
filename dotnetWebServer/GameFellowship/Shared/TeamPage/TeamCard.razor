@@ -4,28 +4,19 @@
     <div class="card h-100" style="min-width: 18rem;">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                @if (!_userExist)
-                {
-                    <LoadingSpinner />
-                    <div class="validation-message">用户已注销</div>
-                }
-                else
-                {
-                    <div class="fs-6">@(string.IsNullOrWhiteSpace(_userName) ? "加载中 ..." : _userName)</div>
-                    <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <img class="rounded-circle" src="@(string.IsNullOrWhiteSpace(_userIconURI) ? UserService.DefaultUserIconUri : _userIconURI)"
-                            alt="User" width="30" height="30">
-                    </button>
-                    <ul class="dropdown-menu text-small shadow">
-                        <li><button class="dropdown-item" type="button">个人资料</button></li>
-                        <li><button class="dropdown-item" type="button">私信</button></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><button class="dropdown-item" type="button">屏蔽</button></li>
-                    </ul>
-                }
+                <div class="fs-6">@Post.CreatorName</div>
+                <button class="btn border-0 dropdown-toggle bg-transparent" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img class="rounded-circle" src="@Post.CreatorIconUri" alt="User" width="30" height="30">
+                </button>
+                <ul class="dropdown-menu text-small shadow">
+                    <li><button class="dropdown-item" type="button" disabled>个人资料</button></li>
+                    <li><button class="dropdown-item" type="button" disabled>私信</button></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li><button class="dropdown-item" type="button" disabled>屏蔽</button></li>
+                </ul>
             </div>
             <h4>@Post.MatchType
                 @if (Post.AudioChat)
@@ -41,7 +32,7 @@
                 <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)" />
             </div>
             <div class="d-flex flex-wrap gap-1 my-2">
-                @foreach (var requirement in _requirements)
+                @foreach (var requirement in Post.Requirements)
                 {
                     <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
                 }
@@ -55,7 +46,7 @@
             else
             {
                 <div class="card-text py-1 my-2">游戏时间:
-                    <span class="fw-bold">@(((DateTime)Post.StartDate!).ToShortDateString()) ~ @(((DateTime)Post.EndDate!).ToShortDateString())</span>
+                    <span class="fw-bold">@(Post.Start.ToShortDateString()) ~ @(Post.End.ToShortDateString())</span>
                 </div>
             }
             <div class="card-text px-2 py-1 rounded-3 bg-dark-subtle">
@@ -63,7 +54,7 @@
             </div>
         </div>
         <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
-            <small class="text-muted">最后更新 @((DateTime.Now.ToUniversalTime() - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前</small>
+            <small class="text-muted">最后更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前</small>
             <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
                 data-bs-target="#teamInfoModal" @onclick="OnDetailCallback">详情</button>
         </div>
@@ -72,26 +63,9 @@
 
 @code {
     [Parameter]
-    public Post Post { get; set; } = new();
+    public PostDto Post { get; set; } = new();
     [Parameter]
     public EventCallback<MouseEventArgs> OnDetailCallback { get; set; }
-
-    private bool _userExist = false;
-    private string? _userName;
-    private string? _userIconURI;
-    private string[] _requirements = Array.Empty<string>();
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _userExist = await UserService.HasUserAsync(Post.Creator.Id);
-        if (_userExist)
-        {
-            var (name, icon) = await UserService.GetUserNameIconPairAsync(Post.Creator.Id);
-            _userName = name;
-            _userIconURI = icon;
-        }
-        _requirements = Post.Requirements.Split(PostService.DefaultConnectionSigns);
-    }
 }
 
 

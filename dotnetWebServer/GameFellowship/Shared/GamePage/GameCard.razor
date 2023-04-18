@@ -2,18 +2,18 @@
 
 <div class="col mx-auto">
     <div class="card h-100" style="max-width: 20rem;">
-        <img class="card-img-top" src=@Game.IconURI alt="GameIcon">
+        <img class="card-img-top" src=@Game.IconUri alt="GameIcon">
         <div class="card-body">
             <h5 class="card-title fw-bold">@Game.Name</h5>
             <p class="card-text">订阅人数: @Game.Followers</p>
             <div class="d-flex justify-content-between align-items-center gap-3">
-                @if (Game.Posts.Count == 0)
+                @if (Game.Posts == 0)
                 {
                     <small class="text-muted">没有组队需求 ...</small>
                 }
                 else
                 {
-                    <small class="text-muted">最后更新 @((DateTime.Now.ToUniversalTime() - Game.LastPostDate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                    <small class="text-muted">最后更新 @((DateTime.Now.ToUniversalTime() - Game.LastPost).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 }
                 <button class="btn btn-outline-primary p-1" type="button" @onclick="NavigateToGame">搜索队伍</button>
             </div>
@@ -23,7 +23,7 @@
 
 @code {
     [Parameter]
-    public Game Game { get; set; } = new();
+    public GameDto Game { get; set; } = new();
 
     private void NavigateToGame()
     {

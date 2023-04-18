@@ -29,7 +29,7 @@ public interface IUserService
     Task<Post[]> GetUserJoinedPostsAsync(int userId);
     Task<(string, string)> GetUserNameIconPairAsync(int userId);
     Task<Dictionary<string, string>> GetUserGroupNameIconPairAsync(IEnumerable<int> userId);
-    Task<UserDto> GetUserFullInfoAsync(int userId);
+    Task<UserDto?> GetUserFullInfoAsync(int userId);
 
     Task<bool> HasUserAsync(int userId);
     Task<bool> HasUserAsync(string userName);

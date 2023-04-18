@@ -290,7 +290,7 @@ public class UserService : IUserService
         return resultUsers;
     }
 
-    public async Task<UserDto> GetUserFullInfoAsync(int userId)
+    public async Task<UserDto?> GetUserFullInfoAsync(int userId)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultUser = await dbContext.Users
@@ -301,10 +301,8 @@ public class UserService : IUserService
                                         .Include(user => user.FriendUsers).AsSplitQuery()
                                         .FirstOrDefaultAsync();
         // https://learn.microsoft.com/zh-cn/ef/core/querying/single-split-queries
-        if (resultUser is null)
-        {
-            return default;
-        }
+
+        if (resultUser is null) return null;
 
         return new UserDto(resultUser);
     }
