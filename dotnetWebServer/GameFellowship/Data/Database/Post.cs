@@ -10,7 +10,7 @@ public class Post
     public DateTime LastUpdate { get; set; }
 
     public string MatchType { get; set; } = null!;
-    public string Requirements { get; set; } = null!; // FIXME: Combine to a string after form model creation
+    public string Requirements { get; set; } = null!;
     public string Description { get; set; } = null!;
 
     public int TotalPeople { get; set; }

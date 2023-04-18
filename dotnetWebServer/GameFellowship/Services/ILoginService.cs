@@ -1,4 +1,4 @@
-﻿namespace GameFellowship.Data.Services;
+﻿namespace GameFellowship.Services;
 
 public interface ILoginService
 {
@@ -7,5 +7,5 @@ public interface ILoginService
     Task<(bool, int)> UserHasLoginAsync(string? userLoginInfo);
 
     Task<(bool, string)> UserLoginAsync(string userName, string password);
-	Task<bool> UserLogoutAsync(string? userLoginInfo);
+    Task<bool> UserLogoutAsync(string? userLoginInfo);
 }

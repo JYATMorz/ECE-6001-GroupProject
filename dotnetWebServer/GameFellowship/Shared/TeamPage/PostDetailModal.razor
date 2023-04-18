@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-between">
-                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                <small class="text-muted">上次更新 @((DateTime.Now.ToUniversalTime() - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
                     <button type="button" class="btn btn-primary" @onclick="OnUserJoinPostAsync">加入！</button>

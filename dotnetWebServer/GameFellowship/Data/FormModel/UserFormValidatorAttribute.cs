@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace GameFellowship.Data.FormModels;
+namespace GameFellowship.Data.FormModel;
 
 public class UserNameValidatorAttribute : ValidationAttribute
 {

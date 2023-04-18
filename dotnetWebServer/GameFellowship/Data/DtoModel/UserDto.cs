@@ -1,6 +1,6 @@
 ﻿using GameFellowship.Data.Database;
 
-namespace GameFellowship.Data.Services;
+namespace GameFellowship.Data.DtoModel;
 
 public readonly record struct UserDto
 {

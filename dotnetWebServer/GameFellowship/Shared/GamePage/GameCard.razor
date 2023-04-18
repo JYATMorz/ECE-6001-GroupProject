@@ -7,13 +7,13 @@
             <h5 class="card-title fw-bold">@Game.Name</h5>
             <p class="card-text">订阅人数: @Game.Followers</p>
             <div class="d-flex justify-content-between align-items-center gap-3">
-                @if (Game.LastPostDate > DateTime.Now || Game.LastPostDate <= DateTime.MinValue)
+                @if (Game.Posts.Count == 0)
                 {
                     <small class="text-muted">没有组队需求 ...</small>
                 }
                 else
                 {
-                    <small class="text-muted">最后更新 @((DateTime.Now - Game.LastPostDate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                    <small class="text-muted">最后更新 @((DateTime.Now.ToUniversalTime() - Game.LastPostDate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
                 }
                 <button class="btn btn-outline-primary p-1" type="button" @onclick="NavigateToGame">搜索队伍</button>
             </div>

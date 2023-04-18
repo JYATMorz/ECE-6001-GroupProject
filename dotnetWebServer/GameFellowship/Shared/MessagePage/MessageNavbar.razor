@@ -11,7 +11,7 @@
         <div>@Post.MatchType</div>
         <div><i class="bi bi-file-person-fill"></i>: @Post.CurrentPeople / @Post.TotalPeople</div>
     </div>
-    <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
+    <small class="text-muted">上次更新 @((DateTime.Now.ToUniversalTime() - Post.LastUpdate).TotalMinutes.ToString("F0")) 前 ...</small>
 </button>
 
 @code {

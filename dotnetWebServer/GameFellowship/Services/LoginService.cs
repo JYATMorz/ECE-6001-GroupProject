@@ -2,11 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
-namespace GameFellowship.Data.Services;
+namespace GameFellowship.Services;
 
 public class LoginService : ILoginService
 {
-	public static string LocalStorageKey => "user";
+    public static string LocalStorageKey => "user";
 
     private readonly string _defaultConnectionSign = "++";
 
@@ -18,48 +18,48 @@ public class LoginService : ILoginService
     }
 
     public async Task<(bool, int)> UserHasLoginAsync(string? userLoginInfo)
-	{
+    {
         if (!TryGetUserInfo(userLoginInfo, out int userId, out DateTime userLogin))
         {
             return (false, -1);
         }
 
         // Not login longer than 3 days
-        if (userLogin.AddDays(3) < DateTime.Now)
+        if (userLogin.AddDays(3) < DateTime.Now.ToUniversalTime())
         {
             return (false, -1);
         }
 
         using var dbContext = _dbContextFactory.CreateDbContext();
-		var resultUser = await dbContext.Users
+        var resultUser = await dbContext.Users
                                         .Where(user => user.Id == userId)
                                         .AnyAsync(user => user.LastLogin == userLogin);
 
         return resultUser ? (true, userId) : (false, -1);
-	}
+    }
 
-	public async Task<(bool, string)> UserLoginAsync(string userName, string password)
-	{
+    public async Task<(bool, string)> UserLoginAsync(string userName, string password)
+    {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultUser = await dbContext.Users
                                         .Where(user => userName == user.Name)
                                         .FirstOrDefaultAsync();
 
-		if (resultUser is null || resultUser.Password != password)
-		{
-			return (false, string.Empty);
-		}
+        if (resultUser is null || resultUser.Password != password)
+        {
+            return (false, string.Empty);
+        }
 
-		int userId = resultUser.Id;
-		DateTime userLoginStamp = DateTime.Now.ToUniversalTime();
+        int userId = resultUser.Id;
+        DateTime userLoginStamp = DateTime.Now.ToUniversalTime();
 
         resultUser.LastLogin = userLoginStamp;
         await dbContext.SaveChangesAsync();
 
         return (true, $"{userId}++{userLoginStamp:O}");
-	}
+    }
 
-	public async Task<bool> UserLogoutAsync(string? userLoginInfo)
+    public async Task<bool> UserLogoutAsync(string? userLoginInfo)
     {
         if (!TryGetUserInfo(userLoginInfo, out int userId, out DateTime userLogin))
         {

@@ -1,7 +1,7 @@
 ﻿using GameFellowship.Data.Database;
-using GameFellowship.Data.FormModels;
+using GameFellowship.Data.FormModel;
 
-namespace GameFellowship.Data.Services;
+namespace GameFellowship.Services;
 
 public interface IPostService
 {
@@ -11,15 +11,15 @@ public interface IPostService
     Task<bool> DeletePostAsync(int postId);
 
     Task<bool> AddCurrentUserAsync(int postID, int userID);
-	Task<bool> AddConversationAsync(ConversationModel model);
+    Task<bool> AddConversationAsync(ConversationModel model);
 
     Task<bool> DeleteCurrentUserAsync(int postID, int userID);
 
     Task<string[]> GetAudioPlatformsAsync(int count);
-	Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
-	Task<int[]> GetJoinedUserIds(int postId);
+    Task<string[]> GetMatchTypesAsync(int count, string? gameName = null);
+    Task<int[]> GetJoinedUserIds(int postId);
     Task<Conversation[]> GetConversations(int postId);
     Task<Post?> GetPostAsync(int postID);
-	Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs);
-	Task<Post[]> GetPostsAsync(string gameName);
+    Task<Post[]> GetPostsAsync(IEnumerable<int> postIDs);
+    Task<Post[]> GetPostsAsync(string gameName);
 }

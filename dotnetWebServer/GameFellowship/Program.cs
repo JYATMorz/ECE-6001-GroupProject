@@ -1,5 +1,5 @@
 using GameFellowship.Data.Database;
-using GameFellowship.Data.Services;
+using GameFellowship.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;

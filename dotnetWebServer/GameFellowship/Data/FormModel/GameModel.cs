@@ -1,4 +1,4 @@
-namespace GameFellowship.Data.FormModels;
+namespace GameFellowship.Data.FormModel;
 
 public class GameModel
 {
