@@ -47,7 +47,6 @@ public class PostService : IPostService
             Game = resultGame,
             Creator = resultUser,
             JoinedUsers = new List<User> { resultUser }
-            // FIXME: Empty Conversations ? Will it work ?
         };
         dbContext.Posts.Add(post);
         resultGame.LastPostDate = DateTime.Now.ToUniversalTime();
@@ -144,6 +143,10 @@ public class PostService : IPostService
             return false;
         }
         resultPost.CurrentPeople--;
+        if (resultPost.CurrentPeople <= 0)
+        {
+            dbContext.Posts.Remove(resultPost);
+        }
 
         await dbContext.SaveChangesAsync();
 
