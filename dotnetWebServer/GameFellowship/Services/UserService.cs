@@ -63,7 +63,6 @@ public class UserService : IUserService
             return false;
         }
         resultUser.FollowedGames.Add(resultGame);
-        resultGame.Followers++;
 
         await dbContext.SaveChangesAsync();
 
@@ -140,7 +139,6 @@ public class UserService : IUserService
         {
             return false;
         }
-        resultGame.Followers--;
 
         await dbContext.SaveChangesAsync();
 

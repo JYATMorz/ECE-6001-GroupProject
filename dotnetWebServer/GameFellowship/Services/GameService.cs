@@ -36,7 +36,6 @@ public class GameService : IGameService
                 Name = model.GameName,
                 IconURI = model.IconURI,
                 LastPostDate = DateTime.Now.ToUniversalTime(),
-                Followers = 1,
                 FollowingUsers = new List<User> { resultUser }
             };
         }
@@ -47,7 +46,6 @@ public class GameService : IGameService
                 Name = model.GameName,
                 IconURI = model.IconURI,
                 LastPostDate = DateTime.Now.ToUniversalTime(),
-                Followers = 0
             };
         }
 

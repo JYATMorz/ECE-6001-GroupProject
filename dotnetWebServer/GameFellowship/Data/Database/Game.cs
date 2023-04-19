@@ -8,7 +8,6 @@ public class Game
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;
-    public int Followers { get; set; }
     public string IconURI { get; set; } = null!;
 	public DateTime LastPostDate { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 using GameFellowship.Data.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameFellowship.Migrations
 {
     [DbContext(typeof(GameFellowshipDb))]
-    partial class GameFellowshipDbModelSnapshot : ModelSnapshot
+    [Migration("20230419064200_RemoveGameFollowers")]
+    partial class RemoveGameFollowers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.4");
