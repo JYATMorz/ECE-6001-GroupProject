@@ -12,10 +12,12 @@ public interface IUserService
     Task<bool> CreateUserAsync(UserModel model);
 
     Task<bool> AddFollowedGameAsync(int userId, int gameId);
+    Task<bool> AddFollowedGameAsync(int userId, string gameName);
     Task<bool> AddJoinedPostAsync(int userId, int postId);
     Task<bool> AddCreatedPostAsync(int userId, int postId);
 
     Task<bool> DeleteFollowedGameAsync(int userId, int gameId);
+    Task<bool> DeleteFollowedGameAsync(int userId, string gameName);
     Task<bool> DeleteJoinedPostAsync(int userId, int postId);
     Task<bool> DeleteCreatedPostAsync(int userId, int postId);
 
@@ -33,4 +35,6 @@ public interface IUserService
     Task<bool> HasUserAsync(int userId);
     Task<bool> HasUserAsync(string userName);
     Task<bool> HasEmailAsync(string email);
+    Task<bool> HasGameFollowed(int userId, int gameId);
+    Task<bool> HasGameFollowed(int userId, string gameName);
 }

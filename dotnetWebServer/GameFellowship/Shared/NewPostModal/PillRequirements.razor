@@ -18,8 +18,8 @@
 {
     <div class="d-inline-flex border border-3 border-dark-subtle rounded-5">
         <input class="form-control form-control-sm rounded-start-4 text-center form-control-plaintext"
-		       type="text" placeholder="新要求" aria-label="team requirement" style="max-width: 6rem;"
-               @bind="NewRequirement" @bind:event="oninput">
+		       type="text" placeholder="新要求" aria-label="team requirement"
+               style="max-width: 6rem;" @bind="NewRequirement">
         <div class="d-inline-flex align-items-center">
             <button type="button" class="btn btn-light btn-sm rounded-end-4" aria-label="New Requirements"
                     @onclick="OnRequirementsAdd">
@@ -48,7 +48,7 @@
             }
             catch
             {
-                _newRequirement = "ValidInput";
+                _newRequirement = "InvalidInput";
             }
         }
     }

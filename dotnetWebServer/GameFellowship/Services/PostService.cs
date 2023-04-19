@@ -82,9 +82,14 @@ public class PostService : IPostService
         var resultUser = await dbContext.Users
                                         .Where(user => user.Id == userId)
                                         .FirstOrDefaultAsync();
-        if (resultUser is null || resultPost.JoinedUsers.Contains(resultUser))
+        if (resultUser is null)
         {
             return false;
+        }
+
+        if (resultPost.JoinedUsers.Contains(resultUser))
+        {
+            return true;
         }
 
         resultPost.JoinedUsers.Add(resultUser);

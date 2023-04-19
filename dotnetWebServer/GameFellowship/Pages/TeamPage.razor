@@ -5,6 +5,7 @@
 
 @inject ILoginService LoginService
 @inject IPostService PostService
+@inject IUserService UserService
 @inject IGameService GameService
 
 <PageTitle>在@(GameName)找个队</PageTitle>
@@ -25,7 +26,10 @@
                 <small class="text-body-secondary">@_game.Value.Followers 订阅</small>
             </div>
             <!-- Start a New Post -->
-            <div class="btn-group mt-auto mb-2 mx-1 text-nowrap" role="group" aria-label="New Post Button">
+            <div class="m-1 text-nowrap d-flex flex-column align-content-between gap-3">
+                <button type="button" class="btn @FollowCss" @onclick="OnUserFollowGame">
+                    @Follow
+                </button>
                 <button type="button" class="btn btn-success" data-bs-toggle="modal"
                         data-bs-target="#teamCreateModal" disabled="@(!_userHasLogin)">
                     新组队
@@ -74,6 +78,10 @@
     private PostDto[]? _posts;
     private GameDto? _game;
 
+    private bool _userHasFollowed = false;
+    private string Follow => _userHasFollowed ? "已关注" : "关注游戏";
+    private string FollowCss => _userHasFollowed ? "btn-outline-secondary" : "btn-primary";
+
     protected override async Task OnParametersSetAsync()
     {
         _posts = await PostService.GetPostsAsync(GameName);
@@ -84,14 +92,12 @@
     {
         if (!firstRender) return;
 
-        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
-        if (!userLoginResult.Success)
-        {
-            _userHasLogin = false;
-            return;
-        }
+        (_userHasLogin, int userId) = await CheckUserLoginAsync();
 
-        (_userHasLogin, int _) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (_userHasLogin && _game is not null)
+        {
+            _userHasFollowed = await UserService.HasGameFollowed(userId, _game.Value.Name);
+        }
 
         StateHasChanged();
     }
@@ -99,6 +105,43 @@
     private void ShowTeamDetail(PostDto post)
     {
         _selectedPost = post;
+    }
+
+    private async void OnUserFollowGame()
+    {
+        if (_game is null) return;
+
+        (_userHasLogin, int userId) = await CheckUserLoginAsync();
+
+        if (_userHasFollowed)
+        {
+            _userHasFollowed = !(await UserService.DeleteFollowedGameAsync(userId, _game.Value.Name));
+        }
+        else
+        {
+            _userHasFollowed = await UserService.AddFollowedGameAsync(userId, _game.Value.Name);
+        }
+
+        _game = await GameService.GetGameAsync(_game.Value.Name);
+
+        StateHasChanged();
+    }
+
+    private async Task<(bool, int)> CheckUserLoginAsync()
+    {
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            return (false, -1);
+        }
+
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!userHasLogin)
+        {
+            return (false, -1);
+        }
+
+        return (true, userId);
     }
 }
 

@@ -49,14 +49,39 @@ public class UserService : IUserService
                                         .FirstOrDefaultAsync();
         if (resultUser is null) return false;
 
-        var resultGame = resultUser.FollowedGames
-                                   .Where(game => game.Id == gameId)
-                                   .FirstOrDefault();
+        var resultGame = await dbContext.Games
+                                        .Where(game => game.Id == gameId)
+                                        .FirstOrDefaultAsync();
         if (resultGame is null) return false;
 
         if (resultUser.FollowedGames.Contains(resultGame))
         {
-            return false;
+            return true;
+        }
+        resultUser.FollowedGames.Add(resultGame);
+
+        await dbContext.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> AddFollowedGameAsync(int userId, string gameName)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultUser = await dbContext.Users
+                                        .Where(user => user.Id == userId)
+                                        .Include(user => user.FollowedGames)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        var resultGame = await dbContext.Games
+                                        .Where(game => game.Name == gameName)
+                                        .FirstOrDefaultAsync();
+        if (resultGame is null) return false;
+
+        if (resultUser.FollowedGames.Contains(resultGame))
+        {
+            return true;
         }
         resultUser.FollowedGames.Add(resultGame);
 
@@ -84,7 +109,7 @@ public class UserService : IUserService
 
         if (resultUser.JoinedPosts.Contains(resultPost))
         {
-            return false;
+            return true;
         }
         resultUser.JoinedPosts.Add(resultPost);
         resultPost.CurrentPeople++;
@@ -129,14 +154,34 @@ public class UserService : IUserService
         var resultGame = resultUser.FollowedGames
                                    .Where(game => game.Id == gameId)
                                    .FirstOrDefault();
-        if (resultGame is null) return false;
+        if (resultGame is null) return true;
 
-        if (!resultUser.FollowedGames.Remove(resultGame))
+        if (resultUser.FollowedGames.Remove(resultGame))
         {
-            return false;
+            await dbContext.SaveChangesAsync();
         }
 
-        await dbContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteFollowedGameAsync(int userId, string gameName)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .Include(user => user.FollowedGames)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        var resultGame = resultUser.FollowedGames
+                                   .Where(game => game.Name == gameName)
+                                   .FirstOrDefault();
+        if (resultGame is null) return true;
+
+        if (resultUser.FollowedGames.Remove(resultGame))
+        {
+            await dbContext.SaveChangesAsync();
+        }
 
         return true;
     }
@@ -324,5 +369,31 @@ public class UserService : IUserService
         using var dbContext = _dbContextFactory.CreateDbContext();
 
         return await dbContext.Users.AnyAsync(user => email.Equals(user.Email));
+    }
+
+    public async Task<bool> HasGameFollowed(int userId, int gameId)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .Include(user => user.FollowedGames)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        return resultUser.FollowedGames.Any(game => game.Id == gameId);
+    }
+
+    public async Task<bool> HasGameFollowed(int userId, string gameName)
+    {
+        using var dbContext = _dbContextFactory.CreateDbContext();
+
+        var resultUser = await dbContext.Users
+                                        .Where(user => userId == user.Id)
+                                        .Include(user => user.FollowedGames)
+                                        .FirstOrDefaultAsync();
+        if (resultUser is null) return false;
+
+        return resultUser.FollowedGames.Any(game => game.Name == gameName);
     }
 }

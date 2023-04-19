@@ -99,6 +99,8 @@
     {
         if (Post is null || Post.Value.Id <= 0) return;
 
+        if (Post.Value.CurrentPeople >= Post.Value.TotalPeople) return;
+
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
         if (!userLoginResult.Success)
         {

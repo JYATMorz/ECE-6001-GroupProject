@@ -94,6 +94,8 @@
 @code {
     [Parameter]
     public PostDto Post { get; set; } = new();
+    [Parameter]
+    public EventCallback OnUserQuitPost { get; set; }
 
     private string _conversationText = string.Empty;
     private int[] _joinedUserIds = Array.Empty<int>();
@@ -121,6 +123,8 @@
             return;
         }
 
+        await OnUserQuitPost.InvokeAsync();
+
         Navigation.NavigateTo("messages", true);
     }
 
@@ -146,6 +150,8 @@
             return;
         }
         _conversationText = string.Empty;
+
+        _conversations = await PostService.GetConversations(Post.Id);
     }
 
     private async Task<(bool, int)> CheckUserLoginAsync()

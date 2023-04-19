@@ -47,7 +47,8 @@
                     <span class="fw-bold">@(Post.Start.ToShortDateString()) ~ @(Post.End.ToShortDateString())</span>
                 </div>
             }
-            <div class="card-text px-2 py-1 rounded-3 bg-dark-subtle">
+            <div class="card-text text-truncate px-2 py-1 rounded-3 bg-dark-subtle"
+                 style="max-width:20rem; max-height: 2rem">
                 @Post.Description
             </div>
         </div>

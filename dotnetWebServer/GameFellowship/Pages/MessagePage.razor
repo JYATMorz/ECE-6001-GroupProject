@@ -12,13 +12,9 @@
     <!-- vertical message navbar -->
 	<div class="overflow-x-hidden overflow-y-scroll pe-0 vh-100">
         <div class="list-group p-1" style="min-width:150px">
-            @if (!_hasPost)
+            @if (!_userHasPost || _myPosts is null)
             {
                 <div class="text-info">您还没有参加过组队，不试一试嘛❤</div>
-            }
-            else if (_myPosts is null)
-            {
-                <LoadingSpinner />
             }
             else
             {
@@ -40,13 +36,13 @@
         }
         else
         {
-            <MessageDetail Post="@_selectedPost.Value" />
+            <MessageDetail Post="@_selectedPost.Value" OnUserQuitPost="@OnUserQuitPost" />
         }
     </div>
 </div>
 
 @code {
-    private bool _hasPost = true;
+    private bool _userHasPost = true;
 
     private IEnumerable<PostDto>? _myPosts;
     private int _selectedPostId = -1;
@@ -56,24 +52,17 @@
     {
         if (!firstRender) return;
 
-        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
-        if(!userLoginResult.Success)
-        {
-            _hasPost = false;
-            return;
-        }
-
-        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        (bool userHasLogin, int userId) = await CheckUserLoginAsync();
         if (!userHasLogin)
         {
-            _hasPost = false;
+            _userHasPost = false;
             return;
         }
 
         _myPosts = await UserService.GetUserJoinedPostsAsync(userId);
         if (_myPosts is null || !_myPosts.Any())
         {
-            _hasPost = false;
+            _userHasPost = false;
             return;
         }
 
@@ -103,5 +92,39 @@
         {
             _selectedPost = null;
         }
+    }
+
+    private async void OnUserQuitPost()
+    {
+        (bool userHasLogin, int userId) = await CheckUserLoginAsync();
+        if (!userHasLogin)
+        {
+            _userHasPost = false;
+            return;
+        }
+
+        _myPosts = await UserService.GetUserJoinedPostsAsync(userId);
+        if (_myPosts is null || !_myPosts.Any())
+        {
+            _userHasPost = false;
+            return;
+        }
+    }
+
+    private async Task<(bool, int)> CheckUserLoginAsync()
+    {
+        var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
+        if (!userLoginResult.Success)
+        {
+            return (false, -1);
+        }
+
+        (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
+        if (!userHasLogin)
+        {
+            return (false, -1);
+        }
+
+        return (true, userId);
     }
 }
