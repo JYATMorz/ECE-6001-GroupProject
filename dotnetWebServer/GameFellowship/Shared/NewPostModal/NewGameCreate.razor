@@ -93,11 +93,11 @@
         _iconUploading = true;
         if (!_uploadOnce) _uploadOnce = true;
 
-        (_uploadSuccess, string message) = await IconUpload.IconUploadToJpg(e, Environment, GameService.DefaultGameIconFolder, GameName);
+        (_uploadSuccess, string message) = await IconUpload.IconUploadToJpg(e, Environment, IGameService.DefaultGameIconFolder, GameName);
 
         _iconUploading = false;
 
-        _newGame.IconURI = _uploadSuccess ? message : GameService.DefaultGameIconUri;
+        _newGame.IconURI = _uploadSuccess ? message : IGameService.DefaultGameIconUri;
     }
 
     private async void OnNewGameCreateAsync()
@@ -116,7 +116,7 @@
 
         if (!_uploadOnce || !_uploadSuccess)
         {
-            _newGame.IconURI = GameService.DefaultGameIconUri;
+            _newGame.IconURI = IGameService.DefaultGameIconUri;
         }
         bool createSuccess = await GameService.CreateNewGameAsync(_newGame, userId);
 

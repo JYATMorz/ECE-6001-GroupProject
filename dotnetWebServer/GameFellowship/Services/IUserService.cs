@@ -5,7 +5,7 @@ namespace GameFellowship.Services;
 
 public interface IUserService
 {
-    static string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
+    static string DefaultUserIconUri { get; } = "images/UserIcons/default.jpg";
     static string DefaultUserIconFolder { get; } = "UserIcons";
     static string DefaultUserName { get; } = "匿名";
 

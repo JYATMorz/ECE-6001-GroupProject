@@ -11,11 +11,12 @@ public class IconUploadService : IIconUploadService
     private const string _unsafePath = "UserUpload";
 
     public async Task<(bool, string)> IconUploadToJpg(InputFileChangeEventArgs e,
-                                                   IWebHostEnvironment Environment,
-                                                   string iconFolder,
-                                                   string fileName,
-                                                   long imageStorageSize = _maxIconSize,
-                                                   int imagePixelSize = 500)
+                                                      IWebHostEnvironment Environment,
+                                                      string iconFolder,
+                                                      string fileName,
+                                                      long imageStorageSize = _maxIconSize,
+                                                      int imagePixelSize = 500,
+                                                      bool safeUpload = false)
     {
         if (string.IsNullOrWhiteSpace(iconFolder))
         {
@@ -26,8 +27,14 @@ public class IconUploadService : IIconUploadService
             return (false, "The name of the game is empty.");
         }
 
+        if (!safeUpload)
+        {
+            await Task.Delay(1000);
+            return (true, Path.Combine(Environment.ContentRootPath, _rootPath, _saveFolderPath, iconFolder, "default.jpg"));
+        }
+
         string patern = @"[^\d\w]";
-        string gameImagePath = Regex.Replace(fileName.Trim().ToLower(), patern, string.Empty) + ".jpeg";
+        string gameImagePath = Regex.Replace(fileName.Trim().ToLower(), patern, string.Empty) + ".jpg";
         string path = Path.Combine(Environment.ContentRootPath, _rootPath, _saveFolderPath, iconFolder, _unsafePath, gameImagePath);
 
         try

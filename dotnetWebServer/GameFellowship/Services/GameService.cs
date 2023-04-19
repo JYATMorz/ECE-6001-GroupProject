@@ -7,9 +7,6 @@ namespace GameFellowship.Services;
 
 public class GameService : IGameService
 {
-    public string DefaultGameIconUri { get; } = "images/GameIcons/gametitle.jpg";
-    public string DefaultGameIconFolder { get; } = "GameIcons";
-
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 
     public GameService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
@@ -118,7 +115,7 @@ public class GameService : IGameService
                                         .Select(game => game.IconURI)
                                         .FirstOrDefaultAsync();
 
-        return string.IsNullOrWhiteSpace(resultGame) ? DefaultGameIconUri : resultGame;
+        return string.IsNullOrWhiteSpace(resultGame) ? IGameService.DefaultGameIconUri : resultGame;
     }
 
     public async Task<string[]> GetGameNamesAsync(IEnumerable<int> gameIDs)

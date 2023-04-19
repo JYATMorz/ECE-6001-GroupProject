@@ -5,8 +5,8 @@ namespace GameFellowship.Services;
 
 public interface IGameService
 {
-    string DefaultGameIconUri { get; }
-    string DefaultGameIconFolder { get; }
+    static string DefaultGameIconUri { get; } = "images/GameIcons/default.jpg";
+    static string DefaultGameIconFolder { get; } = "GameIcons";
 
     Task<bool> CreateNewGameAsync(GameModel model, int userId);
 
