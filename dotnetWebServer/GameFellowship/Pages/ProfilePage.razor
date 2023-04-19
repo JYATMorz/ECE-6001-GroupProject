@@ -16,7 +16,10 @@
 
 @if(!_userHasLogin)
 {
-    <a href="login">请先登录</a>
+    <div class="container-fluid text-center my-5 py-5">
+        <a class="fs-1 fw-bold link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+            href="login">请先登录</a>
+    </div>
 }
 else if(_userInfo is not null)
 {
@@ -215,7 +218,7 @@ else
             return;
         }
 
-        (_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, userId.ToString());
+        (_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, IUserService.DefaultUserIconFolder, userId.ToString());
 
         if (_uploadSucceed)
         {

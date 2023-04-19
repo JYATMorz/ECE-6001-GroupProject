@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
+using System.Text.RegularExpressions;
 
 namespace GameFellowship.Services;
 
@@ -25,7 +26,8 @@ public class IconUploadService : IIconUploadService
             return (false, "The name of the game is empty.");
         }
 
-        string gameImagePath = fileName.Trim().ToLower() + ".jpeg";
+        string patern = @"[^\d\w]";
+        string gameImagePath = Regex.Replace(fileName.Trim().ToLower(), patern, string.Empty) + ".jpeg";
         string path = Path.Combine(Environment.ContentRootPath, _rootPath, _saveFolderPath, iconFolder, _unsafePath, gameImagePath);
 
         try

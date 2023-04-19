@@ -5,9 +5,9 @@ namespace GameFellowship.Services;
 
 public interface IUserService
 {
-    string DefaultUserIconUri { get; }
-    string DefaultUserIconFolder { get; }
-    string DefaultUserName { get; }
+    static string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
+    static string DefaultUserIconFolder { get; } = "UserIcons";
+    static string DefaultUserName { get; } = "匿名";
 
     Task<bool> CreateUserAsync(UserModel model);
 

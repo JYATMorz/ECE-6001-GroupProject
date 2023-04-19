@@ -87,7 +87,7 @@
 					@if(_uploadComplete && _uploadSucceed)
 					{
 						<img alt="用户头像" width="250" height="250"
-							src="@(!string.IsNullOrWhiteSpace(_newUser.UserIconURI) ? _newUser.UserIconURI : UserService.DefaultUserIconUri)" />
+							src="@(!string.IsNullOrWhiteSpace(_newUser.UserIconURI) ? _newUser.UserIconURI : IUserService.DefaultUserIconUri)" />
 					}
 					else if (!_uploadSucceed)
 					{
@@ -152,9 +152,9 @@
 
 	private async Task OnIconFileUploaded(InputFileChangeEventArgs e)
 	{
-		(_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, UserService.DefaultUserIconFolder, _newUser.UserName);
+		(_uploadSucceed, string message) = await IconUpload.IconUploadToJpg(e, Environment, IUserService.DefaultUserIconFolder, _newUser.UserName);
 
-		_newUser.UserIconURI = _uploadSucceed ? message : UserService.DefaultUserIconUri;
+		_newUser.UserIconURI = _uploadSucceed ? message : IUserService.DefaultUserIconUri;
 		_uploadComplete = true;
 	}
 
@@ -162,7 +162,7 @@
 	{
 		if (string.IsNullOrWhiteSpace(_newUser.UserIconURI))
 		{
-			_newUser.UserIconURI = UserService.DefaultUserIconUri;
+			_newUser.UserIconURI = IUserService.DefaultUserIconUri;
 		}
 
 		_registerSucceed = await UserService.CreateUserAsync(_newUser);

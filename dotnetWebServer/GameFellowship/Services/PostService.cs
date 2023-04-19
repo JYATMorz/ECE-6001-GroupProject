@@ -7,8 +7,6 @@ namespace GameFellowship.Services;
 
 public class PostService : IPostService
 {
-    public static string DefaultConnectionSigns => "++";
-
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 
     public PostService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
@@ -36,7 +34,7 @@ public class PostService : IPostService
         {
             LastUpdate = DateTime.Now.ToUniversalTime(),
             MatchType = model.MatchType,
-            Requirements = string.Join(DefaultConnectionSigns, model.Requirements),
+            Requirements = string.Join(IPostService.DefaultConnectionSigns, model.Requirements),
             Description = model.Description,
             TotalPeople = model.TotalPeople,
             CurrentPeople = model.CurrentPeople,

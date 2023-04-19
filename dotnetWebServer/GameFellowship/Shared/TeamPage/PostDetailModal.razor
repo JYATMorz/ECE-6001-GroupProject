@@ -9,86 +9,95 @@
 <div class="modal fade" id="teamInfoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
     aria-labelledby="teamInfoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-lg">
+        @if (Post is not null)
+        {
+            <div class="modal-content">
 
-        <div class="modal-content">
-
-            <div class="modal-header align-items-baseline">
-                <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.GameName</h1>
-                <small class="text-muted pt-1">@Post.MatchType</small>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
-                    @foreach (var requirement in Post.Requirements)
-                    {
-                        <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
-                    }
+                <div class="modal-header align-items-baseline">
+                    <h1 class="modal-title fs-3 me-3" id="teamInfoModalLabel">@Post.Value.GameName</h1>
+                    <small class="text-muted pt-1">@Post.Value.MatchType</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <div class="d-flex align-items-center mb-2">
-                    <div class="fs-5 fw-bold">需要人数 <i class="bi bi-person-circle"></i> :
-                        @Post.CurrentPeople / @Post.TotalPeople</div>
-                    <div class="ms-4 px-2 border border-1 border-primary-subtle rounded-4">
-                        <PersonIconsDiv Current="@Post.CurrentPeople" Remain="@(Post.TotalPeople - Post.CurrentPeople)"
-                            NewUser="@true" />
+                <div class="modal-body">
+
+                    <div id="teamRequirements" class="d-inline-flex gap-2 pb-2 mb-2">
+                        @foreach (var requirement in Post.Value.Requirements)
+                        {
+                            <div class="px-2 rounded-4 bg-info-subtle">@requirement</div>
+                        }
                     </div>
-                </div>
 
-                @if (@Post.PlayNow)
-                {
-                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> : 现在</p>
-                }
-                else
-                {
-                    <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> :
-                        @(Post.Start.ToShortDateString()) ~ @(Post.End.ToShortDateString())
-                    </p>
-                }
+                    <div class="d-flex align-items-center mb-2">
+                        <div class="fs-5 fw-bold">
+                            需要人数 <i class="bi bi-person-circle"></i> :
+                            @Post.Value.CurrentPeople / @Post.Value.TotalPeople
+                        </div>
+                        <div class="ms-4 px-2 border border-1 border-primary-subtle rounded-4">
+                            <PersonIconsDiv Current="@Post.Value.CurrentPeople" Remain="@(Post.Value.TotalPeople - Post.Value.CurrentPeople)"
+                                        NewUser="@true" />
+                        </div>
+                    </div>
 
-                <div class="my-3">
-                    <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText"
-                        value="@Post.Description" disabled readonly style="resize: none; height: 120px;"></textarea>
-                </div>
-
-                <div class="d-flex align-items-center">
-                    <span class="fs-5 fw-bold">语音平台</span>
-                    @if (Post.AudioChat)
+                    @if (@Post.Value.PlayNow)
                     {
-                        <i class="bi bi-mic-fill mx-2"></i>
-                        <span id="audioChatName">@Post.AudioPlatform</span>
-                        <i class="bi bi-arrow-bar-right ms-1"></i>
-                        <input type="text" name="teamDetails" id="audioChatLink" placeholder="Audio Link From User"
-                        value="@Post.AudioLink" readonly style="width: 60%;">
+                        <p class="fs-5 fw-bold">游戏时间 <i class="bi bi-calendar3"></i> : 现在</p>
                     }
                     else
                     {
-                        <i class="bi bi-mic-mute-fill mx-2"></i>
-                        <span>不需要</span>
+                        <p class="fs-5 fw-bold">
+                            游戏时间 <i class="bi bi-calendar3"></i> :
+                            @(Post.Value.Start.ToShortDateString()) ~ @(Post.Value.End.ToShortDateString())
+                        </p>
                     }
+
+                    <div class="my-3">
+                        <textarea class="form-control w-100 rounded-3" name="teamDetails" id="teamOtherText"
+                                  value="@Post.Value.Description" disabled readonly style="resize: none; height: 120px;"></textarea>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <span class="fs-5 fw-bold">语音平台</span>
+                        @if (Post.Value.AudioChat)
+                        {
+                            <i class="bi bi-mic-fill mx-2"></i>
+                            <span id="audioChatName">@Post.Value.AudioPlatform</span>
+                            <i class="bi bi-arrow-bar-right ms-1"></i>
+                            <input type="text" name="teamDetails" id="audioChatLink" placeholder="Audio Link From User"
+                                   value="@Post.Value.AudioLink" readonly style="width: 60%;">
+                        }
+                        else
+                        {
+                            <i class="bi bi-mic-mute-fill mx-2"></i>
+                            <span>不需要</span>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <small class="text-muted">上次更新 @((DateTime.Now - Post.Value.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
+                    <div>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" @onclick="OnUserJoinPostAsync">加入！</button>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer justify-content-between">
-                <small class="text-muted">上次更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前 ...</small>
-                <div>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary" @onclick="OnUserJoinPostAsync">加入！</button>
-                </div>
-            </div>
-        </div>
+        }
+        else
+        {
+            <LoadingSpinner />
+        }
     </div>
 </div>
 
 @code {
     [Parameter]
-    public PostDto Post { get; set; } = default;
+    public PostDto? Post { get; set; } = null;
 
     private string[] _requirements = Array.Empty<string>();
 
     private async void OnUserJoinPostAsync()
     {
-        if (Post.Id <= 0) return;
+        if (Post is null || Post.Value.Id <= 0) return;
 
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
         if (!userLoginResult.Success)
@@ -104,7 +113,7 @@
             return;
         }
 
-        bool joinSucceed = await PostService.AddCurrentUserAsync(Post.Id, userId);
+        bool joinSucceed = await PostService.AddCurrentUserAsync(Post.Value.Id, userId);
         if (!joinSucceed)
         {
             await JS.InvokeVoidAsync("updatePostAlert");

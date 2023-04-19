@@ -40,7 +40,7 @@ public readonly record struct PostDto
 
         MatchType = post.MatchType;
         Description = post.Description;
-        Requirements = post.Requirements.Split(PostService.DefaultConnectionSigns);
+        Requirements = post.Requirements.Split(IPostService.DefaultConnectionSigns);
         
         TotalPeople = post.TotalPeople;
         CurrentPeople = post.CurrentPeople;

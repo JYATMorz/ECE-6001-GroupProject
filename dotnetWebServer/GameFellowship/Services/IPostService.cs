@@ -5,7 +5,7 @@ namespace GameFellowship.Services;
 
 public interface IPostService
 {
-    string DefaultConnectionSigns => "++";
+    static string DefaultConnectionSigns => "++";
 
     Task<bool> CreatePostAsync(PostModel model, int userID);
     Task<bool> DeletePostAsync(int postId);

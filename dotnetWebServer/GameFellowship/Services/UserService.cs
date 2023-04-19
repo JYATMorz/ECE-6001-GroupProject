@@ -7,10 +7,6 @@ namespace GameFellowship.Services;
 
 public class UserService : IUserService
 {
-    public string DefaultUserIconUri { get; } = "images/UserIcons/50913860_p9.jpg";
-    public string DefaultUserIconFolder { get; } = "UserIcons";
-    public string DefaultUserName { get; } = "匿名";
-
     private readonly IDbContextFactory<GameFellowshipDb> _dbContextFactory;
 
     public UserService(IDbContextFactory<GameFellowshipDb> dbContextFactory)
@@ -231,7 +227,7 @@ public class UserService : IUserService
                                         .Where(user => userId == user.Id)
                                         .FirstOrDefaultAsync();
 
-        return resultUser?.Name ?? DefaultUserName;
+        return resultUser?.Name ?? IUserService.DefaultUserName;
     }
 
     public async Task<string> GetUserIconUriAsync(int userId)
@@ -241,7 +237,7 @@ public class UserService : IUserService
                                         .Where(user => userId == user.Id)
                                         .FirstOrDefaultAsync();
 
-        return resultUser?.IconURI ?? DefaultUserIconUri;
+        return resultUser?.IconURI ?? IUserService.DefaultUserIconUri;
     }
 
     public async Task<string[]> GetUserFollowedGameNamesAsync(int userId)
