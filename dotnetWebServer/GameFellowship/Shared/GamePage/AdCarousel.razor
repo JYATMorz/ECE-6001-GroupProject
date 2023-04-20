@@ -4,17 +4,29 @@
     data-bs-touch="false">
     <div class="carousel-inner text-center py-2 w-75 m-auto">
         <div class="carousel-item active" data-bs-interval="3000">
-            <div class="d-block w-100 border border-success" style="height: 125px;">
-                <h1>Ad1</h1>
+            <div class="d-block w-100 border border-success" style="height: 150px;">
+                <div class="d-flex w-100 h-100">
+                    <div class="col-6 overflow-hidden">
+                        <img src="@_adImageSrc1" class="img-fluid" alt="GTSI">
+                    </div>
+                    <div class="col-6 text-end p-2">
+                        <h5 class="mt-1 text-start">GTSI New Campus</h5>
+                        <p class="text-start w-100">@_adDetail1</p>
+                        <a href="https://www.gtsi.edu.cn/" rel="external" target="_blank" title="GTSI"
+                            class="stretched-link link-success link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+                            >Visit GTSI
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="carousel-item" data-bs-interval="3000">
-            <div class="d-block w-100 border border-success" style="height: 125px;">
+            <div class="d-block w-100 border border-success" style="height: 150px;">
                 <h1>Ad2</h1>
             </div>
         </div>
         <div class="carousel-item" data-bs-interval="3000">
-            <div class="d-block w-100 border border-success" style="height: 125px;">
+            <div class="d-block w-100 border border-success" style="height: 150px;">
                 <h1>Ad3</h1>
             </div>
         </div>
@@ -23,6 +35,8 @@
 
 @code {
     private const string _carouselName = "adsCarousel";
+    private const string _adImageSrc1 = "images/GTSI.jpg";
+    private const string _adDetail1 = "校园位于深圳市南山区白石岭, 临近地铁5号线长岭陂站, 总规划用地面积 16.21公顷，总建筑面积为 190415 ㎡。";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

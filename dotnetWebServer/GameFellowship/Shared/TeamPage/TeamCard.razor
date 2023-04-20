@@ -53,7 +53,7 @@
             </div>
         </div>
         <div class="card-footer d-inline-flex justify-content-between align-items-center gap-3">
-            <small class="text-muted">最后更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前</small>
+            <small class="text-body-secondary">最后更新 @((DateTime.Now - Post.LastUpdate).TotalMinutes.ToString("F0")) 分钟前</small>
             <button type="button" class="btn btn-outline-primary p-1" data-bs-toggle="modal"
                 data-bs-target="#teamInfoModal" @onclick="OnDetailCallback">详情</button>
         </div>
