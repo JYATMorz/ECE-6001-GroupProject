@@ -47,7 +47,7 @@ public readonly record struct PostDto
 
         PlayNow = post.PlayNow;
         Start = (post.StartDate ?? DateTime.Now).ToLocalTime();
-        End = (post.StartDate ?? DateTime.Now).ToLocalTime();
+        End = (post.EndDate ?? DateTime.Now).ToLocalTime();
 
         AudioChat = post.AudioChat;
         AudioPlatform = post.AudioPlatform ?? string.Empty;
