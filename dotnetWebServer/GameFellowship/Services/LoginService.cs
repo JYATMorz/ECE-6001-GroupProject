@@ -38,11 +38,11 @@ public class LoginService : ILoginService
         return resultUser ? (true, userId) : (false, -1);
     }
 
-    public async Task<(bool, string)> UserLoginAsync(string userName, string password)
+    public async Task<(bool, string)> UserLoginAsync(string userInfo, string password)
     {
         using var dbContext = _dbContextFactory.CreateDbContext();
         var resultUser = await dbContext.Users
-                                        .Where(user => userName == user.Name)
+                                        .Where(user => userInfo == user.Name || userInfo == user.Email)
                                         .FirstOrDefaultAsync();
 
         if (resultUser is null || resultUser.Password != password)
@@ -56,7 +56,7 @@ public class LoginService : ILoginService
         resultUser.LastLogin = userLoginStamp;
         await dbContext.SaveChangesAsync();
 
-        return (true, $"{userId}++{userLoginStamp:O}");
+        return (true, $"{userId}{_defaultConnectionSign}{userLoginStamp:O}");
     }
 
     public async Task<bool> UserLogoutAsync(string? userLoginInfo)
