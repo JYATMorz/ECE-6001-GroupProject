@@ -62,7 +62,7 @@
                     @bind="_conversationText"></textarea>
                 <div class="d-inline-flex flex-column align-self-stretch justify-content-evenly">
                     <button class="btn btn-outline-primary text-nowrap" type="button"
-                        @onclick="OnConversationSendAsync">发送</button>
+                        @onclick="OnConversationSendAsync" disabled="@EmptyMessage">发送</button>
 					<button class="btn btn-outline-secondary text-nowrap" type="button"
                         @onclick="() => _conversationText = string.Empty">清空</button>
                 </div>
@@ -101,6 +101,8 @@
     private int[] _joinedUserIds = Array.Empty<int>();
     private ConversationDto[] _conversations = Array.Empty<ConversationDto>();
 
+    private bool EmptyMessage => string.IsNullOrEmpty(_conversationText);
+
     protected override async Task OnParametersSetAsync()
     {
         _joinedUserIds = await PostService.GetJoinedUserIds(Post.Id);
@@ -136,6 +138,9 @@
             return;
         }
 
+        string words = _conversationText;
+        _conversationText = string.Empty;
+
         (bool userIsLogin, int userId) = await CheckUserLoginAsync();
         if (!userIsLogin)
         {
@@ -143,15 +148,16 @@
             return;
         }
 
-        ConversationModel newConversation = new(DateTime.Now, _conversationText, Post.Id, userId);
+        ConversationModel newConversation = new(DateTime.Now, words, Post.Id, userId);
         if (!(await PostService.AddConversationAsync(newConversation)))
         {
             await JS.InvokeVoidAsync("updatePostAlert");
             return;
         }
-        _conversationText = string.Empty;
 
         _conversations = await PostService.GetConversations(Post.Id);
+
+        StateHasChanged();
     }
 
     private async Task<(bool, int)> CheckUserLoginAsync()

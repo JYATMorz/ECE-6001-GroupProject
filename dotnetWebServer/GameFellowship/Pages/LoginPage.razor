@@ -48,7 +48,9 @@
 		<button class="btn btn-outline-info btn-lg px-4 py-3"
 			@onclick="OnUserRegister">立刻注册</button>
 		<button class="btn btn-primary btn-lg px-4 py-3" @onclick="OnUserLogin"
-			disabled="@(!UserLoginNameValid || !UserPasswordValid)">登陆账号</button>
+				disabled="@(!UserLoginNameValid || !UserPasswordValid || _userLoggingIn)">
+				登陆账号
+		</button>
 	</div>
 </div>
 

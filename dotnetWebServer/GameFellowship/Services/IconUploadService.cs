@@ -30,7 +30,7 @@ public class IconUploadService : IIconUploadService
         if (!safeUpload)
         {
             await Task.Delay(1000);
-            return (true, Path.Combine(Environment.ContentRootPath, _rootPath, _saveFolderPath, iconFolder, "default.jpg"));
+            return (true, Path.Combine(_saveFolderPath, iconFolder, "default.jpg"));
         }
 
         string patern = @"[^\d\w]";

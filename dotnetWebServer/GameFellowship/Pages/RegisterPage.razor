@@ -102,7 +102,9 @@
 		<button class="btn btn-outline-info btn-lg px-4 py-3" type="button"
 			@onclick="OnReturnToLogin">返回登录</button>
 		<button class="btn btn-primary btn-lg px-4 py-3" type="submit" form="newUserForm"
-			disabled="@(!_newUser.ValidPassword || !_newUser.ValidUserName)">立刻注册</button>
+				disabled="@(!_newUser.ValidPassword || !_newUser.ValidUserName || _creatingUser)">
+			立刻注册
+		</button>
 	</div>
 </div>
 
@@ -114,6 +116,8 @@
 	private bool _registerSucceed = false;
 	private bool _uploadSucceed = true;
 	private bool _uploadComplete = false;
+
+	private bool _creatingUser = false;
 
 	private UserModel _newUser = default!;
 	private EditContext? _editContext;
@@ -160,6 +164,8 @@
 
 	private async void HandleValidSubmit()
 	{
+		_creatingUser = true;
+
 		if (string.IsNullOrWhiteSpace(_newUser.UserIconURI))
 		{
 			_newUser.UserIconURI = IUserService.DefaultUserIconUri;
@@ -168,12 +174,13 @@
 		_registerSucceed = await UserService.CreateUserAsync(_newUser);
 		if (!_registerSucceed)
 		{
+			_creatingUser = false;
 			await JS.InvokeVoidAsync("userRegisterFailAlert");
 			return;
 		}
 
 		// TODO: register animation ?
-
+		_creatingUser = false;
 		Navigation.NavigateTo("login");
 	}
 }

@@ -202,7 +202,8 @@
                 }
                 <div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-					<button type="submit" class="btn btn-primary mx-1" form="newPostForm">创建</button>
+					<button type="submit" class="btn btn-primary mx-1" form="newPostForm"
+                            disabled="@_creatingPost">创建</button>
                 </div>
             </div>
         </div>
@@ -221,6 +222,8 @@
 
     private bool _createOnce = false;
     private bool _createSucceed = false;
+
+    private bool _creatingPost = false;
 
     protected override void OnInitialized()
     {
@@ -260,11 +263,14 @@
 
     private async void HandleValidSubmit()
     {
+        _creatingPost = true;
+
         if (!_existedGame)
         {
             _existedGame = await GameService.HasGameNameAsync(_newPost.GameName);
             if (!_existedGame)
             {
+                _creatingPost = false;
                 await JS.InvokeVoidAsync("createGameAlert", _newPost.GameName);
                 return;                
             }
@@ -273,6 +279,7 @@
         var userLoginResult = await LocalStorage.GetAsync<string>(LoginService.LocalStorageKey);
         if (!userLoginResult.Success)
         {
+            _creatingPost = false;
             await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
@@ -280,6 +287,7 @@
         (bool userHasLogin, int userId) = await LoginService.UserHasLoginAsync(userLoginResult.Value);
         if (!userHasLogin)
         {
+            _creatingPost = false;
             await JS.InvokeVoidAsync("userLoginConfirm", Navigation.BaseUri + "login");
             return;
         }
@@ -289,11 +297,13 @@
         _createSucceed = await PostService.CreatePostAsync(_newPost, userId);
         if (!_createSucceed)
         {
+            _creatingPost = false;
             await JS.InvokeVoidAsync("createPostAlert");
             return;
         }
 
         // Reload the page
+        _creatingPost = false;
         Navigation.NavigateTo(Navigation.Uri, true);
     }
 }
