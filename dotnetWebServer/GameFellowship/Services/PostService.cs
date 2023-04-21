@@ -30,9 +30,11 @@ public class PostService : IPostService
                                         .FirstOrDefaultAsync();
         if (resultGame is null) return false;
 
-        if (resultGame.LastPostDate.AddSeconds(3) > DateTime.Now.ToUniversalTime())
+        if (resultGame.LastPostDate.AddSeconds(1) > DateTime.Now.ToUniversalTime())
         {
-            var lastPost = await dbContext.Posts.LastOrDefaultAsync();
+            var lastPost = await dbContext.Posts
+                                          .Include(post => post.Creator)
+                                          .LastOrDefaultAsync();
 
             if (lastPost is not null && lastPost.Creator.Id == userId)
             {
